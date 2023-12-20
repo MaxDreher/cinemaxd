@@ -1,0 +1,144 @@
+.form-control {
+    border: 1px solid #6c757d;
+    font-family: 'Roboto', sans-serif !important;
+    font-size: 10pt;
+    border-radius: 3px;
+    padding: 5px;
+    background-color: transparent;
+    color: inherit;
+    margin-left: 3px;
+}
+
+.input-group-text {
+    border: 1px solid #6c757d;
+    background-color: #6c757d;
+}
+
+.form-label {
+    font-family: 'Roboto', sans-serif !important;
+    font-size: 10pt
+}
+
+#addMovieControl {
+    border: 1px solid #202224;
+    font-family: 'Roboto', sans-serif !important;
+    font-size: 10pt;
+    border-radius: 7px;
+    padding: 18px;
+    background-color: #202224;
+    color: inherit;
+    margin-bottom: 10px;
+}
+
+table.dataTable.no-footer {
+    border: 1px solid #202224;
+    border-radius: 7px;
+}
+
+thead {
+    background-color: #202224;
+}
+
+div.dtsp-panesContainer button.btn-subtle:hover {
+    background-color: #6c757d;
+    color: #ffffff;
+    border-radius: var(--bs-btn-border-radius);
+}
+
+div.dtsp-panesContainer button.btn-subtle {
+    background-color: #6c757d;
+    color: #000000
+}
+
+.bg-secondary {
+    background-color: #6c757d !important;
+    color: #ffffff !important;
+}
+
+.btn-sm {
+    font-family: 'Roboto', sans-serif !important;
+    font-size: 8pt;
+}
+
+.badge {
+    color: #000000 !important;
+    text-decoration: none;
+    font-weight: inherit;
+}
+
+.list-group {
+    --bs-list-group-bg: #202224;
+    --bs-list-group-border-width: 0px;
+    border-radius: 10px;
+}
+
+.list-group-item+.list-group-item {
+    border-width: 0px;
+    border-radius: 10px;
+    border-top-width: 0px;
+}
+
+.list-group-item:first-child {
+    border-radius: 10px;
+}
+
+.card {
+    border-width: 0px;
+    border-radius: 10px;
+    border-color: #202224;
+    background-color: #202224;
+}
+
+.year {
+    font-family: 'Roboto', sans-serif !important;
+    font-size: 8pt;
+    filter:brightness(80%)
+  }
+  
+.stars {
+    color: #15d37c !important;
+}
+
+.poster {
+    border: 1px solid #202224;
+    border-radius: 7px;
+}
+
+.big-number-card {
+    font-family: 'Montserrat';
+    font-size: 36pt;
+    text-align: center;
+}
+
+.small-number-card {
+    font-family: 'Roboto';
+    font-size: 14pt;
+    filter: brightness(80%);
+}
+
+.dates {
+    font-family: 'Roboto';
+    font-size: 12pt;
+    filter: brightness(60%);
+}
+
+::before {
+    font-family: 'Karla';
+    font-size: 12pt;
+}
+
+.section-heading {
+    font-family: 'Roboto';
+    font-size: 12pt;
+    filter: brightness(60%);
+}
+
+.sidebar-title {
+    font-family: "Raleway";
+    font-size: 14px;
+}
+
+.little-stars {
+    color: #15d37c !important;
+    font-size: 12px;
+}

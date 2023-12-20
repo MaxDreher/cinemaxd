@@ -1,0 +1,151 @@
+{% extends 'watchlist/base.html' %}
+{% load static %}
+{% load custom_filters %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'watchlist/css/rankings.css' %}">
+{% endblock %}
+{% block js %}
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="{% static 'watchlist/js/rankings.js' %}"></script>
+    <script>
+        var updateOrderUrl = "{% url 'update_order' %}";
+    </script>
+{% endblock %}
+{% block content %}
+<div class="container mt-3">
+    <div class="row">
+        <div class="col-md-3">
+            <div id="addMovieControl">
+                <a class="btn btn-secondary " data-bs-toggle="collapse" data-bs-target="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                    Show/Hide Add to Rankings
+                </a>
+                <div class="collapse" id="collapseExample">
+                    <form id="addMovieForm" method="post" action="{% url 'rankings' %}">
+                        {% csrf_token %}
+                        <div class="row mt-3">
+                            <div class="col-md-12 form-group">
+                                <label for="id_title" class="form-label"><b>Title:</b></label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <svg class="bi d-block mx-auto" width="16" height="16"><use xlink:href="#film"></use></svg>
+                                    </span>
+                                    <input type="text" name="title" id="id_title" class="form-control" placeholder="Title">
+                                    {{ form.title.errors }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-md-12 form-group">
+                                <label for="id_year" class="form-label"><b>Year:</b></label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <svg class="bi d-block mx-auto" width="16" height="16"><use xlink:href="#calendar-year"></use></svg>
+                                    </span>
+                                    <input type="text" name="year" id="id_year" class="form-control" placeholder="YYYY">
+                                    {{ form.year.errors }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mt-3">
+                            <button class="btn btn-secondary" type="submit">Submit</button>
+                        </div>
+                    </form>    
+                </div>
+            </div>
+            <div class="card rounded-3">
+                <div class="card card-body">
+                    <p style="text-align: center;"><b class="big-number-card">{{ total }}</b><b class="small-number-card">&nbsp;&nbsp;MOVIES</b></p>
+                    <p style="text-align: center;"><b class="big-number-card">{{ days }}</b><b class="small-number-card">&nbsp;&nbsp;DAYS</b></p>
+                    <p class="dates" style="text-align: center;">{{ start }} - {{ end }}</p>
+                </div>        
+            </div>
+            <div class="card rounded-3 mt-3">
+                <div class="card card-body">
+                    <p style="text-align: center;">Average Rating: {{ avg }}★</p>
+                    <p style="text-align: center;">Total Minutes: {{ runtime.runtime__sum }}</p>
+                </div>        
+            </div>
+            <div class="card rounded-3 mt-3">
+                <div class="card card-body">
+                    <b class="section-heading">NEWEST ADDITION:</b>
+                    <div class="row mt-2">
+                        <div class="col-md-2 text-center">
+                            <img class="poster shadow-lg" src="{{ newest.posterLink }}" height="60px">
+                        </div>
+                        <div class="col-md-10">
+                            <div class="fw-bold sidebar-title">
+                                {{ newest.title }} <b class="year">{{ newest.year }}</b>
+                            </div>
+                            <div class="little-stars">
+                                {{ newest.rating|convert_to_stars }}
+                            </div>
+                        </div>
+                    </div>
+                </div>        
+            </div>
+            <div class="card rounded-3 mt-3">
+                <div class="card card-body">
+                    <span><b class="section-heading">BUSIEST DAY:</b> <span class="dates">{{ busiestDay }}</span></span>
+                    {% for instance in busiestMovies %}
+                    <div class="row mt-2">
+                        <div class="col-md-2 text-center">
+                            <img class="poster shadow-lg" src="{{ instance.posterLink }}" height="60px">
+                        </div>
+                        <div class="col-md-10">
+                            <div class="fw-bold sidebar-title">
+                                {{ instance.title }} <b class="year">{{ instance.year }}</b>
+                            </div>
+                            <div class="little-stars">
+                                {{ instance.rating|convert_to_stars }}
+                            </div>
+                        </div>
+                    </div>        
+                    {% endfor %}
+                </div>        
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div class="row flex-nowrap">
+                <ul class="list-group list-group-numbered" id="sortable">
+                    {% for instance in data %}
+                        <li class="list-group-item d-flex justify-content-center ui-state-default mb-2" data-movie-id="{{ instance.TMDB_ID }}">
+                            <div class="col-md-1 text-center">
+                                <img class="poster shadow-lg" src="{{ instance.posterLink }}" height="80px">
+                            </div>
+                            <div class="col-md-11">
+                                <div class="fw-bold raleway">
+                                    {{ instance.title }} <b class="year">{{ instance.year }}</b>
+                                </div>
+                                <div class="stars">
+                                    {{ instance.rating|convert_to_stars }}
+                                </div>
+                                <a class="badge bg-secondary pill" data-bs-toggle="collapse" data-bs-target="#{{ instance.TMDB_ID }}collapse" role="button" aria-expanded="false" aria-controls="{{ instance.TMDB_ID }}collapse">
+                                    Expand...
+                                </a>
+                                <div class="collapse multi-collapse" id="{{ instance.TMDB_ID }}collapse">
+                                    <div class="card card-body mt-3 mb-1">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <b>Seen:</b> {{ instance.date|default:"Unknown"}}
+                                            </div>
+                                            <div class="col-md-4">
+                                                <b>Review:</b>
+                                                {{ instance.review}}
+                                            </div>
+                                            <div class="col-md-4">
+                                                <b>Review:</b>
+                                                {{ instance.review}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div> 
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
