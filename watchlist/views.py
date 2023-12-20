@@ -8,6 +8,7 @@ from .forms import MovieForm, WatchlistForm, RankingForm
 from django.conf import settings
 from .models import *
 import datetime
+import json 
 
 from .api_calls import get_OMDB
 from .utils import make_api_calls_and_update_database, make_api_calls_and_update_watchlist  # Create this function
@@ -63,8 +64,24 @@ class WatchlogView(View):
             date_watched = form.cleaned_data['date_watched']
             service = form.cleaned_data['service']
             theaters = form.cleaned_data['theaters']
-
-            make_api_calls_and_update_database(title, year, rating, review, theaters, date_watched, service)
+            cleaned = {
+                'title': title,
+                'year': year,
+                'rating': rating,
+                'review': review,
+                'date': date_watched,
+                'service': service,
+                'theaters': theaters
+            }
+            try:
+                update_object = Movie.objects.get(title=title, year=year)
+                for key, value in cleaned.items():
+                    if value != "" and value is not None and value != False:
+                        if getattr(update_object, key) != value:
+                            setattr(update_object, key, value)
+                update_object.save()
+            except Movie.DoesNotExist:
+                make_api_calls_and_update_database(title, year, rating, review, theaters, date_watched, service)
 
             return redirect('watchlog')  # Redirect to the same page after adding a movie
         else:
@@ -178,12 +195,28 @@ def update_order(request):
             return JsonResponse({'status': 'error', 'message': 'Movie or list not found'}, status=400)
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=400)
 
-
-# EMPTY TEMPLATES:
 class DashboardView(View):
     def get(self, request):
-        return render(request, 'watchlist/dashboard.html')
-    
+        # Get the current year
+        current_year = datetime.date.today().year
+        print(current_year)
+        # Generate an array of years from the current year to 20 years ago
+        years = list(range(current_year - 24, current_year + 1, 1))
+
+        # Query MovieList for each year and count the number of movies
+        movie_counts = []
+        for year in years:
+            movies_count = Movie.objects.filter(year=year).count()
+            movie_counts.append(movies_count)
+        print(years)
+        print(movie_counts)
+        context = {
+            'years': json.dumps(years),
+            'movie_counts': json.dumps(movie_counts),
+        }
+        return render(request, 'watchlist/dashboard.html', context)
+
+# EMPTY TEMPLATES   
 class EloView(View):
     def get(self, request):
         return render(request, 'watchlist/elo.html')

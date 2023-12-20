@@ -1,4 +1,89 @@
 {% extends 'watchlist/base.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'watchlist/css/dashboard.css' %}">
+{% endblock %}
+{% block js %}
+{% endblock %}
 
 {% block content %}
+<div class="row mx-2 mt-3">
+    <div class="col-md-4">
+        <div id="chart" class="chart-bg">
+        </div>
+    </div>
+    <div class="col-md-8">
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.45.0/apexcharts.min.js"></script>
+<script src="{% static 'watchlist/js/dashboard.js' %}"></script>
+<script>
+    var moviesPerYear = {
+        series: [{ 
+            name: 'Movies', 
+            data: {{ movie_counts|safe }} 
+        }],
+        chart: { 
+            height: 200, 
+            type: 'bar' 
+        },
+        colors: ['#6c757d'],
+        plotOptions: {
+            bar: {
+                borderTopRadius: 4,    
+                dataLabels: {
+                    position: 'bottom', // top, center, bottom
+                },
+            }
+        },
+        dataLabels: {
+            enabled: true,
+            style: {
+                fontFamily: 'Roboto',
+                fontSize: '12px',
+                colors: ["#adb5bd"]
+            }
+        },
+        grid: {
+            show: false
+        },
+        xaxis: {
+            categories: {{ years }},
+            labels: {
+                show: true,
+                style: {
+                    fontFamily: 'Roboto',
+                    fontSize: '10px',
+                    colors: "#6c757d"
+                }
+            },
+            position: 'bottom',
+            axisTicks: {
+                show: false
+            }
+        },
+        yaxis: {
+            labels: {
+                show: false
+            }
+        },
+        title: {
+            text: 'MOVIES PER YEAR',
+            floating: true,
+            offsetY: 10,
+            align: 'left',
+            style: {
+                color: '#fff',
+                fontFamily: 'Roboto',
+                fontSize: '12pt',
+                color: '#686d71'
+            }
+        }
+    };
+
+    var chart = new ApexCharts(document.querySelector("#chart"), moviesPerYear);
+    chart.render();
+</script>
 {% endblock %}

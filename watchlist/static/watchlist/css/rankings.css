@@ -130,7 +130,7 @@ div.dtsp-panesContainer button.btn-subtle {
 .section-heading {
     font-family: 'Roboto';
     font-size: 12pt;
-    filter: brightness(60%);
+    color: #686d71;
 }
 
 .sidebar-title {
