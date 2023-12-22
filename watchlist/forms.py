@@ -23,10 +23,10 @@ SERVICES = [
 class MovieForm(forms.Form):
     title = forms.CharField(label='Title', widget=forms.TextInput(attrs={'class': 'form-control input rounded-1 dark-input'}))
     year = forms.IntegerField(label='Year', widget=forms.TextInput(attrs={'class': 'form-control input rounded-1 dark-input'}))
-    rating = forms.FloatField(label='Rating', widget=forms.TextInput(attrs={'class': 'form-control input rounded-1 dark-input'}))
+    rating = forms.FloatField(label='Rating', widget=forms.TextInput(attrs={'class': 'form-control input rounded-1 dark-input'}), required=False)
     review = forms.CharField(label='Review', widget=forms.Textarea(attrs={'class': 'form-control input rounded-1 dark-input'}), required=False)
-    date_watched = forms.DateField(label='Date Watched')
-    service = forms.ChoiceField(label="Service", choices=SERVICES)
+    date_watched = forms.DateField(label='Date Watched', required=False)
+    service = forms.ChoiceField(label="Service", choices=SERVICES, required=False)
     theaters = forms.BooleanField(label = "Theater", required=False)
 
 class WatchlistForm(forms.Form):

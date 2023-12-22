@@ -8,6 +8,7 @@ from .forms import MovieForm, WatchlistForm, RankingForm
 from django.conf import settings
 from .models import *
 import datetime
+import json 
 
 from .api_calls import get_OMDB
 from .utils import make_api_calls_and_update_database, make_api_calls_and_update_watchlist  # Create this function
@@ -63,8 +64,24 @@ class WatchlogView(View):
             date_watched = form.cleaned_data['date_watched']
             service = form.cleaned_data['service']
             theaters = form.cleaned_data['theaters']
-
-            make_api_calls_and_update_database(title, year, rating, review, theaters, date_watched, service)
+            cleaned = {
+                'title': title,
+                'year': year,
+                'rating': rating,
+                'review': review,
+                'date': date_watched,
+                'service': service,
+                'theaters': theaters
+            }
+            try:
+                update_object = Movie.objects.get(title=title, year=year)
+                for key, value in cleaned.items():
+                    if value != "" and value is not None and value != False:
+                        if getattr(update_object, key) != value:
+                            setattr(update_object, key, value)
+                update_object.save()
+            except Movie.DoesNotExist:
+                make_api_calls_and_update_database(title, year, rating, review, theaters, date_watched, service)
 
             return redirect('watchlog')  # Redirect to the same page after adding a movie
         else:
@@ -121,7 +138,7 @@ class RankingsView(View):
         common_date = movies_in_order.exclude(date__isnull=True).values('date').annotate(num_movies=Count('TMDB_ID')).order_by('-num_movies')[0]['date']
         common_date_movies = movies_in_order.filter(date=common_date)
         print(common_date_movies)
-        newest = movies_in_order.latest("date")
+        newest = movies_in_order.latest('datetime_added')
         avg = movies_in_order.aggregate((Avg('rating')))
         runtime = movies_in_order.aggregate((Sum('runtime')))
         print(common_date)
@@ -178,12 +195,81 @@ def update_order(request):
             return JsonResponse({'status': 'error', 'message': 'Movie or list not found'}, status=400)
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=400)
 
-
-# EMPTY TEMPLATES:
 class DashboardView(View):
     def get(self, request):
-        return render(request, 'watchlist/dashboard.html')
-    
+        # CONSTANTS
+        movies = Movie.objects.all()
+        today = datetime.date.today()
+
+        # MOVIES SEEN BY YEAR DATA
+        current_year = datetime.date.today().year
+        years = list(range(current_year - 24, current_year + 1, 1))
+        movie_counts = []
+        for year in years:
+            movies_count = movies.filter(year=year).count()
+            movie_counts.append(movies_count)
+
+        # RECENT MOVIE DATA
+        newest = movies.latest('datetime_added')
+        top_this_week = movies.filter(date__range=[today-datetime.timedelta(days=7), today]).order_by('-rating', '-date').first()
+        top_this_month = movies.filter(date__month=today.month, date__year=today.year).order_by('-rating', 'date').first()
+        most_recent_5 = movies.order_by('-rating', '-date').first()
+
+        # HEATMAP DATA
+        dateStart = today - datetime.timedelta(weeks=14, days=today.weekday())
+        dateEnd = today + datetime.timedelta(days=(6 - today.weekday()))
+        last_15_weeks = movies.filter(date__range=[dateStart, dateEnd]).values('date').annotate(count=Count('TMDB_ID'))
+
+        weekday_lists = [[] for _ in range(7)]
+
+        for entry in last_15_weeks:
+            date = entry['date']
+            weekday = date.weekday()  # 0 for Monday, 1 for Tuesday, ..., 6 for Sunday
+            count = entry['count']
+
+            # Create a dictionary with the required format
+            day_dict = {'x': len(weekday_lists[weekday]) + 1, 'y': count, 'date': date.strftime('%m/%d/%Y')}
+            weekday_lists[weekday].append(day_dict)
+
+        start_date = dateStart
+        end_date = dateEnd
+        current_date = start_date
+        while current_date <= end_date:
+            weekday = current_date.weekday()
+            if not any(day['date'] == current_date.strftime('%m/%d/%Y') for day in weekday_lists[weekday]):
+                # Add a dictionary with count 0 for missing dates
+                day_dict = {'x': '', 'y': 0, 'date': current_date.strftime('%m/%d/%Y')}
+                weekday_lists[weekday].append(day_dict)
+            current_date += datetime.timedelta(days=1)
+
+        # Sort each list by 'date'
+        for weekday_list in weekday_lists:
+            weekday_list.sort(key=lambda x: x['date'])
+
+        # Assign x-values based on the sorted order
+        for weekday_list in weekday_lists:
+            for index, entry in enumerate(weekday_list):
+                entry['x'] = index + 1
+
+        
+        context = {
+            'years': json.dumps(years),
+            'movie_counts': json.dumps(movie_counts),
+            'newest': newest,
+            'top_this_week': top_this_week,
+            'top_this_month': top_this_month,
+            'last_5': most_recent_5,
+            'monday': weekday_lists[0],
+            'tuesday': weekday_lists[1],
+            'wednesday': weekday_lists[2],
+            'thursday': weekday_lists[3],
+            'friday': weekday_lists[4],
+            'saturday': weekday_lists[5],
+            'sunday': weekday_lists[6]
+        }
+        return render(request, 'watchlist/dashboard.html', context)
+
+# EMPTY TEMPLATES   
 class EloView(View):
     def get(self, request):
         return render(request, 'watchlist/elo.html')

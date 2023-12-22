@@ -14,28 +14,8 @@ from utils import make_api_calls_and_update_database, make_api_calls_and_update_
 # make_api_calls_and_update_database("Disney Channel’s Theme A History Mystery", 2022, 5, "Went out of my way to find the proper documentation for this YouTube documentary done by Kevin Perjurer of Defunctland. One of the most artistic and well-done documentaries I've ever seen, and a beautiful conclusion in every way. Such a masterful way of cherishing and promoting art that deserves to be remembered.", None)
 from watchlist.models import List, MovieList, Movie
 
-MovieList.objects.all().delete()
-# Create the "EveryNight" list
-every_night_list = List.objects.get(pk=1)
-
-# Add movies to the list with the specified primary keys
-movie_primary_keys = [
-    313369, 314365, 155, 492188, 986054, 329865, 463257, 10191, 776503, 290250,
-    1949, 97546, 354912, 489, 556984, 961323, 44214, 817758, 937278, 718032, 414906,
-    615777, 194662, 438631, 324849, 614930, 453, 502033, 210577, 38, 37799, 487558,
-    12162, 391713, 508943, 150540, 680, 840430, 334541, 37165, 269149, 7326, 346698,
-    923939, 381284, 106646, 49026, 166428, 45269, 82702, 747188, 98, 120467, 10315,
-    115, 641, 649394, 500, 447332, 76341, 272, 205596, 583406, 823482, 260513, 976573,
-    839369, 520763, 9955, 877269, 674324, 62177, 324552, 725201, 318846, 273481,
-    603692, 335984, 50646, 129, 75656, 527774, 458156, 1002315, 884605, 245891,
-    521777, 330457, 400535, 787781, 647250, 256591, 376867, 581734, 862965, 800158,
-    508442, 18169, 72570, 291805, 830991, 475557, 59436, 828613, 457335, 1075794,
-    507089, 999644, 790459
-]
-
-for order, movie_pk in enumerate(movie_primary_keys, start=1):
-    movie = Movie.objects.get(pk=movie_pk)
-    MovieList.objects.create(list=every_night_list, movie=movie, order=order)
+dele = Movie.objects.get(pk=393)
+dele.delete()
 
 # make_api_calls_and_update_watchlist("Toy Story 4", 2019, None, "2023-12-06")
 # make_api_calls_and_update_watchlist("Good Boys", 2019, None, "2023-12-06")
