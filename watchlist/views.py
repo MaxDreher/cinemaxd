@@ -138,7 +138,7 @@ class RankingsView(View):
         common_date = movies_in_order.exclude(date__isnull=True).values('date').annotate(num_movies=Count('TMDB_ID')).order_by('-num_movies')[0]['date']
         common_date_movies = movies_in_order.filter(date=common_date)
         print(common_date_movies)
-        newest = movies_in_order.latest("date")
+        newest = movies_in_order.latest('datetime_added')
         avg = movies_in_order.aggregate((Avg('rating')))
         runtime = movies_in_order.aggregate((Sum('runtime')))
         print(common_date)
@@ -197,22 +197,28 @@ def update_order(request):
 
 class DashboardView(View):
     def get(self, request):
-        # Get the current year
         current_year = datetime.date.today().year
-        print(current_year)
-        # Generate an array of years from the current year to 20 years ago
         years = list(range(current_year - 24, current_year + 1, 1))
-
-        # Query MovieList for each year and count the number of movies
         movie_counts = []
         for year in years:
             movies_count = Movie.objects.filter(year=year).count()
             movie_counts.append(movies_count)
-        print(years)
-        print(movie_counts)
+
+        movies = Movie.objects.all()
+        newest = movies.latest('datetime_added')
+        top_this_week = movies.filter(date__range=[datetime.date.today()-datetime.timedelta(days=7), datetime.date.today()]).order_by('-rating', '-date').first()
+        top_this_month = movies.filter(date__month=datetime.date.today().month, date__year=datetime.date.today().year).order_by('-rating', 'date').first()
+        most_recent_5 = movies.order_by('-rating', '-date').first()
+        print(newest, top_this_week, top_this_month, most_recent_5)
+
+        
         context = {
             'years': json.dumps(years),
             'movie_counts': json.dumps(movie_counts),
+            'newest': newest,
+            'top_this_week': top_this_week,
+            'top_this_month': top_this_month,
+            'last_5': most_recent_5,
         }
         return render(request, 'watchlist/dashboard.html', context)
 

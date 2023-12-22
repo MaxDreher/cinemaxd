@@ -79,6 +79,7 @@ class Movie(models.Model):
     rating = models.FloatField(validators=[MinValueValidator(0.5), MaxValueValidator(5)], choices=rating_choices, null=True)
     review = models.TextField(null=True)
     date = models.DateField(null=True)
+    datetime_added = models.DateTimeField(null=True)
     timesSeen = models.IntegerField()
     posterLink = models.CharField(max_length=255)
     plot = models.TextField(null=True)

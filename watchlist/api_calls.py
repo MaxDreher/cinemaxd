@@ -42,6 +42,21 @@ def get_TMDB(TMDB_KEY, omdb):
         print(f"Error accessing TMDB API: {tmdb_response.status_code}")
         return None
 
+def get_TMDB_from_id(TMDB_KEY, id, type):
+    # TV SERIES
+    if type == "series":
+        tmdb_url = f"https://api.themoviedb.org/3/tv/{id}?api_key={TMDB_KEY}&append_to_response=credits,watch/providers"
+    # MOVIE
+    else:
+        tmdb_url = f"https://api.themoviedb.org/3/movie/{id}?api_key={TMDB_KEY}&append_to_response=credits,watch/providers"
+
+    tmdb_response = requests.get(tmdb_url)
+    if tmdb_response.status_code == 200:
+        return tmdb_response.json()
+    else:
+        print(f"Error accessing TMDB API: {tmdb_response.status_code}")
+        return None
+
 def get_OMDB_xml(OMDB_KEY, title, year):
     omdb_xml_url = f"http://www.omdbapi.com/?apikey={OMDB_KEY}&t={title}&y={year}&r=xml&tomatoes=true"
     response = requests.get(omdb_xml_url)

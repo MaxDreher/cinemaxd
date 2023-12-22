@@ -1,22 +1,11 @@
 {% extends 'watchlist/base.html' %}
 {% load static %}
+{% load custom_filters %}
 
 {% block css %}
     <link rel="stylesheet" href="{% static 'watchlist/css/dashboard.css' %}">
 {% endblock %}
 {% block js %}
-{% endblock %}
-
-{% block content %}
-<div class="row mx-2 mt-3">
-    <div class="col-md-4">
-        <div id="chart" class="chart-bg">
-        </div>
-    </div>
-    <div class="col-md-8">
-    </div>
-</div>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.45.0/apexcharts.min.js"></script>
 <script src="{% static 'watchlist/js/dashboard.js' %}"></script>
 <script>
@@ -86,4 +75,91 @@
     var chart = new ApexCharts(document.querySelector("#chart"), moviesPerYear);
     chart.render();
 </script>
+{% endblock %}
+
+{% block content %}
+<div class="row mx-3 mt-3">
+    <div class="col-md-2 chart-bg">
+        <b class="section-heading">LATEST</b>
+        <div class="row mt-2">
+            <div class="col-md-2 text-center">
+                <img class="poster shadow-lg" src="{{ newest.posterLink }}" height="60px">
+            </div>
+            <div class="col-md-10">
+                <div class="fw-bold sidebar-title">
+                    {{ newest.title }} <b class="year">{{ newest.year }}</b>
+                </div>
+                <span class="little-stars">
+                    {{ newest.rating|convert_to_stars }}
+                </span>
+                <span class="year">
+                    &nbsp;&nbsp;&nbsp;{{ newest.date }}
+                </span>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <b class="section-heading">TOP THIS WEEK</b>
+            <div class="row mt-2">
+                <div class="col-md-2 text-center">
+                    <img class="poster shadow-lg" src="{{ top_this_week.posterLink }}" height="60px">
+                </div>
+                <div class="col-md-10">
+                    <div class="fw-bold sidebar-title">
+                        {{ top_this_week.title }} <b class="year">{{ top_this_week.year }}</b>
+                    </div>
+                    <span class="little-stars">
+                        {{ top_this_week.rating|convert_to_stars }}
+                    </span>
+                    <span class="year">
+                        &nbsp;&nbsp;&nbsp;{{ top_this_week.date }}
+                    </span>
+                    </div>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <b class="section-heading">TOP THIS MONTH</b>
+            <div class="row mt-2">
+                <div class="col-md-2 text-center">
+                    <img class="poster shadow-lg" src="{{ top_this_month.posterLink }}" height="60px">
+                </div>
+                <div class="col-md-10">
+                    <div class="fw-bold sidebar-title">
+                        {{ top_this_month.title }} <b class="year">{{ top_this_month.year }}</b>
+                    </div>
+                    <span class="little-stars">
+                        {{ top_this_month.rating|convert_to_stars }}
+                    </span>
+                    <span class="year">
+                        &nbsp;&nbsp;&nbsp;{{ top_this_month.date }}
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <b class="section-heading">LAST 5★</b>
+            <div class="row mt-2">
+                <div class="col-md-2 text-center">
+                    <img class="poster shadow-lg" src="{{ last_5.posterLink }}" height="60px">
+                </div>
+                <div class="col-md-10">
+                    <div class="fw-bold sidebar-title">
+                        {{ last_5.title }} <b class="year">{{ last_5.year }}</b>
+                    </div>
+                    <span class="little-stars">
+                        {{ last_5.rating|convert_to_stars }}
+                    </span>
+                    <span class="year">
+                        &nbsp;&nbsp;&nbsp;{{ last_5.date }}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div id="chart" class="chart-bg">
+        </div>
+    </div>
+    <div class="col-md-8">
+    </div>
+</div>
 {% endblock %}

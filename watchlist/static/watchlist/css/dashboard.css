@@ -6,3 +6,30 @@
     border-color: #202224;
     background-color: #202224;
 }
+
+.section-heading {
+    font-family: 'Roboto';
+    font-size: 12pt;
+    color: #686d71;
+}
+
+.sidebar-title {
+    font-family: "Raleway";
+    font-size: 14px;
+}
+
+.little-stars {
+    color: #15d37c !important;
+    font-size: 12px;
+}
+
+.year {
+    font-family: 'Roboto', sans-serif !important;
+    font-size: 8pt;
+    filter:brightness(80%)
+}
+
+.poster {
+    border: 1px solid #202224;
+    border-radius: 7px;
+}
