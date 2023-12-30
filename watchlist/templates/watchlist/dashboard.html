@@ -6,162 +6,13 @@
     <link rel="stylesheet" href="{% static 'watchlist/css/dashboard.css' %}">
 {% endblock %}
 {% block js %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.45.0/apexcharts.min.js"></script>
-<script src="{% static 'watchlist/js/dashboard.js' %}"></script>
-<script>
-    var heatmap_options = {
-        series: [
-            {
-                name: 'Sunday',
-                data: {{ sunday|safe }}
-            },
-            {   
-                name: 'Saturday',
-                data: {{ saturday|safe }}
-            },
-            {
-                name: 'Friday',
-                data: {{ friday|safe }}
-            },
-            {
-                name: 'Thursday',
-                data: {{ thursday|safe }}
-            },
-            {
-                name: 'Wednesday',
-                data: {{ wednesday|safe }}
-            },
-            {
-                name: 'Tuesday',
-                data: {{ tuesday|safe }}
-            },
-            {
-                name: 'Monday',
-                data: {{ monday|safe }}
-            }
-        ],
-        chart: {
-            toolbar: {
-                show: false
-            },
-            height: 250,
-            type: 'heatmap',
-        },
-        dataLabels: {
-            enabled: false,
-            style: {
-                fontFamily: 'Roboto',
-                fontSize: '12px',
-                colors: ["#fff"]
-            }
-        },
-        plotOptions: {
-            heatmap: {
-              shadeIntensity: 1.0,
-              radius: 0,
-              useFillColorAsStroke: true,
-              colorScale: {
-                ranges: [{
-                    from: 0,
-                    to: 0,
-                    color: '#202224'
-                  },
-                  {
-                    from: 1,
-                    to: 3,
-                    color: '#058618'
-                  },
-                ]
-              }
-            }
-          },
-          legend: {
-            show: false
-          },
-          title: {
-            text: 'MOVIES PER DAY',
-            floating: true,
-            offsetY: 0,
-            margin: 24,
-            align: 'left',
-            style: {
-                color: '#fff',
-                fontFamily: 'Roboto',
-                fontSize: '12pt',
-                color: '#686d71'
-            }
-        }
-    };
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.45.0/apexcharts.min.js"></script>
+    <script src="{% static 'watchlist/js/dashboard.js' %}"></script>
 
-    var moviesPerYear = {
-        series: [{ 
-            name: 'Movies', 
-            data: {{ movie_counts|safe }} 
-        }],
-        chart: { 
-            height: 200, 
-            type: 'bar' 
-        },
-        colors: ['#6c757d'],
-        plotOptions: {
-            bar: {
-                borderTopRadius: 4,    
-                dataLabels: {
-                    position: 'bottom', // top, center, bottom
-                },
-            }
-        },
-        dataLabels: {
-            enabled: true,
-            style: {
-                fontFamily: 'Roboto',
-                fontSize: '12px',
-                colors: ["#adb5bd"]
-            }
-        },
-        grid: {
-            show: false
-        },
-        xaxis: {
-            categories: {{ years }},
-            labels: {
-                show: true,
-                style: {
-                    fontFamily: 'Roboto',
-                    fontSize: '10px',
-                    colors: "#6c757d"
-                }
-            },
-            position: 'bottom',
-            axisTicks: {
-                show: false
-            }
-        },
-        yaxis: {
-            labels: {
-                show: false
-            }
-        },
-        title: {
-            text: 'MOVIES PER YEAR',
-            floating: true,
-            offsetY: 10,
-            align: 'left',
-            style: {
-                color: '#fff',
-                fontFamily: 'Roboto',
-                fontSize: '12pt',
-                color: '#686d71'
-            }
-        }
-    };
-
-    var chart = new ApexCharts(document.querySelector("#chart"), moviesPerYear);
-    var heatmap = new ApexCharts(document.querySelector("#heatmap"), heatmap_options);
-    chart.render();
-    heatmap.render();
-    
-</script>
+    {% include "./charts/heatmap.html" %}
+    {% include "./charts/movperyear.html" %}
+    {% include "./charts/actors.html" %}
+    {% include "./charts/directors.html" %}
 {% endblock %}
 
 {% block content %}
@@ -184,7 +35,7 @@
                 </span>
             </div>
         </div>
-        <div class="row mt-2">
+        <div class="row mt-4">
             <b class="section-heading">TOP THIS WEEK</b>
             <div class="row mt-2">
                 <div class="col-md-2 text-center">
@@ -203,7 +54,7 @@
                     </div>
             </div>
         </div>
-        <div class="row mt-2">
+        <div class="row mt-4">
             <b class="section-heading">TOP THIS MONTH</b>
             <div class="row mt-2">
                 <div class="col-md-2 text-center">
@@ -222,7 +73,7 @@
                 </div>
             </div>
         </div>
-        <div class="row mt-2">
+        <div class="row mt-4">
             <b class="section-heading">LAST 5★</b>
             <div class="row mt-2">
                 <div class="col-md-2 text-center">
@@ -248,7 +99,81 @@
         <div id="heatmap" class="chart-bg mt-3">
         </div>
     </div>
-    <div class="col-md-8">
+    <div class="col-md-2 chart-bg">
+        <b class="section-heading">RANDOM SELECTIONS</b>
+        {% for randy in random %}
+        <div class="row mt-3">
+            <div class="col-md-2 text-center">
+                <img class="poster shadow-lg" src="{{ randy.posterLink }}" height="60px">
+            </div>
+            <div class="col-md-7">
+                <div class="fw-bold sidebar-title">
+                    {{ randy.title }} <b class="year">{{ randy.year }}</b>
+                </div>
+            </div>
+            <div class="col-md-3 text-center">
+                <img class="poster" src="/static/watchlist/images/{{ randy.provider.last.name|striptags }}.png" height="50px">
+            </div>
+        </div>
+        {% endfor %}
+        <div class="row mt-3 mx-1">
+            <button class="btn btn-secondary" type="submit">Randomize Selections</button>
+            {% comment %} <a class="btn btn-secondary" data-bs-toggle="collapse" data-bs-target="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                Show/Hide Add to Watchlist
+            </a>
+            <div class="collapse" id="collapseExample">
+                None
+            </div> {% endcomment %}
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div id="actors" class="chart-bg">
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div id="directors" class="chart-bg">
+        </div>
     </div>
 </div>
+<div class="row mx-3 mt-3">
+    <div class="col-md-2 chart-bg">
+        <b class="section-heading">TOP ACTORS</b>
+        {% for actor in actor_avg%}
+        <div class="row mt-3">
+            <div class="col-md-2 text-center">
+                <img class="portrait shadow-lg" src="{{ url_start }}{{ actor.imgLink }}" height="35px">
+            </div>
+            <div class="col-md-10">
+                <div class="fw-bold sidebar-title">
+                    {{ actor.name }}
+                    <div class="year">
+                        {{ actor.avg_rating }}
+                        &nbsp;&nbsp;({{ actor.nonnull_count }})
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="col-md-2 ms-3 chart-bg">
+        <b class="section-heading">WORST ACTORS</b>
+        {% for actor in actor_bad_avg%}
+        <div class="row mt-3">
+            <div class="col-md-2 text-center">
+                <img class="portrait shadow-lg" src="{{ url_start }}{{ actor.imgLink }}" height="35px">
+            </div>
+            <div class="col-md-10">
+                <div class="fw-bold sidebar-title">
+                    {{ actor.name }}
+                    <div class="year">
+                        {{ actor.avg_rating }}
+                        &nbsp;&nbsp;({{ actor.nonnull_count }})
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
 {% endblock %}

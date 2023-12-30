@@ -1,0 +1,71 @@
+<script>
+    var moviesPerYear = {
+        series: [{ 
+            name: 'Movies', 
+            data: {{ movie_counts|safe }} 
+        }],
+        chart: {
+            toolbar: {
+                show: false
+            },
+            height: 200, 
+            type: 'bar' 
+        },
+        colors: ['#6c757d'],
+        plotOptions: {
+            bar: {
+                borderTopRadius: 4,    
+                dataLabels: {
+                    position: 'bottom', // top, center, bottom
+                },
+            }
+        },
+        dataLabels: {
+            enabled: true,
+            style: {
+                fontFamily: 'Roboto',
+                fontSize: '12px',
+                colors: ["#adb5bd"]
+            }
+        },
+        grid: {
+            show: false
+        },
+        xaxis: {
+            categories: {{ years }},
+            labels: {
+                show: true,
+                style: {
+                    fontFamily: 'Roboto',
+                    fontSize: '10px',
+                    colors: "#6c757d"
+                }
+            },
+            position: 'bottom',
+            axisTicks: {
+                show: false
+            }
+        },
+        yaxis: {
+            labels: {
+                show: false
+            }
+        },
+        title: {
+            text: 'MOVIES PER YEAR',
+            floating: true,
+            offsetY: 10,
+            align: 'left',
+            style: {
+                color: '#fff',
+                fontFamily: 'Roboto',
+                fontSize: '12pt',
+                color: '#686d71'
+            }
+        }
+    };
+
+    var chart = new ApexCharts(document.querySelector("#chart"), moviesPerYear);
+    chart.render();
+    
+</script>

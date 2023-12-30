@@ -1,5 +1,6 @@
 import sys
-sys.path.append(r"D:\Users\Max\MovieSite")
+# sys.path.append(r"D:\Users\Max\MovieSite")
+sys.path.append(r"C:\Users\maxan\moviesite")
 
 import os
 import django

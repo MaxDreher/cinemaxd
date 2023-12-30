@@ -1,0 +1,18 @@
+LAST SEEN (POSTER, TITLE, DATE, RATING)
+LAST 5* FILM (POSTER, TITLE, DATE, RATING)
+TAB SELECTOR (?)
+    THIS WEEK
+    - top this week (use elo when implemented?) (POSTER, TITLE, DATE, RATING)
+    - total this week
+    - average score this week
+    - score breakdown pie chart
+    THIS MONTH
+    - top this month (use elo when implemented?) (POSTER, TITLE, DATE, RATING)
+    - total this month
+    - average score this month
+    - score breakdown pie chart
+    THIS YEAR
+    - top this year (use elo when implemented?) (POSTER, TITLE, DATE, RATING)
+    - total this year
+    - average score this year
+    - score breakdown pie chart

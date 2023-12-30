@@ -33,3 +33,12 @@
     border: 1px solid #202224;
     border-radius: 7px;
 }
+
+.year-labels {
+    text-transform: uppercase;
+}
+
+.portrait {
+    border: 1px solid #202224;
+    border-radius: 24px;
+}

@@ -1,0 +1,108 @@
+<script>
+    var heatmap_options = {
+        series: [
+            {
+                name: 'Sunday',
+                data: {{ sunday|safe }}
+            },
+            {   
+                name: 'Saturday',
+                data: {{ saturday|safe }}
+            },
+            {
+                name: 'Friday',
+                data: {{ friday|safe }}
+            },
+            {
+                name: 'Thursday',
+                data: {{ thursday|safe }}
+            },
+            {
+                name: 'Wednesday',
+                data: {{ wednesday|safe }}
+            },
+            {
+                name: 'Tuesday',
+                data: {{ tuesday|safe }}
+            },
+            {
+                name: 'Monday',
+                data: {{ monday|safe }}
+            }
+        ],
+        chart: {
+            toolbar: {
+                show: false
+            },
+            height: 250,
+            type: 'heatmap',
+        },
+        xaxis: {
+            labels: {
+                show: false,
+            },
+            axisTicks: {
+                show: false
+            }
+        },
+        yaxis: {
+            labels: {
+                show: true,
+                style: {
+                    fontFamily: 'Roboto',
+                    fontSize: '10px',
+                    colors: "#6c757d",
+                    cssClass: "year-labels"
+                }
+            },
+            axisTicks: {
+                show: false
+            }
+        },
+        tooltip: {
+            enabled: false
+        },
+        dataLabels: {
+            enabled: false
+        },
+        plotOptions: {
+            heatmap: {
+              shadeIntensity: 1.0,
+              radius: 0,
+              useFillColorAsStroke: true,
+              colorScale: {
+                    ranges: [{
+                            from: 0,
+                            to: 0,
+                            color: '#202224'
+                        },
+                        {
+                            from: 1,
+                            to: 3,
+                            color: '#058618'
+                        },
+                    ]
+                }
+            }
+        },
+        legend: {
+            show: false
+          },
+          title: {
+            text: 'MOVIES PER DAY',
+            floating: true,
+            offsetY: 0,
+            margin: 24,
+            align: 'left',
+            style: {
+                color: '#fff',
+                fontFamily: 'Roboto',
+                fontSize: '12pt',
+                color: '#686d71'
+            }
+        }
+    };
+
+    var heatmap = new ApexCharts(document.querySelector("#heatmap"), heatmap_options);
+    heatmap.render();
+</script>

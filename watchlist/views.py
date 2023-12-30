@@ -1,5 +1,5 @@
 from django.http import JsonResponse
-from django.db.models import Prefetch, Case, When, IntegerField, Avg, Count, Min, Sum
+from django.db.models import Prefetch, Case, When, IntegerField, Avg, Count, Min, Sum, Q, Func
 from django.shortcuts import render, redirect
 from django.core import serializers
 from django.views import View
@@ -9,9 +9,14 @@ from django.conf import settings
 from .models import *
 import datetime
 import json 
+import random
 
 from .api_calls import get_OMDB
 from .utils import make_api_calls_and_update_database, make_api_calls_and_update_watchlist  # Create this function
+
+class Round(Func):
+    function = 'ROUND'
+    template = '%(function)s(%(expressions)s, 2)'
 
 # DISCONTINUED:
 class AddMovieView(View):
@@ -251,7 +256,33 @@ class DashboardView(View):
             for index, entry in enumerate(weekday_list):
                 entry['x'] = index + 1
 
+        # RANDOM LIST (WIP)
+        idlist = [i.TMDB_ID for i in WatchlistMovie.objects.filter(provider__isnull=False)]
+        rand_ids = random.sample(idlist, 5)
+        rand_movies = [WatchlistMovie.objects.get(pk=i) for i in rand_ids]
+
+        actorObjects = Actor.objects.annotate(
+            movie_count=Count('movieactor'),
+            nonnull_count=Count('movieactor', filter=Q(movieactor__movie__rating__isnull=False)),
+        ).order_by('-movie_count')
+
+        actors = actorObjects[:20]
+        actor_names = [i.name for i in actors]
+        actor_count = [i.movie_count for i in actors]
+
+        directors = Director.objects.annotate(movie_count=Count('moviedirector')).order_by('-movie_count')[:20]
+        direct_names = [i.name for i in directors]
+        direct_count = [i.movie_count for i in directors]
+
+        actors_with_avg_rating = actorObjects.annotate(
+            avg_rating=Round(Avg('movieactor__movie__rating'))
+        ).filter(
+            nonnull_count__gte=4,
+        )
         
+        top_5_actors = actors_with_avg_rating.order_by('-avg_rating')[:5]
+        bot_5_actors = actors_with_avg_rating.order_by('avg_rating')[:5]
+
         context = {
             'years': json.dumps(years),
             'movie_counts': json.dumps(movie_counts),
@@ -265,7 +296,15 @@ class DashboardView(View):
             'thursday': weekday_lists[3],
             'friday': weekday_lists[4],
             'saturday': weekday_lists[5],
-            'sunday': weekday_lists[6]
+            'sunday': weekday_lists[6],
+            'random': rand_movies,
+            'actor_names': actor_names,
+            'actor_count': actor_count,
+            'director_names': direct_names,
+            'director_count': direct_count,
+            'actor_avg': top_5_actors,
+            'actor_bad_avg': bot_5_actors,
+            'url_start': 'https://www.themoviedb.org/t/p/w90_and_h90_face',
         }
         return render(request, 'watchlist/dashboard.html', context)
 
