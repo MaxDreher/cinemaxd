@@ -1,0 +1,171 @@
+<script>
+    var weekPie = {
+        series: {{ weeklyCountList }},
+        chart: {
+            type: 'donut',
+            height: '100%'
+        },
+        theme: {
+            monochrome: {
+                enabled: true,
+                color: '#15d37c',
+            }
+        },
+        plotOptions: {
+            pie: {
+              offsetY: 10,
+              dataLabels: {
+                offset: 28,
+              },
+            }
+          },
+          stroke: {
+            width: 0
+        },
+        dataLabels: {
+            enabled: true,
+            formatter(val, opts) {
+                const name = opts.w.globals.labels[opts.seriesIndex]
+                return [name + '★']
+            },
+            textAnchor: 'start',
+            style: {
+                fontFamily: 'Roboto',
+                fontWeight: 'bold',
+                colors: ['#616a70'],
+            },
+            dropShadow: {
+                enabled: false,
+            }
+        },
+        labels: {{ weeklyRatingsList }},
+        responsive: [{
+            breakpoint: 480,
+            options: {
+                chart: {
+                    width: 200
+                },
+            }
+        }],
+        legend: {
+            show: false,
+        }
+    };
+
+    var monthPie = {
+        series: {{ monthlyCountList }},
+        chart: {
+            type: 'donut',
+            height: '100%'
+        },
+        theme: {
+            monochrome: {
+                enabled: true,
+                color: '#15d37c',
+            }
+        },
+        plotOptions: {
+            pie: {
+              offsetY: 10,
+              dataLabels: {
+                offset: 28,
+              },
+            }
+          },
+          stroke: {
+            width: 0
+        },
+        dataLabels: {
+            enabled: true,
+            formatter(val, opts) {
+                const name = opts.w.globals.labels[opts.seriesIndex]
+                return [name + '★']
+            },
+            textAnchor: 'start',
+            style: {
+                fontFamily: 'Roboto',
+                fontWeight: 'bold',
+                colors: ['#616a70'],
+            },
+            dropShadow: {
+                enabled: false,
+            }
+        },
+        labels: {{ monthlyRatingsList }},
+        responsive: [{
+            breakpoint: 480,
+            options: {
+                chart: {
+                    width: 200
+                },
+            }
+        }],
+        legend: {
+            show: false,
+        }
+    };
+
+    var yearPie = {
+        series: {{ yearlyCountList }},
+        chart: {
+            type: 'donut',
+            height: '100%'
+        },
+        theme: {
+            monochrome: {
+                enabled: true,
+                color: '#15d37c',
+            }
+        },
+        plotOptions: {
+            pie: {
+              offsetY: 10,
+              dataLabels: {
+                offset: 28,
+              },
+            }
+          },
+          stroke: {
+            width: 0
+        },
+        dataLabels: {
+            enabled: true,
+            formatter(val, opts) {
+                const name = opts.w.globals.labels[opts.seriesIndex]
+                return [name + '★']
+            },
+            textAnchor: 'start',
+            style: {
+                fontFamily: 'Roboto',
+                fontWeight: 'bold',
+                colors: ['#616a70'],
+            },
+            dropShadow: {
+                enabled: false,
+            }
+        },
+        labels: {{ yearlyRatingsList }},
+        responsive: [{
+            breakpoint: 480,
+            options: {
+                chart: {
+                    width: 200
+                },
+            }
+        }],
+        legend: {
+            show: false,
+        }
+    };
+
+
+    var chart_week = new ApexCharts(document.querySelector("#weekPie"), weekPie);
+    var chart_month = new ApexCharts(document.querySelector("#monthPie"), monthPie);
+    var chart_year = new ApexCharts(document.querySelector("#yearPie"), yearPie);
+
+    chart_week.render();
+    chart_month.render();
+    chart_year.render();
+
+</script>
+  

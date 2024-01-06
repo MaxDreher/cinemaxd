@@ -1,71 +1,87 @@
 <script>
-    var moviesPerYear = {
-        series: [{ 
-            name: 'Movies', 
-            data: {{ movie_counts|safe }} 
-        }],
-        chart: {
-            toolbar: {
-                show: false
-            },
-            height: 200, 
-            type: 'bar' 
-        },
-        colors: ['#6c757d'],
-        plotOptions: {
-            bar: {
-                borderTopRadius: 4,    
-                dataLabels: {
-                    position: 'bottom', // top, center, bottom
+    const chartData = [
+        { id: 1, years: {{ years1|safe }}, movieCounts: {{ movie_counts1|safe }} },
+        { id: 2, years: {{ years2|safe }}, movieCounts: {{ movie_counts2|safe }} },
+        { id: 3, years: {{ years3|safe }}, movieCounts: {{ movie_counts3|safe }} },
+        { id: 4, years: {{ years4|safe }}, movieCounts: {{ movie_counts4|safe }} },
+    ];
+
+    max = Math.ceil(Math.max(Math.max(...{{movie_counts1}}), Math.max(...{{movie_counts2}}), Math.max(...{{movie_counts3}}), Math.max(...{{movie_counts4}})) / 10) * 10
+
+    chartData.forEach(data => {
+        const moviesPerYear = {
+            colors: ['#6c757d'],
+            series: [{
+                name: 'Movies',
+                data: data.movieCounts,
+            }],
+            chart: {
+                toolbar: {
+                    show: false
                 },
-            }
-        },
-        dataLabels: {
-            enabled: true,
-            style: {
-                fontFamily: 'Roboto',
-                fontSize: '12px',
-                colors: ["#adb5bd"]
-            }
-        },
-        grid: {
-            show: false
-        },
-        xaxis: {
-            categories: {{ years }},
-            labels: {
-                show: true,
-                style: {
-                    fontFamily: 'Roboto',
-                    fontSize: '10px',
-                    colors: "#6c757d"
+                height: 180, 
+                type: 'bar' 
+            },
+            plotOptions: {
+                bar: {
+                    borderRadius: 6, // radius of bars
+                    borderRadiusApplication: 'end', // end, around
                 }
             },
-            position: 'bottom',
-            axisTicks: {
+            dataLabels: {
+                enabled: false,
+            },
+            grid: {
                 show: false
-            }
-        },
-        yaxis: {
-            labels: {
-                show: false
-            }
-        },
-        title: {
-            text: 'MOVIES PER YEAR',
-            floating: true,
-            offsetY: 10,
-            align: 'left',
-            style: {
-                color: '#fff',
-                fontFamily: 'Roboto',
-                fontSize: '12pt',
-                color: '#686d71'
-            }
-        }
-    };
+            },
+            xaxis: {
+                categories: data.years,
+                labels: {
+                    show: true,
+                    rotate: '-45',
+                    style: {
+                        fontFamily: 'Roboto',
+                        fontSize: '10px',
+                        colors: "#6c757d"
+                    }
+                },
+                position: 'bottom',
+                axisTicks: {
+                    show: false
+                }
+            },
+            yaxis: {
+                tickAmount: (max / 10),
+                labels: {
+                    show: true
+                },
+                max: max
+            },
+            states: {
+                active: {
+                    allowMultipleDataPointsSelection: true,
+                    filter: {
+                        type: 'darken',
+                        value: 0.35,
+                    }
+                },
+            },
+            tooltip: {
+                enabled: true,
+                followCursor: false,
+                intersect: false,
+                theme: 'dark',
+                style: {
+                  fontSize: '12px',
+                  fontFamily: 'Roboto'
+                },
+                onDatasetHover: {
+                    highlightDataSeries: false,
+                },
+            },
+        };
 
-    var chart = new ApexCharts(document.querySelector("#chart"), moviesPerYear);
-    chart.render();
-    
+        const chart = new ApexCharts(document.querySelector(`#movperyear${data.id}`), moviesPerYear);
+        chart.render();
+    });
 </script>

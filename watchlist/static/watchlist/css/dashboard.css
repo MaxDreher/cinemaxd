@@ -1,3 +1,13 @@
+/* .card {
+    --bs-body-bg: #202224;
+    --bs-body-color-rgb: 26, 28, 30;
+    --bs-card-border-color: #252729;
+} */
+
+.roboto {
+    font-family: 'Roboto';
+}
+
 .chart-bg {
     padding: 1%;
     font-family: 'Roboto';
@@ -9,24 +19,30 @@
 
 .section-heading {
     font-family: 'Roboto';
-    font-size: 12pt;
+    text-transform: uppercase;
     color: #686d71;
 }
 
-.sidebar-title {
+.title {
     font-family: "Raleway";
-    font-size: 14px;
 }
 
-.little-stars {
+.smaller-title {
+    font-family: "Raleway";
+    font-size: 10pt;
+}
+
+.smaller-title {
+    font-family: 'Roboto', sans-serif !important;
+    font-size: 8pt;
+}
+
+.stars {
     color: #15d37c !important;
-    font-size: 12px;
 }
 
 .year {
     font-family: 'Roboto', sans-serif !important;
-    font-size: 8pt;
-    filter:brightness(80%)
 }
 
 .poster {
@@ -41,4 +57,48 @@
 .portrait {
     border: 1px solid #202224;
     border-radius: 24px;
+}
+
+.big-number-card {
+    font-family: 'Montserrat';
+    text-align: center;
+}
+
+.small-number-card {
+    font-family: 'Roboto';
+    filter: brightness(80%);
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+  top: 50%;
+  transform: translateY(30%);
+}
+
+.heatmap-date {
+    background: #141414;
+    color: #fff;
+    padding: 5px;
+    border-radius: 5px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 12px;
+}
+
+.heatmap-date span {
+    display: block;
+    margin-bottom: 5px;
+}
+
+#heatmap-container {
+    margin: 0;
+    padding: 0;
+}
+
+.img-2 {
+    position: absolute;
+    transform: translate(10%, 170%);
+}
+
+.nav-pills .nav-link.active, .nav-pills .show>.nav-link {
+    background-color: #6c757d;
 }

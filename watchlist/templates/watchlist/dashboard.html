@@ -6,173 +6,468 @@
     <link rel="stylesheet" href="{% static 'watchlist/css/dashboard.css' %}">
 {% endblock %}
 {% block js %}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.45.0/apexcharts.min.js"></script>
-    <script src="{% static 'watchlist/js/dashboard.js' %}"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.45.0/apexcharts.min.js"></script>
+        <script src="{% static 'watchlist/js/dashboard.js' %}"></script>
 
-    {% include "./charts/heatmap.html" %}
-    {% include "./charts/movperyear.html" %}
-    {% include "./charts/actors.html" %}
-    {% include "./charts/directors.html" %}
+        {% include "./charts/heatmap.html" %}
+        {% include "./charts/movperyear.html" %}
+        {% include "./charts/actors.html" %}
+        {% include "./charts/directors.html" %}
+        {% include "./charts/piecharts.html" %}
+
 {% endblock %}
 
 {% block content %}
-<div class="row mx-3 mt-3">
-    <div class="col-md-2 chart-bg">
-        <b class="section-heading">LATEST</b>
-        <div class="row mt-2">
-            <div class="col-md-2 text-center">
-                <img class="poster shadow-lg" src="{{ newest.posterLink }}" height="60px">
-            </div>
-            <div class="col-md-10">
-                <div class="fw-bold sidebar-title">
-                    {{ newest.title }} <b class="year">{{ newest.year }}</b>
+<div class="container-fluid">
+    <div class="row mt-0 g-3">
+        <div class="col-md-4">
+            <div class="card shadow mb-3">
+                <div class="row g-0">
+                    <div class="col-md-4 shadow-lg">
+                        <img src="{{ newest.posterLink }}" class="img-fluid rounded-start" alt="{{ newest.title }} Poster">
+                    </div>
+                    <div class="col-md-8 d-flex flex-column">
+                        <div class="card-header section-heading">
+                            <b>LAST SEEN</b>
+                            {% if newest.date == date_today %}
+                                &nbsp;<span class="badge bg-secondary">New</span>                        
+                            {% endif %}
+                        </div>    
+                        <div class="card-body">
+                            <span>
+                                <p class="card-title">
+                                    <span class="h4 title">
+                                        <b>{{ newest.title }}</b>
+                                    </span>
+                                    <small class="card-subtitle mb-2 text-body-secondary">
+                                        {{ newest.year }}
+                                    </small>
+                                </p>
+                                <p class="h6 card-subtitle mb-2 text-body-secondary stars">{{ newest.rating|convert_to_stars }}</p>
+                            </span>
+                            <p class="card-text"><small class="text-body-secondary">{{ newest.plot }}</small></p>
+                        </div>
+                        <div class="card-footer">
+                            <small class="text-body-secondary">Seen on: {{ newest.date }}</small>
+                        </div>                            
+                    </div>
                 </div>
-                <span class="little-stars">
-                    {{ newest.rating|convert_to_stars }}
-                </span>
-                <span class="year">
-                    &nbsp;&nbsp;&nbsp;{{ newest.date }}
-                </span>
+            </div>
+            {% comment %} TABS {% endcomment %}
+            <div class="card shadow">
+                <div class="card-header">
+                    <ul class="nav nav-pills nav-fill" id="myTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link section-heading active" id="week-tab" data-bs-toggle="tab" data-bs-target="#week-tab-pane" type="button" role="tab">Week</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link section-heading" id="month-tab" data-bs-toggle="tab" data-bs-target="#month-tab-pane" type="button" role="tab">Month</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link section-heading" id="year-tab" data-bs-toggle="tab" data-bs-target="#year-tab-pane" type="button" role="tab">Year</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link section-heading" id="disabled-tab" data-bs-toggle="tab" data-bs-target="#disabled-tab-pane" type="button" role="tab" disabled>Total</button>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body">
+                    <div class="tab-content" id="myTabContent">
+                        {% comment %} WEEK TAB {% endcomment %}
+                        <div class="tab-pane fade show active" id="week-tab-pane" role="tabpanel" tabindex="0">
+                            <div class="row g-3">
+                                <div class="col-md-7 d-flex flex-fill">
+                                    <div class="card shadow">
+                                        <div class="row g-0">
+                                            <div class="card-header section-heading"><b>TOP THIS WEEK</b></div>
+                                            <div class="col-md-4 d-flex shadow-lg">
+                                                <img src="{{ top_this_week.posterLink }}" class="img-fluid rounded-start" alt="{{ top_this_week.title }} Poster">
+                                            </div>
+                                            <div class="col-md-8 d-flex flex-column">
+                                                <div class="card-body">
+                                                    <h6 class="card-title title"><b>{{ top_this_week.title }}</b></h6>
+                                                    <ul class="list-inline">
+                                                        <li class="list-inline-item"><small class="card-subtitle text-body-secondary year">{{ top_this_week.year }}</small></li>
+                                                        <li class="list-inline-item"><small class="card-subtitle text-body-secondary stars">{{ top_this_week.rating|convert_to_stars }}</small></li>
+                                                    </ul>
+                                                </div>
+                                                <div class="card-footer"><small class="text-body-secondary">Seen on: {{ top_this_week.date }}</small></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-5 d-flex align-items-stretch">
+                                    <div class="card shadow flex-fill">
+                                        {% comment %} <div class="card-header section-heading"><b>MONTHLY STATISTICS</b></div> {% endcomment %}
+                                        <div class="card-body text-center d-flex flex-column justify-content-center">
+                                            <p>
+                                                <span><b class="h1 big-number-card">{{ week_total }}</b></span>
+                                                <b class="small-number-card">MOVIES</b>
+                                            </p>
+                                            <p class="mt-3">
+                                                <span><b class="h1 big-number-card">{{ week_avg.avg }}</b><b class="h3 big-number-card">★</b></span>
+                                                <b class="small-number-card">AVG</b>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-5 d-flex align-items-stretch">
+                                    <div class="card shadow flex-fill">
+                                        {% comment %} <div class="card-header section-heading"><b>RATING DISTRIBUTION</b></div> {% endcomment %}
+                                        <div class="card-body text-center justify-content-center p-2">
+                                            <div id="weekPie">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-7 d-flex flex-fill">
+                                    <div class="card shadow">
+                                        <div class="row g-0">
+                                            <div class="card-header section-heading"><b>MOST RECENT 5★</b></div>
+                                            <div class="col-md-4 d-flex shadow-lg">
+                                                <img src="{{ last_5.posterLink }}" class="img-fluid rounded-start" alt="{{ last_5.title }} Poster">
+                                            </div>
+                                            <div class="col-md-8 d-flex flex-column">
+                                                <div class="card-body">
+                                                    <h6 class="card-title title"><b>{{ last_5.title }}</b></h6>
+                                                    <ul class="list-inline">
+                                                        <li class="list-inline-item"><small class="card-subtitle text-body-secondary year">{{ last_5.year }}</small></li>
+                                                        <li class="list-inline-item"><small class="card-subtitle text-body-secondary stars">{{ last_5.rating|convert_to_stars }}</small></li>
+                                                    </ul>
+                                                </div>
+                                                <div class="card-footer"><small class="text-body-secondary">Seen: {{ last_5.date }}</small></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% comment %} MONTH TAB {% endcomment %}
+                        <div class="tab-pane fade" id="month-tab-pane" role="tabpanel" tabindex="0">
+                            <div class="row g-3">
+                                <div class="col-md-7 d-flex flex-fill">
+                                    <div class="card shadow">
+                                        <div class="row g-0">
+                                            <div class="card-header section-heading"><b>TOP SEEN IN {{ month_today }} <small class="year">({{ year_today }})</small></b></div>
+                                            <div class="col-md-4 d-flex shadow-lg">
+                                                <img src="{{ top_this_month.posterLink }}" class="img-fluid rounded-start" alt="{{ top_this_month.title }} Poster">
+                                            </div>
+                                            <div class="col-md-8 d-flex flex-column">
+                                                <div class="card-body">
+                                                    <h6 class="card-title title"><b>{{ top_this_month.title }}</b></h6>
+                                                    <ul class="list-inline">
+                                                        <li class="list-inline-item"><small class="card-subtitle text-body-secondary year">{{ top_this_month.year }}</small></li>
+                                                        <li class="list-inline-item"><small class="card-subtitle text-body-secondary stars">{{ top_this_month.rating|convert_to_stars }}</small></li>
+                                                    </ul>
+                                                </div>
+                                                <div class="card-footer"><small class="text-body-secondary">Seen on: {{ top_this_month.date }}</small></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-5 d-flex align-items-stretch">
+                                    <div class="card shadow flex-fill">
+                                        {% comment %} <div class="card-header section-heading"><b>MONTHLY STATISTICS</b></div> {% endcomment %}
+                                        <div class="card-body text-center d-flex flex-column justify-content-center">
+                                            <p>
+                                                <span><b class="h1 big-number-card">{{ month_total }}</b></span>
+                                                <b class="small-number-card">MOVIES</b>
+                                            </p>
+                                            <p class="mt-3">
+                                                <span><b class="h1 big-number-card">{{ month_avg.avg }}</b><b class="h3 big-number-card">★</b></span>
+                                                <b class="small-number-card">AVG</b>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-5 d-flex align-items-stretch">
+                                    <div class="card shadow flex-fill">
+                                        {% comment %} <div class="card-header section-heading"><b>RATING DISTRIBUTION</b></div> {% endcomment %}
+                                        <div class="card-body text-center justify-content-center p-2">
+                                            <div id="monthPie">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-7 d-flex flex-fill">
+                                    <div class="card shadow">
+                                        <div class="row g-0">
+                                            <div class="card-header section-heading"><b>TOP RELEASED IN {{ month_today }} <small class="year">(ALL-TIME)</small></b></div>
+                                            <div class="col-md-4 d-flex shadow-lg">
+                                                <img src="{{ alltime_month.posterLink }}" class="img-fluid rounded-start" alt="{{ alltime_month.title }} Poster">
+                                            </div>
+                                            <div class="col-md-8 d-flex flex-column">
+                                                <div class="card-body">
+                                                    <h6 class="card-title title"><b>{{ alltime_month.title }}</b></h6>
+                                                    <ul class="list-inline">
+                                                        <li class="list-inline-item"><small class="card-subtitle text-body-secondary year">{{ alltime_month.year }}</small></li>
+                                                        <li class="list-inline-item"><small class="card-subtitle text-body-secondary stars">{{ alltime_month.rating|convert_to_stars }}</small></li>
+                                                    </ul>
+                                                </div>
+                                                <div class="card-footer"><small class="text-body-secondary">Released: {{ alltime_month.releaseDate }}</small></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>            
+                        </div>
+                        {% comment %} YEAR TAB {% endcomment %}
+                        <div class="tab-pane fade" id="year-tab-pane" role="tabpanel" tabindex="0">
+                            <div class="row g-3">
+                                <div class="col-md-7 d-flex flex-fill">
+                                    <div class="card shadow">
+                                        <div class="row g-0">
+                                            <div class="card-header section-heading"><b>TOP THIS YEAR</b></div>
+                                            <div class="col-md-4 d-flex shadow-lg">
+                                                <img src="{{ top_this_year.posterLink }}" class="img-fluid rounded-start" alt="{{ top_this_year.title }} Poster">
+                                            </div>
+                                            <div class="col-md-8 d-flex flex-column">
+                                                <div class="card-body">
+                                                    <h6 class="card-title title"><b>{{ top_this_year.title }}</b></h6>
+                                                    <ul class="list-inline">
+                                                        <li class="list-inline-item"><small class="card-subtitle text-body-secondary year">{{ top_this_year.year }}</small></li>
+                                                        <li class="list-inline-item"><small class="card-subtitle text-body-secondary stars">{{ top_this_year.rating|convert_to_stars }}</small></li>
+                                                    </ul>
+                                                </div>
+                                                <div class="card-footer"><small class="text-body-secondary">Seen on: {{ top_this_year.date }}</small></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-5 d-flex align-items-stretch">
+                                    <div class="card shadow flex-fill">
+                                        {% comment %} <div class="card-header section-heading"><b>MONTHLY STATISTICS</b></div> {% endcomment %}
+                                        <div class="card-body text-center d-flex flex-column justify-content-center">
+                                            <p>
+                                                <span><b class="h1 big-number-card">{{ year_total }}</b></span>
+                                                <b class="small-number-card">MOVIES</b>
+                                            </p>
+                                            <p class="mt-3">
+                                                <span><b class="h1 big-number-card">{{ year_avg.avg }}</b><b class="h3 big-number-card">★</b></span>
+                                                <b class="small-number-card">AVG</b>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-5 d-flex align-items-stretch">
+                                    <div class="card shadow flex-fill">
+                                        {% comment %} <div class="card-header section-heading"><b>RATING DISTRIBUTION</b></div> {% endcomment %}
+                                        <div class="card-body text-center justify-content-center p-2">
+                                            <div id="yearPie">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-7 d-flex flex-fill">
+                                    <div class="card shadow">
+                                        <div class="row g-0">
+                                            <div class="card-header section-heading"><b>MOST RECENT RELEASE</b></div>
+                                            <div class="col-md-4 d-flex shadow-lg">
+                                                <img src="{{ most_recent_release.posterLink }}" class="img-fluid rounded-start" alt="{{ most_recent_release.title }} Poster">
+                                            </div>
+                                            <div class="col-md-8 d-flex flex-column">
+                                                <div class="card-body">
+                                                    <h6 class="card-title title"><b>{{ most_recent_release.title }}</b></h6>
+                                                    <ul class="list-inline">
+                                                        <li class="list-inline-item"><small class="card-subtitle text-body-secondary year">{{ most_recent_release.year }}</small></li>
+                                                        <li class="list-inline-item"><small class="card-subtitle text-body-secondary stars">{{ most_recent_release.rating|convert_to_stars }}</small></li>
+                                                    </ul>
+                                                </div>
+                                                <div class="card-footer"><small class="text-body-secondary">Released: {{ most_recent_release.releaseDate }}</small></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="disabled-tab-pane" role="tabpanel" tabindex="0">...</div>
+                    </div>                          
+                </div>
             </div>
         </div>
-        <div class="row mt-4">
-            <b class="section-heading">TOP THIS WEEK</b>
-            <div class="row mt-2">
+        <div class="col-md-4">
+            <div id="movieperyearCarousel" class="carousel slide">
+                <div class="carousel-indicators">
+                    <button type="button" data-bs-target="#movieperyearCarousel" data-bs-slide-to="0"></button>
+                    <button type="button" data-bs-target="#movieperyearCarousel" data-bs-slide-to="1"></button>
+                    <button type="button" data-bs-target="#movieperyearCarousel" data-bs-slide-to="2"></button>
+                    <button type="button" data-bs-target="#movieperyearCarousel" data-bs-slide-to="3" class="active"></button>
+                </div>
+                <div class="card shadow mb-3">
+                    <div class="carousel-inner">
+                        <div class="carousel-item">
+                            <div class="card-header section-heading">
+                                <b>MOVIES PER YEAR {{ year_today|add:"-99" }} - {{ year_today|add:"-75" }}</b>
+                            </div>
+                            <div class="card-body">
+                                <figure id="movperyear1">
+                                </figure>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="card-header section-heading">
+                                <b>MOVIES PER YEAR {{ year_today|add:"-74" }} - {{ year_today|add:"-50" }}</b>
+                            </div>
+                            <div class="card-body">
+                                <figure id="movperyear2">
+                                </figure>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="card-header section-heading">
+                                <b>MOVIES PER YEAR {{ year_today|add:"-49" }} - {{ year_today|add:"-25" }}</b>
+                            </div>
+                            <div class="card-body">
+                                <figure id="movperyear3">
+                                </figure>
+                            </div>
+                        </div>
+                        <div class="carousel-item active">
+                            <div class="card-header section-heading">
+                                <b>MOVIES PER YEAR {{ year_today|add:"-24" }} - {{ year_today }}</b>
+                            </div>
+                            <div class="card-body">
+                                <figure id="movperyear4">
+                                </figure>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#movieperyearCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon"></span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#movieperyearCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon"></span>
+                </button>
+            </div>
+            <div>
+                <div class="col-md-6">
+                    <div class="card shadow mb-3">
+                        <div class="card-header section-heading">
+                            <b>MOVIES PER DAY</b>
+                        </div>
+                        <div id="heatmap-container" class="card-body">
+                            <div id="heatmap">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card shadow flex-fill">
+                <div class="card-header section-heading">
+                    <b>TOP RATED ACTORS</b>
+                </div>
+                <div class="card-body">
+                    <table class="table table-sm table-borderless table-hover">
+                        <tbody>
+                            {% for actor in actor_avg%}
+                            <tr>
+                                <th scope="row">{{ forloop.counter }}</th>
+                                <td><img class="portrait shadow-lg" src="{{ url_start }}{{ actor.imgLink }}" height="25px"></td>
+                                <td>{{ actor.name }}</td>
+                                <td>{{ actor.avg_rating }}★</td>
+                                <td>({{ actor.nonnull_count }})</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card shadow flex-fill mt-3">
+                <div class="card-header section-heading">
+                    <b>WORST RATED ACTORS</b>
+                </div>
+                <div class="card-body">
+                    <table class="table table-sm table-borderless table-hover">
+                        <tbody>
+                            {% for actor in actor_bad_avg %}
+                            <tr>
+                                <th scope="row">{{ forloop.counter }}</th>
+                                <td><img class="portrait shadow-lg" src="{{ url_start }}{{ actor.imgLink }}" height="25px"></td>
+                                <td>{{ actor.name }}</td>
+                                <td>{{ actor.avg_rating }}★</td>
+                                <td>({{ actor.nonnull_count }})</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card shadow mb-3">
+                <div class="card-header section-heading">
+                    <b>RANDOM SELECTIONS</b>
+                </div>
+                <div class="card-body mb-1">
+                    {% for randy in random %}
+                        <div class="card shadow mb-3">
+                            <div class="row g-0">
+                                <div class="overlap col-md-3 d-flex shadow-lg">
+                                    <img src="{{ randy.posterLink }}" class="img-fluid rounded-start" alt="{{ randy.title }} Poster">
+                                    <img class="poster img-2" src="/static/watchlist/images/{{ randy.provider.last.name|striptags }}.png" height="35px">
+                                </div>
+                                <div class="col-md-9 d-flex flex-column">
+                                    <div class="card-body p-2">
+                                        <span>
+                                            <small class="title">
+                                                <b>{{ randy.title }}</b>
+                                            </small>
+                                            <small class="smaller-year text-body-secondary">
+                                                {{ randy.year }}
+                                            </small>
+                                            <br>
+                                            <small class="card-subtitle text-body-secondary">
+                                                {{ randy.runtime }} mins
+                                            </small>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>                
+                        </div>
+                    {% endfor %}
+                    <div class="row mt-3 mx-1">
+                        <button class="btn btn-secondary" type="submit">Randomize Selections</button>
+                        {% comment %} <a class="btn btn-secondary" data-bs-toggle="collapse" data-bs-target="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                            Show/Hide Random Selection Options
+                        </a>
+                        <div class="collapse" id="collapseExample">
+                            None
+                        </div> {% endcomment %}
+                    </div>        
+                </div>
+            </div>
+        </div>
+    </div>
+        <div class="col-md-2 ms-3 chart-bg">
+            <b class="section-heading">WORST ACTORS</b>
+            {% for actor in actor_bad_avg%}
+            <div class="row mt-3">
                 <div class="col-md-2 text-center">
-                    <img class="poster shadow-lg" src="{{ top_this_week.posterLink }}" height="60px">
+                    <img class="portrait shadow-lg" src="{{ url_start }}{{ actor.imgLink }}" height="35px">
                 </div>
                 <div class="col-md-10">
                     <div class="fw-bold sidebar-title">
-                        {{ top_this_week.title }} <b class="year">{{ top_this_week.year }}</b>
-                    </div>
-                    <span class="little-stars">
-                        {{ top_this_week.rating|convert_to_stars }}
-                    </span>
-                    <span class="year">
-                        &nbsp;&nbsp;&nbsp;{{ top_this_week.date }}
-                    </span>
-                    </div>
-            </div>
-        </div>
-        <div class="row mt-4">
-            <b class="section-heading">TOP THIS MONTH</b>
-            <div class="row mt-2">
-                <div class="col-md-2 text-center">
-                    <img class="poster shadow-lg" src="{{ top_this_month.posterLink }}" height="60px">
-                </div>
-                <div class="col-md-10">
-                    <div class="fw-bold sidebar-title">
-                        {{ top_this_month.title }} <b class="year">{{ top_this_month.year }}</b>
-                    </div>
-                    <span class="little-stars">
-                        {{ top_this_month.rating|convert_to_stars }}
-                    </span>
-                    <span class="year">
-                        &nbsp;&nbsp;&nbsp;{{ top_this_month.date }}
-                    </span>
-                </div>
-            </div>
-        </div>
-        <div class="row mt-4">
-            <b class="section-heading">LAST 5★</b>
-            <div class="row mt-2">
-                <div class="col-md-2 text-center">
-                    <img class="poster shadow-lg" src="{{ last_5.posterLink }}" height="60px">
-                </div>
-                <div class="col-md-10">
-                    <div class="fw-bold sidebar-title">
-                        {{ last_5.title }} <b class="year">{{ last_5.year }}</b>
-                    </div>
-                    <span class="little-stars">
-                        {{ last_5.rating|convert_to_stars }}
-                    </span>
-                    <span class="year">
-                        &nbsp;&nbsp;&nbsp;{{ last_5.date }}
-                    </span>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div id="chart" class="chart-bg">
-        </div>
-        <div id="heatmap" class="chart-bg mt-3">
-        </div>
-    </div>
-    <div class="col-md-2 chart-bg">
-        <b class="section-heading">RANDOM SELECTIONS</b>
-        {% for randy in random %}
-        <div class="row mt-3">
-            <div class="col-md-2 text-center">
-                <img class="poster shadow-lg" src="{{ randy.posterLink }}" height="60px">
-            </div>
-            <div class="col-md-7">
-                <div class="fw-bold sidebar-title">
-                    {{ randy.title }} <b class="year">{{ randy.year }}</b>
-                </div>
-            </div>
-            <div class="col-md-3 text-center">
-                <img class="poster" src="/static/watchlist/images/{{ randy.provider.last.name|striptags }}.png" height="50px">
-            </div>
-        </div>
-        {% endfor %}
-        <div class="row mt-3 mx-1">
-            <button class="btn btn-secondary" type="submit">Randomize Selections</button>
-            {% comment %} <a class="btn btn-secondary" data-bs-toggle="collapse" data-bs-target="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
-                Show/Hide Add to Watchlist
-            </a>
-            <div class="collapse" id="collapseExample">
-                None
-            </div> {% endcomment %}
-        </div>
-    </div>
-    <div class="col-md-2">
-        <div id="actors" class="chart-bg">
-        </div>
-    </div>
-    <div class="col-md-2">
-        <div id="directors" class="chart-bg">
-        </div>
-    </div>
-</div>
-<div class="row mx-3 mt-3">
-    <div class="col-md-2 chart-bg">
-        <b class="section-heading">TOP ACTORS</b>
-        {% for actor in actor_avg%}
-        <div class="row mt-3">
-            <div class="col-md-2 text-center">
-                <img class="portrait shadow-lg" src="{{ url_start }}{{ actor.imgLink }}" height="35px">
-            </div>
-            <div class="col-md-10">
-                <div class="fw-bold sidebar-title">
-                    {{ actor.name }}
-                    <div class="year">
-                        {{ actor.avg_rating }}
-                        &nbsp;&nbsp;({{ actor.nonnull_count }})
+                        {{ actor.name }}
+                        <div class="year">
+                            {{ actor.avg_rating }}
+                            &nbsp;&nbsp;({{ actor.nonnull_count }})
+                        </div>
                     </div>
                 </div>
             </div>
+            {% endfor %}
         </div>
-        {% endfor %}
-    </div>
-    <div class="col-md-2 ms-3 chart-bg">
-        <b class="section-heading">WORST ACTORS</b>
-        {% for actor in actor_bad_avg%}
-        <div class="row mt-3">
-            <div class="col-md-2 text-center">
-                <img class="portrait shadow-lg" src="{{ url_start }}{{ actor.imgLink }}" height="35px">
-            </div>
-            <div class="col-md-10">
-                <div class="fw-bold sidebar-title">
-                    {{ actor.name }}
-                    <div class="year">
-                        {{ actor.avg_rating }}
-                        &nbsp;&nbsp;({{ actor.nonnull_count }})
-                    </div>
-                </div>
+        <div class="col-md-2">
+            <div id="actors" class="chart-bg">
             </div>
         </div>
-        {% endfor %}
+        <div class="col-md-2">
+            <div id="directors" class="chart-bg">
+            </div>
+        </div>
     </div>
 </div>
 

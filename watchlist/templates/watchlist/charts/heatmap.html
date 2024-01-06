@@ -34,7 +34,8 @@
             toolbar: {
                 show: false
             },
-            height: 250,
+            height: 300,
+            width: 300,
             type: 'heatmap',
         },
         xaxis: {
@@ -43,63 +44,69 @@
             },
             axisTicks: {
                 show: false
+            },
+            axisBorder: {
+                show: false
+            },
+            tooltip: {
+                enabled: false
             }
         },
         yaxis: {
             labels: {
-                show: true,
-                style: {
-                    fontFamily: 'Roboto',
-                    fontSize: '10px',
-                    colors: "#6c757d",
-                    cssClass: "year-labels"
-                }
+                show: false,
             },
             axisTicks: {
                 show: false
             }
         },
         tooltip: {
-            enabled: false
+            enabled: true,
+            theme: 'dark',
+            custom: function ({ series, seriesIndex, dataPointIndex, w }) {
+                var date = w.config.series[seriesIndex].data[dataPointIndex].date;
+                var count = w.config.series[seriesIndex].data[dataPointIndex].y;
+                var seriesName = w.config.series[seriesIndex].name;        
+                return '<div class="custom-tooltip heatmap-date">' + seriesName + ': ' + date + 
+                    '<span>Movies: ' + count + '</span>' + '</div>';
+            }
         },
         dataLabels: {
             enabled: false
         },
-        plotOptions: {
-            heatmap: {
-              shadeIntensity: 1.0,
-              radius: 0,
-              useFillColorAsStroke: true,
-              colorScale: {
-                    ranges: [{
-                            from: 0,
-                            to: 0,
-                            color: '#202224'
-                        },
-                        {
-                            from: 1,
-                            to: 3,
-                            color: '#058618'
-                        },
-                    ]
-                }
-            }
+        stroke: {
+            show: true,
+            curve: 'smooth',
+            colors: ['#212529'],
         },
         legend: {
-            show: false
-          },
-          title: {
-            text: 'MOVIES PER DAY',
-            floating: true,
-            offsetY: 0,
-            margin: 24,
-            align: 'left',
-            style: {
-                color: '#fff',
-                fontFamily: 'Roboto',
-                fontSize: '12pt',
-                color: '#686d71'
-            }
+            show: false,
+        },
+        plotOptions: {
+            heatmap: {
+                shadeIntensity: 1,
+                radius: 0,
+                colorScale: {
+                    ranges: [
+                    {
+                        from: 0,
+                        to: 0,
+                        color: '#25292D'
+                    },
+                    {
+                        from: 1,
+                        to: 2,
+                        color: '#18A868'
+                    },
+                    {
+                        from: 3,
+                        to: 4,
+                        color: '#15D37C'
+                    },
+
+                    ]
+                }
+            },
         }
     };
 

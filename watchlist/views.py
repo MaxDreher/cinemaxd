@@ -8,6 +8,7 @@ from .forms import MovieForm, WatchlistForm, RankingForm
 from django.conf import settings
 from .models import *
 import datetime
+
 import json 
 import random
 
@@ -44,7 +45,6 @@ class AddMovieView(View):
 class AddWatchlistView(View):
     def get(self, request):
         return render(request, 'watchlist/add_watchlist.html')
-
 
 # ACTIVE:
 class WatchlogView(View):
@@ -142,11 +142,9 @@ class RankingsView(View):
         movies_in_order = Movie.objects.filter(TMDB_ID__in=movie_ids).order_by(ordering)
         common_date = movies_in_order.exclude(date__isnull=True).values('date').annotate(num_movies=Count('TMDB_ID')).order_by('-num_movies')[0]['date']
         common_date_movies = movies_in_order.filter(date=common_date)
-        print(common_date_movies)
         newest = movies_in_order.latest('datetime_added')
         avg = movies_in_order.aggregate((Avg('rating')))
         runtime = movies_in_order.aggregate((Sum('runtime')))
-        print(common_date)
         total = (len(movies_in_order))
         day1 = datetime.date(2023, 8, 15)
         dayNow = datetime.date.today()
@@ -205,23 +203,42 @@ class DashboardView(View):
         # CONSTANTS
         movies = Movie.objects.all()
         today = datetime.date.today()
-
-        # MOVIES SEEN BY YEAR DATA
-        current_year = datetime.date.today().year
-        years = list(range(current_year - 24, current_year + 1, 1))
-        movie_counts = []
-        for year in years:
-            movies_count = movies.filter(year=year).count()
-            movie_counts.append(movies_count)
+        this_year = today.year
+        this_month = today.strftime("%B")
 
         # RECENT MOVIE DATA
-        newest = movies.latest('datetime_added')
-        top_this_week = movies.filter(date__range=[today-datetime.timedelta(days=7), today]).order_by('-rating', '-date').first()
-        top_this_month = movies.filter(date__month=today.month, date__year=today.year).order_by('-rating', 'date').first()
+        newest = movies.order_by('-datetime_added').first()
+        # WEEK
+        weekMovies = movies.filter(date__range=[today-datetime.timedelta(days=7), today])
+        weeklyRatingCounts = weekMovies.values('rating').annotate(count=Count('TMDB_ID')).order_by('-rating')
+        weeklyRatingsList = [obj['rating'] for obj in weeklyRatingCounts]
+        weeklyCountList = [obj['count'] for obj in weeklyRatingCounts]
+        weekSorted = weekMovies.order_by('-rating', '-date')
+        week_data = [weekSorted.first(), len(weekSorted), weekSorted.aggregate(avg=Round(Avg('rating')))]
+        # MONTH
+        monthMovies = movies.filter(date__month=today.month, date__year=today.year)
+        monthlyRatingCounts = monthMovies.values('rating').annotate(count=Count('TMDB_ID')).order_by('-rating')
+        monthlyRatingsList = [obj['rating'] for obj in monthlyRatingCounts]
+        monthlyCountList = [obj['count'] for obj in monthlyRatingCounts]
+        monthSorted = monthMovies.order_by('-rating', 'date')
+        month_data = [monthSorted.first(), len(monthSorted), monthSorted.aggregate(avg=Round(Avg('rating')))]
+        top_ever_month = movies.filter(releaseDate__month=today.month).order_by('-rating').first()
+        # YEAR
+        yearMovies = movies.filter(date__year=today.year)
+        yearlyRatingCounts = yearMovies.values('rating').annotate(count=Count('TMDB_ID')).order_by('-rating')
+        yearlyRatingsList = [obj['rating'] for obj in yearlyRatingCounts]
+        yearlyCountList = [obj['count'] for obj in yearlyRatingCounts]
+        yearSorted = yearMovies.order_by('-rating', 'date')
+        year_data = [yearSorted.first(), len(yearSorted), yearSorted.aggregate(avg=Round(Avg('rating')))]
         most_recent_5 = movies.order_by('-rating', '-date').first()
+        most_recent_release = movies.order_by('-releaseDate').first()
+
+        # MOVIES SEEN BY YEAR DATA
+        years = list(range(this_year - 99, this_year + 1))
+        movie_counts = [movies.filter(year=year).count() for year in years]
 
         # HEATMAP DATA
-        dateStart = today - datetime.timedelta(weeks=14, days=today.weekday())
+        dateStart = today - datetime.timedelta(weeks=6, days=today.weekday())
         dateEnd = today + datetime.timedelta(days=(6 - today.weekday()))
         last_15_weeks = movies.filter(date__range=[dateStart, dateEnd]).values('date').annotate(count=Count('TMDB_ID'))
 
@@ -249,7 +266,7 @@ class DashboardView(View):
 
         # Sort each list by 'date'
         for weekday_list in weekday_lists:
-            weekday_list.sort(key=lambda x: x['date'])
+            weekday_list.sort(key=lambda x: datetime.datetime.strptime(x['date'], '%m/%d/%Y'))
 
         # Assign x-values based on the sorted order
         for weekday_list in weekday_lists:
@@ -284,11 +301,35 @@ class DashboardView(View):
         bot_5_actors = actors_with_avg_rating.order_by('avg_rating')[:5]
 
         context = {
-            'years': json.dumps(years),
-            'movie_counts': json.dumps(movie_counts),
+            'years1': json.dumps(years[0:25]),
+            'movie_counts1': json.dumps(movie_counts[0:25]),
+            'years2': json.dumps(years[25:50]),
+            'movie_counts2': json.dumps(movie_counts[25:50]),
+            'years3': json.dumps(years[50:75]),
+            'movie_counts3': json.dumps(movie_counts[50:75]),
+            'years4': json.dumps(years[75:100]),
+            'movie_counts4': json.dumps(movie_counts[75:100]),
             'newest': newest,
-            'top_this_week': top_this_week,
-            'top_this_month': top_this_month,
+            'month_today': this_month,
+            'year_today': this_year,
+            'date_today': datetime.date.today(),
+            'top_this_week': week_data[0],
+            'week_total': week_data[1],
+            'week_avg': week_data[2],
+            'weeklyRatingsList': weeklyRatingsList,
+            'weeklyCountList': weeklyCountList,
+            'top_this_month': month_data[0],
+            'month_total': month_data[1],
+            'month_avg': month_data[2],
+            'alltime_month': top_ever_month,
+            'monthlyRatingsList': monthlyRatingsList,
+            'monthlyCountList': monthlyCountList,
+            'top_this_year': year_data[0],
+            'year_total': year_data[1],
+            'year_avg': year_data[2],
+            'yearlyRatingsList': yearlyRatingsList,
+            'yearlyCountList': yearlyCountList,
+            'most_recent_release': most_recent_release,
             'last_5': most_recent_5,
             'monday': weekday_lists[0],
             'tuesday': weekday_lists[1],
