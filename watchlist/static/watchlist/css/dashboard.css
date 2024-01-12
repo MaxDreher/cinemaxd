@@ -4,6 +4,17 @@
     --bs-card-border-color: #252729;
 } */
 
+a {
+    color: inherit; /* blue colors for links too */
+    text-decoration: inherit; /* no underline */
+}
+
+a:hover {
+    color: inherit; /* blue colors for links too */
+    text-decoration: underline; /* no underline */
+}
+
+  
 .roboto {
     font-family: 'Roboto';
 }
@@ -72,8 +83,14 @@
 .carousel-control-prev,
 .carousel-control-next {
   top: 50%;
-  transform: translateY(30%);
+  transform: translateY(20%);
 }
+
+.smaller {
+  top: 50%;
+  transform: translateY(35%);
+}
+
 
 .heatmap-date {
     background: #141414;
@@ -96,9 +113,21 @@
 
 .img-2 {
     position: absolute;
-    transform: translate(10%, 170%);
+    bottom: 0;
+    left: 0;
+    transform: translate(10%, -10%); /* Adjust the values as needed */
 }
 
 .nav-pills .nav-link.active, .nav-pills .show>.nav-link {
     background-color: #6c757d;
+}
+
+.badge-green {
+    color: #fff !important;
+    background-color: #15d37c !important;
+}
+
+.badge-gray {
+    color: #fff !important;
+    background-color: #6c757d !important;
 }

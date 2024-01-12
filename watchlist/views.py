@@ -1,5 +1,6 @@
 from django.http import JsonResponse
 from django.db.models import Prefetch, Case, When, IntegerField, Avg, Count, Min, Sum, Q, Func
+from django.db.models.functions import ExtractWeekDay
 from django.shortcuts import render, redirect
 from django.core import serializers
 from django.views import View
@@ -297,8 +298,22 @@ class DashboardView(View):
             nonnull_count__gte=4,
         )
         
-        top_5_actors = actors_with_avg_rating.order_by('-avg_rating')[:5]
-        bot_5_actors = actors_with_avg_rating.order_by('avg_rating')[:5]
+        top_5_actors = actors_with_avg_rating.order_by('-avg_rating')[:15]
+        bot_5_actors = actors_with_avg_rating.order_by('avg_rating')[:15]
+
+        today = datetime.date.today()
+        start_of_week = today - datetime.timedelta(days=today.weekday())
+        end_of_week = start_of_week + datetime.timedelta(days=6)
+
+        # Query to get count and average rating for each day of the week
+        weekly_stats = Movie.objects.exclude(date__isnull=True).annotate(
+            weekday=ExtractWeekDay('date')
+        ).values('weekday').annotate(
+            count=Count('TMDB_ID'),
+            avg_rating=Round(Avg('rating'))
+        ).order_by('weekday')
+        counts_list = [item['count'] for item in weekly_stats]
+        avg_ratings_list = [item['avg_rating'] for item in weekly_stats]
 
         context = {
             'years1': json.dumps(years[0:25]),
@@ -346,6 +361,8 @@ class DashboardView(View):
             'actor_avg': top_5_actors,
             'actor_bad_avg': bot_5_actors,
             'url_start': 'https://www.themoviedb.org/t/p/w90_and_h90_face',
+            'weekday_counts': counts_list,
+            'weekday_avg': avg_ratings_list,
         }
         return render(request, 'watchlist/dashboard.html', context)
 

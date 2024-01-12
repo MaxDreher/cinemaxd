@@ -14,7 +14,7 @@
         {% include "./charts/actors.html" %}
         {% include "./charts/directors.html" %}
         {% include "./charts/piecharts.html" %}
-
+        {% include "./charts/weekdays.html" %}
 {% endblock %}
 
 {% block content %}
@@ -37,15 +37,21 @@
                             <span>
                                 <p class="card-title">
                                     <span class="h4 title">
-                                        <b>{{ newest.title }}</b>
+                                        <a data-bs-toggle="offcanvas" href="#{{newest.TMDB_ID}}" role="button">
+                                            <b>{{ newest.title }}</b>
+                                        </a>
+                                        <small class="card-subtitle roboto mb-2 text-body-secondary">
+                                            {{ newest.year }}
+                                        </small>    
                                     </span>
-                                    <small class="card-subtitle mb-2 text-body-secondary">
-                                        {{ newest.year }}
-                                    </small>
                                 </p>
+                                {% include "./offcanvas_movie.html" with movie=newest %}
                                 <p class="h6 card-subtitle mb-2 text-body-secondary stars">{{ newest.rating|convert_to_stars }}</p>
                             </span>
                             <p class="card-text"><small class="text-body-secondary">{{ newest.plot }}</small></p>
+                            {% if newest.tagline %}
+                                <footer class="blockquote-footer mt-auto">{{ newest.tagline }}</footer>
+                            {% endif %}
                         </div>
                         <div class="card-footer">
                             <small class="text-body-secondary">Seen on: {{ newest.date }}</small>
@@ -85,7 +91,10 @@
                                             </div>
                                             <div class="col-md-8 d-flex flex-column">
                                                 <div class="card-body">
-                                                    <h6 class="card-title title"><b>{{ top_this_week.title }}</b></h6>
+                                                    <a data-bs-toggle="offcanvas" href="#{{top_this_week.TMDB_ID}}" role="button">
+                                                        <h6 class="card-title title"><b>{{ top_this_week.title }}</b></h6>
+                                                    </a>
+                                                    {% include "./offcanvas_movie.html" with movie=top_this_week %}
                                                     <ul class="list-inline">
                                                         <li class="list-inline-item"><small class="card-subtitle text-body-secondary year">{{ top_this_week.year }}</small></li>
                                                         <li class="list-inline-item"><small class="card-subtitle text-body-secondary stars">{{ top_this_week.rating|convert_to_stars }}</small></li>
@@ -129,7 +138,10 @@
                                             </div>
                                             <div class="col-md-8 d-flex flex-column">
                                                 <div class="card-body">
-                                                    <h6 class="card-title title"><b>{{ last_5.title }}</b></h6>
+                                                    <a data-bs-toggle="offcanvas" href="#{{last_5.TMDB_ID}}" role="button">
+                                                        <h6 class="card-title title"><b>{{ last_5.title }}</b></h6>
+                                                    </a>
+                                                    {% include "./offcanvas_movie.html" with movie=last_5 %}
                                                     <ul class="list-inline">
                                                         <li class="list-inline-item"><small class="card-subtitle text-body-secondary year">{{ last_5.year }}</small></li>
                                                         <li class="list-inline-item"><small class="card-subtitle text-body-secondary stars">{{ last_5.rating|convert_to_stars }}</small></li>
@@ -154,7 +166,10 @@
                                             </div>
                                             <div class="col-md-8 d-flex flex-column">
                                                 <div class="card-body">
-                                                    <h6 class="card-title title"><b>{{ top_this_month.title }}</b></h6>
+                                                    <a data-bs-toggle="offcanvas" href="#{{top_this_month.TMDB_ID}}" role="button">
+                                                        <h6 class="card-title title"><b>{{ top_this_month.title }}</b></h6>
+                                                    </a>
+                                                    {% include "./offcanvas_movie.html" with movie=top_this_month %}
                                                     <ul class="list-inline">
                                                         <li class="list-inline-item"><small class="card-subtitle text-body-secondary year">{{ top_this_month.year }}</small></li>
                                                         <li class="list-inline-item"><small class="card-subtitle text-body-secondary stars">{{ top_this_month.rating|convert_to_stars }}</small></li>
@@ -198,7 +213,10 @@
                                             </div>
                                             <div class="col-md-8 d-flex flex-column">
                                                 <div class="card-body">
-                                                    <h6 class="card-title title"><b>{{ alltime_month.title }}</b></h6>
+                                                    <a data-bs-toggle="offcanvas" href="#{{alltime_month.TMDB_ID}}" role="button">
+                                                        <h6 class="card-title title"><b>{{ alltime_month.title }}</b></h6>
+                                                    </a>
+                                                    {% include "./offcanvas_movie.html" with movie=alltime_month %}
                                                     <ul class="list-inline">
                                                         <li class="list-inline-item"><small class="card-subtitle text-body-secondary year">{{ alltime_month.year }}</small></li>
                                                         <li class="list-inline-item"><small class="card-subtitle text-body-secondary stars">{{ alltime_month.rating|convert_to_stars }}</small></li>
@@ -223,7 +241,10 @@
                                             </div>
                                             <div class="col-md-8 d-flex flex-column">
                                                 <div class="card-body">
-                                                    <h6 class="card-title title"><b>{{ top_this_year.title }}</b></h6>
+                                                    <a data-bs-toggle="offcanvas" href="#{{top_this_year.TMDB_ID}}" role="button">
+                                                        <h6 class="card-title title"><b>{{ top_this_year.title }}</b></h6>
+                                                    </a>
+                                                    {% include "./offcanvas_movie.html" with movie=top_this_year %}
                                                     <ul class="list-inline">
                                                         <li class="list-inline-item"><small class="card-subtitle text-body-secondary year">{{ top_this_year.year }}</small></li>
                                                         <li class="list-inline-item"><small class="card-subtitle text-body-secondary stars">{{ top_this_year.rating|convert_to_stars }}</small></li>
@@ -267,7 +288,10 @@
                                             </div>
                                             <div class="col-md-8 d-flex flex-column">
                                                 <div class="card-body">
-                                                    <h6 class="card-title title"><b>{{ most_recent_release.title }}</b></h6>
+                                                    <a data-bs-toggle="offcanvas" href="#{{most_recent_release.TMDB_ID}}" role="button">
+                                                        <h6 class="card-title title"><b>{{ most_recent_release.title }}</b></h6>
+                                                    </a>
+                                                    {% include "./offcanvas_movie.html" with movie=most_recent_release %}
                                                     <ul class="list-inline">
                                                         <li class="list-inline-item"><small class="card-subtitle text-body-secondary year">{{ most_recent_release.year }}</small></li>
                                                         <li class="list-inline-item"><small class="card-subtitle text-body-secondary stars">{{ most_recent_release.rating|convert_to_stars }}</small></li>
@@ -286,62 +310,64 @@
             </div>
         </div>
         <div class="col-md-4">
-            <div id="movieperyearCarousel" class="carousel slide">
-                <div class="carousel-indicators">
-                    <button type="button" data-bs-target="#movieperyearCarousel" data-bs-slide-to="0"></button>
-                    <button type="button" data-bs-target="#movieperyearCarousel" data-bs-slide-to="1"></button>
-                    <button type="button" data-bs-target="#movieperyearCarousel" data-bs-slide-to="2"></button>
-                    <button type="button" data-bs-target="#movieperyearCarousel" data-bs-slide-to="3" class="active"></button>
-                </div>
-                <div class="card shadow mb-3">
-                    <div class="carousel-inner">
-                        <div class="carousel-item">
-                            <div class="card-header section-heading">
-                                <b>MOVIES PER YEAR {{ year_today|add:"-99" }} - {{ year_today|add:"-75" }}</b>
+            <div class="row">
+                <div id="movieperyearCarousel" class="carousel slide">
+                    <div class="carousel-indicators">
+                        <button type="button" data-bs-target="#movieperyearCarousel" data-bs-slide-to="0"></button>
+                        <button type="button" data-bs-target="#movieperyearCarousel" data-bs-slide-to="1"></button>
+                        <button type="button" data-bs-target="#movieperyearCarousel" data-bs-slide-to="2"></button>
+                        <button type="button" data-bs-target="#movieperyearCarousel" data-bs-slide-to="3" class="active"></button>
+                    </div>
+                    <div class="card shadow mb-3">
+                        <div class="carousel-inner">
+                            <div class="carousel-item">
+                                <div class="card-header section-heading">
+                                    <b>MOVIES PER YEAR {{ year_today|add:"-99" }} - {{ year_today|add:"-75" }}</b>
+                                </div>
+                                <div class="card-body">
+                                    <figure id="movperyear1">
+                                    </figure>
+                                </div>
                             </div>
-                            <div class="card-body">
-                                <figure id="movperyear1">
-                                </figure>
+                            <div class="carousel-item">
+                                <div class="card-header section-heading">
+                                    <b>MOVIES PER YEAR {{ year_today|add:"-74" }} - {{ year_today|add:"-50" }}</b>
+                                </div>
+                                <div class="card-body">
+                                    <figure id="movperyear2">
+                                    </figure>
+                                </div>
                             </div>
-                        </div>
-                        <div class="carousel-item">
-                            <div class="card-header section-heading">
-                                <b>MOVIES PER YEAR {{ year_today|add:"-74" }} - {{ year_today|add:"-50" }}</b>
+                            <div class="carousel-item">
+                                <div class="card-header section-heading">
+                                    <b>MOVIES PER YEAR {{ year_today|add:"-49" }} - {{ year_today|add:"-25" }}</b>
+                                </div>
+                                <div class="card-body">
+                                    <figure id="movperyear3">
+                                    </figure>
+                                </div>
                             </div>
-                            <div class="card-body">
-                                <figure id="movperyear2">
-                                </figure>
-                            </div>
-                        </div>
-                        <div class="carousel-item">
-                            <div class="card-header section-heading">
-                                <b>MOVIES PER YEAR {{ year_today|add:"-49" }} - {{ year_today|add:"-25" }}</b>
-                            </div>
-                            <div class="card-body">
-                                <figure id="movperyear3">
-                                </figure>
-                            </div>
-                        </div>
-                        <div class="carousel-item active">
-                            <div class="card-header section-heading">
-                                <b>MOVIES PER YEAR {{ year_today|add:"-24" }} - {{ year_today }}</b>
-                            </div>
-                            <div class="card-body">
-                                <figure id="movperyear4">
-                                </figure>
+                            <div class="carousel-item active">
+                                <div class="card-header section-heading">
+                                    <b>MOVIES PER YEAR {{ year_today|add:"-24" }} - {{ year_today }}</b>
+                                </div>
+                                <div class="card-body">
+                                    <figure id="movperyear4">
+                                    </figure>
+                                </div>
                             </div>
                         </div>
                     </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#movieperyearCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon"></span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#movieperyearCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon"></span>
+                    </button>
                 </div>
-                <button class="carousel-control-prev" type="button" data-bs-target="#movieperyearCarousel" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon"></span>
-                </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#movieperyearCarousel" data-bs-slide="next">
-                    <span class="carousel-control-next-icon"></span>
-                </button>
             </div>
-            <div>
-                <div class="col-md-6">
+            <div class="row row-cols-1 row-cols-md-2 g-3">
+                <div class="col">
                     <div class="card shadow mb-3">
                         <div class="card-header section-heading">
                             <b>MOVIES PER DAY</b>
@@ -352,6 +378,42 @@
                         </div>
                     </div>
                 </div>
+                <div class="col">
+                    <div id="movieWeekdayCarousel" class="carousel slide">
+                        <div class="carousel-indicators">
+                            <button type="button" data-bs-target="#movieWeekdayCarousel" data-bs-slide-to="0" class="active"></button>
+                            <button type="button" data-bs-target="#movieWeekdayCarousel" data-bs-slide-to="1"></button>
+                        </div>
+                        <div class="card shadow mb-3">
+                            <div class="carousel-inner">
+                                <div class="carousel-item active">
+                                    <div class="card-header section-heading">
+                                        <b>MOVIE COUNT BY WEEKDAY</b>
+                                    </div>
+                                    <div class="card-body p-0">
+                                        <figure id="weekdayCount">
+                                        </figure>
+                                    </div>
+                                </div>
+                                <div class="carousel-item">
+                                    <div class="card-header section-heading">
+                                        <b>AVG RATING BY WEEKDAY</b>
+                                    </div>
+                                    <div class="card-body p-0">
+                                        <figure id="weekdayRatings">
+                                        </figure>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="carousel-control-prev smaller" type="button" data-bs-target="#movieWeekdayCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon"></span>
+                        </button>
+                        <button class="carousel-control-next smaller" type="button" data-bs-target="#movieWeekdayCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon"></span>
+                        </button>            
+                    </div>
+                </div>
             </div>
         </div>
         <div class="col-md-2">
@@ -359,7 +421,7 @@
                 <div class="card-header section-heading">
                     <b>TOP RATED ACTORS</b>
                 </div>
-                <div class="card-body">
+                <div class="card-body p-2">
                     <table class="table table-sm table-borderless table-hover">
                         <tbody>
                             {% for actor in actor_avg%}
@@ -367,8 +429,16 @@
                                 <th scope="row">{{ forloop.counter }}</th>
                                 <td><img class="portrait shadow-lg" src="{{ url_start }}{{ actor.imgLink }}" height="25px"></td>
                                 <td>{{ actor.name }}</td>
-                                <td>{{ actor.avg_rating }}★</td>
-                                <td>({{ actor.nonnull_count }})</td>
+                                <td>
+                                    <span class="badge rounded-pill badge-green">
+                                        {{ actor.avg_rating }}★
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge rounded-pill badge-gray">
+                                        {{ actor.nonnull_count }}
+                                    </span>
+                                </td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -379,7 +449,7 @@
                 <div class="card-header section-heading">
                     <b>WORST RATED ACTORS</b>
                 </div>
-                <div class="card-body">
+                <div class="card-body p-2">
                     <table class="table table-sm table-borderless table-hover">
                         <tbody>
                             {% for actor in actor_bad_avg %}
@@ -407,13 +477,15 @@
                             <div class="row g-0">
                                 <div class="overlap col-md-3 d-flex shadow-lg">
                                     <img src="{{ randy.posterLink }}" class="img-fluid rounded-start" alt="{{ randy.title }} Poster">
-                                    <img class="poster img-2" src="/static/watchlist/images/{{ randy.provider.last.name|striptags }}.png" height="35px">
+                                    <img class="poster img-2" src="/static/watchlist/images/{{ randy.provider.first.name|striptags }}.png" height="35px">
                                 </div>
                                 <div class="col-md-9 d-flex flex-column">
                                     <div class="card-body p-2">
                                         <span>
                                             <small class="title">
-                                                <b>{{ randy.title }}</b>
+                                                <a data-bs-toggle="offcanvas" href="#{{randy.TMDB_ID}}" role="button">
+                                                    <b>{{ randy.title }}</b>
+                                                </a>
                                             </small>
                                             <small class="smaller-year text-body-secondary">
                                                 {{ randy.year }}
@@ -422,6 +494,7 @@
                                             <small class="card-subtitle text-body-secondary">
                                                 {{ randy.runtime }} mins
                                             </small>
+                                            {% include "./offcanvas_movie.html" with movie=randy %}
                                         </span>
                                     </div>
                                 </div>
@@ -441,25 +514,6 @@
             </div>
         </div>
     </div>
-        <div class="col-md-2 ms-3 chart-bg">
-            <b class="section-heading">WORST ACTORS</b>
-            {% for actor in actor_bad_avg%}
-            <div class="row mt-3">
-                <div class="col-md-2 text-center">
-                    <img class="portrait shadow-lg" src="{{ url_start }}{{ actor.imgLink }}" height="35px">
-                </div>
-                <div class="col-md-10">
-                    <div class="fw-bold sidebar-title">
-                        {{ actor.name }}
-                        <div class="year">
-                            {{ actor.avg_rating }}
-                            &nbsp;&nbsp;({{ actor.nonnull_count }})
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
         <div class="col-md-2">
             <div id="actors" class="chart-bg">
             </div>

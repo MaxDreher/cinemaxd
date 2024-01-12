@@ -7,15 +7,53 @@ import django
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'MovieSite.settings')
 django.setup()
 
+import time
+import logging
+import requests
+import xml.etree.ElementTree as ET
+from dotenv import load_dotenv
+from slugify import slugify
+from datetime import datetime
+from watchlist.models import Movie, Actor, MovieActor, Director, Genre, ProdCompany, Provider, WatchlistMovie, WatchlistActor
+from watchlist.api_calls import *  
+import concurrent.futures
+from django.db import transaction
+from functools import partial
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponseRedirect
-from utils import make_api_calls_and_update_database, make_api_calls_and_update_watchlist, make_api_calls_and_update_database_from_id
+from api_calls import get_TMDB_from_id
+from utils import make_api_calls_and_update_database, make_api_calls_and_update_watchlist, make_api_calls_and_update_database_from_id, getCast, process_actor
 
 # make_api_calls_and_update_database("Disney Channel’s Theme A History Mystery", 2022, 5, "Went out of my way to find the proper documentation for this YouTube documentary done by Kevin Perjurer of Defunctland. One of the most artistic and well-done documentaries I've ever seen, and a beautiful conclusion in every way. Such a masterful way of cherishing and promoting art that deserves to be remembered.", None)
-from watchlist.models import List, MovieList, Movie
 
-dele = Movie.objects.get(pk=393)
-dele.delete()
+from watchlist.models import List, MovieList, Movie
+t1 = time.time()
+load_dotenv()
+TMDB_KEY = os.getenv("TMDB_KEY")
+for movie in WatchlistMovie.objects.all():
+    print(movie.title, movie.TMDB_ID)
+    tmdb = get_TMDB_from_id(TMDB_KEY, movie.TMDB_ID, movie.type)
+
+    cast, roles = getCast(tmdb, 10)
+    if cast:
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            # Use executor.map to process each actor_id concurrently
+            actors = list(executor.map(partial(process_actor, TMDB_KEY), cast))
+
+        for actor, role in zip(actors, roles):
+            print(actor.name, role)
+            WatchlistActor.objects.create(movie=movie, actor=actor, role=role)
+    else:
+        pass
+print("Completed Updates for All Films in: ", time.time()-t1, " seconds.")
+
+def delete_movie_actors_with_null_role():
+    movie_actors_to_delete = MovieActor.objects.filter(role__isnull=True)
+    movie_actors_to_delete.delete()
+
+def delete_watchlist_actors_with_null_role():
+    movie_actors_to_delete = WatchlistActor.objects.filter(role__isnull=True)
+    movie_actors_to_delete.delete()
 
 # make_api_calls_and_update_watchlist("Toy Story 4", 2019, None, "2023-12-06")
 # make_api_calls_and_update_watchlist("Good Boys", 2019, None, "2023-12-06")

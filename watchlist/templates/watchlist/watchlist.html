@@ -118,7 +118,7 @@
                             <td>{{ instance.year }}</td>
                             {% if instance.provider.all %}
                             <td>
-                                <img class="poster" src="/static/watchlist/images/{% if instance.provider.all %}{{ instance.provider.last.name|striptags }}.png{% endif %}" height="30%" width="30%">
+                                <img class="poster" src="/static/watchlist/images/{% if instance.provider.all %}{{ instance.provider.first.name|striptags }}.png{% endif %}" height="30%" width="30%">
                             </td>
                             {% else %}
                                 <td></td>

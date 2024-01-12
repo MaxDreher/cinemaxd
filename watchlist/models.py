@@ -202,6 +202,7 @@ class MovieDirector(models.Model):
 class MovieActor(models.Model):
     movie = models.ForeignKey('Movie', on_delete=models.CASCADE)
     actor = models.ForeignKey(Actor, on_delete=models.CASCADE)
+    role = models.CharField(max_length=255,null=True)
     class Meta:
         db_table = 'MOVIE_ACTOR'  # Set the table name to WATCHLIST
         app_label = 'watchlist'
@@ -244,6 +245,7 @@ class WatchlistDirector(models.Model):
 class WatchlistActor(models.Model):
     movie = models.ForeignKey('WatchlistMovie', on_delete=models.CASCADE)
     actor = models.ForeignKey(Actor, on_delete=models.CASCADE)
+    role = models.CharField(max_length=255,null=True)
     class Meta:
         db_table = 'WATCHLIST_ACTOR'  # Set the table name to WATCHLIST
         app_label = 'watchlist'
