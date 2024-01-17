@@ -1,0 +1,43 @@
+[MANUAL AUDIT LOG]
+<-- ADDED 1/16/2023 -->
+Alvin and the Chipmunks - 2007
+Ice Age - 2002
+Ice Age: The Meltdown - 2006
+The Santa Clause - 1994
+The Santa Clause 2 - 2002
+The Santa Clause 3: The Escape Clause - 2006
+Men in Black - 1997
+Men in Black II - 2002
+Men in Black 3 - 2012
+Transformers - 2007
+Transformers: Revenge of the Fallen - 2009
+Transformers: Dark of the Moon - 2011
+Home - 2015
+Ghostbusters - 2016 (theaters)
+After Earth - 2013
+Thriller - 2018
+How the Grinch Stole Christmas - 2000
+The Hunger Games - 2012
+The Muppet Christmas Carol - 1992
+The Great Gatsby - 2013
+Teenage Mutant Ninja Turtles - 1990
+Batman - 1989
+Batman Returns - 1992
+Falling for Christmas - 2022
+Descendants - 2015
+Good Luck Charlie, It’s Christmas! - 2011
+The Suite Life Movie - 2011
+Sword Art Online - 2012
+Richie Rich - 2015
+Video Game High School - 2012
+
+<-- TO BE ADDED WITH ALTERATION (ENGLISH VERSIONS) -->
+Pokémon: The First Movie - 1998
+Pokémon The Movie 2000 - 1999
+Pokémon 3: The Movie - 2000
+Pokémon: The Rise of Darkrai - 2007
+Pokémon: Arceus and the Jewel of Life: 2009
+Pokémon the Movie: Kyurem vs. The Sword of Justice - 2012
+Pokémon the Movie: Diancie and the Cocoon of Destruction - 2014
+Pokémon the Movie: Hoopa and the Clash of Ages - 2015
+

@@ -9,43 +9,14 @@ from .forms import MovieForm, WatchlistForm, RankingForm
 from django.conf import settings
 from .models import *
 import datetime
-
 import json 
 import random
-
 from .api_calls import get_OMDB
 from .utils import make_api_calls_and_update_database, make_api_calls_and_update_watchlist  # Create this function
 
 class Round(Func):
     function = 'ROUND'
     template = '%(function)s(%(expressions)s, 2)'
-
-# DISCONTINUED:
-class AddMovieView(View):
-    def get(self, request):
-        form = MovieForm()
-        return render(request, 'watchlist/add_movie.html', {'form': form})
-
-    def post(self, request):
-        form = MovieForm(request.POST)
-        if form.is_valid():
-            # Get form data
-            title = form.cleaned_data['title']
-            year = form.cleaned_data['year']
-            rating = form.cleaned_data['rating']
-            review = form.cleaned_data['review']
-            date_watched = form.cleaned_data['date_watched']
-
-            # Make API calls and update the database
-            make_api_calls_and_update_database(title, year, rating, review, date_watched)
-
-            return redirect('add_movie')  # Redirect to the movie list page or any other page
-
-        return render(request, 'watchlist/add_movie.html', {'form': form})
-
-class AddWatchlistView(View):
-    def get(self, request):
-        return render(request, 'watchlist/add_watchlist.html')
 
 # ACTIVE:
 class WatchlogView(View):
@@ -57,6 +28,7 @@ class WatchlogView(View):
         context = {
             'data': data,
             'form': form,
+            'url_start': 'https://www.themoviedb.org/t/p/w90_and_h90_face',
         }
         return render(request, self.template_name, context)
 
@@ -281,25 +253,23 @@ class DashboardView(View):
 
         actorObjects = Actor.objects.annotate(
             movie_count=Count('movieactor'),
-            nonnull_count=Count('movieactor', filter=Q(movieactor__movie__rating__isnull=False)),
+            nonnull_count=Count('movieactor', filter=Q(movieactor__movie__rating__isnull=False), distinct=True),
+            avg_rating=Round(Avg('movieactor__movie__rating'))
         ).order_by('-movie_count')
 
-        actors = actorObjects[:20]
-        actor_names = [i.name for i in actors]
-        actor_count = [i.movie_count for i in actors]
+        actors = actorObjects[:15]
+        top_15_actors = actorObjects.filter(nonnull_count__gte=4).order_by('-avg_rating')[:15]
+        bot_15_actors = actorObjects.filter(nonnull_count__gte=4).order_by('avg_rating')[:15]
 
-        directors = Director.objects.annotate(movie_count=Count('moviedirector')).order_by('-movie_count')[:20]
-        direct_names = [i.name for i in directors]
-        direct_count = [i.movie_count for i in directors]
+        directorObjects = Director.objects.annotate(
+            movie_count=Count('moviedirector'),
+            nonnull_count=Count('moviedirector', filter=Q(moviedirector__movie__rating__isnull=False)),
+            avg_rating=Round(Avg('moviedirector__movie__rating'))
+        ).order_by('-movie_count')
 
-        actors_with_avg_rating = actorObjects.annotate(
-            avg_rating=Round(Avg('movieactor__movie__rating'))
-        ).filter(
-            nonnull_count__gte=4,
-        )
-        
-        top_5_actors = actors_with_avg_rating.order_by('-avg_rating')[:15]
-        bot_5_actors = actors_with_avg_rating.order_by('avg_rating')[:15]
+        directors = directorObjects[:15]
+        top_15_directors = directorObjects.filter(nonnull_count__gte=3).order_by('-avg_rating')[:15]
+        bot_15_directors = directorObjects.filter(nonnull_count__gte=3).order_by('avg_rating')[:15]
 
         today = datetime.date.today()
         start_of_week = today - datetime.timedelta(days=today.weekday())
@@ -314,6 +284,13 @@ class DashboardView(View):
         ).order_by('weekday')
         counts_list = [item['count'] for item in weekly_stats]
         avg_ratings_list = [item['avg_rating'] for item in weekly_stats]
+
+        year_ranges = [
+            (this_year - 99, this_year - 75),
+            (this_year - 74, this_year - 50),
+            (this_year - 49, this_year - 25),
+            (this_year - 24, this_year),
+        ]
 
         context = {
             'years1': json.dumps(years[0:25]),
@@ -354,15 +331,16 @@ class DashboardView(View):
             'saturday': weekday_lists[5],
             'sunday': weekday_lists[6],
             'random': rand_movies,
-            'actor_names': actor_names,
-            'actor_count': actor_count,
-            'director_names': direct_names,
-            'director_count': direct_count,
-            'actor_avg': top_5_actors,
-            'actor_bad_avg': bot_5_actors,
+            'actors': actors,
+            'actor_avg': top_15_actors,
+            'actor_bad_avg': bot_15_actors,
+            'directors': directors,
+            'director_avg': top_15_directors,
+            'director_bad_avg': bot_15_directors,
             'url_start': 'https://www.themoviedb.org/t/p/w90_and_h90_face',
             'weekday_counts': counts_list,
             'weekday_avg': avg_ratings_list,
+            'year_ranges': year_ranges
         }
         return render(request, 'watchlist/dashboard.html', context)
 
@@ -370,7 +348,3 @@ class DashboardView(View):
 class EloView(View):
     def get(self, request):
         return render(request, 'watchlist/elo.html')
-
-class EditMovieView(View):
-    def get(self, request):
-        return render(request, 'watchlist/edit_movie.html')

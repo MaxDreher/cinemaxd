@@ -1,12 +1,12 @@
 {% extends 'watchlist/base.html' %}
 {% load static %}
 {% block css %}
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.7.0/css/select.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/searchpanes/2.2.0/css/searchPanes.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/searchpanes/2.2.0/css/searchPanes.bootstrap5.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.7.0/css/select.dataTables.min.css">
     <link rel="stylesheet" href="{% static 'watchlist/css/table.css' %}">
 {% endblock %}
 {% block js %}
@@ -16,120 +16,144 @@
     <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.colVis.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.bootstrap5.min.js"></script>
-    <script src="https://cdn.datatables.net/select/1.7.0/js/dataTables.select.min.js"></script>
     <script src="https://cdn.datatables.net/searchpanes/2.2.0/js/dataTables.searchPanes.min.js"></script>
     <script src="https://cdn.datatables.net/searchpanes/2.2.0/js/searchPanes.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/select/1.7.0/js/dataTables.select.min.js"></script>
     <script src="{% static 'watchlist/js/watchlog.js' %}"></script>
 {% endblock %}
-{% block sidebar %}
-<div id="superDiv" class="container-fluid" style="display:none">
-    <div class="row flex-nowrap">
-        <div id="sidebar" class="col-auto col-md-2 px-sm-2 px-0 bg-dark sidebar position-sticky">
-            <div class="dtsp-verticalContainer mt-3">
-                <div class="dtsp-verticalPanes position-sticky"></div>
-            </div>  
-        </div>      
-        {% endblock %}
-        {% block content %}
-        <div class="col-md-10 col-xl-10 mt-3">
-            <div class="container-fluid">
-                <div id="addMovieControl" class="container-fluid">
+{% block content %}
+<div id="container" class="container-fluid" style="display:none">
+    <div class="row g-3 mt-1">
+        <div id="sidebar" class="sidebar col-xl-3">
+            <div class="card">
+                <div class="card-header">
+                    <div id="sidebar-header" class="row">
+                    </div>
+                </div>  
+                <div class="card-body py-0">
+                    <div class="dtsp-verticalContainer">
+                        <div class="dtsp-verticalPanes">
+                        </div>
+                    </div>  
+                </div>  
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div class="card mb-3">
+                {% comment %} <div class="card-header">
+                </div> {% endcomment %}
+                <div class="card-body">
                     <a class="btn btn-secondary" data-bs-toggle="collapse" data-bs-target="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
                         Show/Hide Add to Watchlog
                     </a>
-                    <div class="collapse" id="collapseExample">
-                        <form method="post" action="{% url 'watchlog' %}">
-                            {% csrf_token %}
-                            <div class="row mt-3">
-                                <div class="col-md-4 form-group">
-                                    <label for="id_title" class="form-label"><b>Title:</b></label>
-                                    <div class="input-group">
-                                        <span class="input-group-text">
-                                            <svg class="bi d-block mx-auto" width="16" height="16"><use xlink:href="#film"></use></svg>
-                                        </span>
-                                        <input type="text" name="title" id="id_title" class="form-control" placeholder="Title">
+                    <div id="addMovieControl" class="row">
+                        <div class="collapse" id="collapseExample">
+                            <form method="post" action="{% url 'watchlog' %}">
+                                {% csrf_token %}
+                                <div class="row">
+                                    <div class="col-md-4 form-group">
+                                        <label for="id_title" class="form-label"><b>Title:</b></label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">
+                                                <svg class="bi d-block mx-auto" width="16" height="16"><use xlink:href="#film"></use></svg>
+                                            </span>
+                                            <input type="text" name="title" id="id_title" class="form-control" placeholder="Title">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 form-group">
+                                        <label for="id_year" class="form-label"><b>Year:</b></label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">
+                                                <svg class="bi d-block mx-auto" width="16" height="16"><use xlink:href="#calendar-year"></use></svg>
+                                            </span>
+                                            <input type="text" name="year" id="id_year" class="form-control" placeholder="YYYY">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 form-group">
+                                        <label for="id_rating" class="form-label"><b>Rating:</b></label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">
+                                                <svg class="bi d-block mx-auto" width="16" height="16"><use xlink:href="#star"></use></svg>
+                                            </span>
+                                            <input type="number" name="rating" id="id_rating" class="form-control" placeholder="{ &#9733; | 0.0 - 5.0 }" min="0.5" max="5.0" step="0.5">
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="col-md-4 form-group">
-                                    <label for="id_year" class="form-label"><b>Year:</b></label>
-                                    <div class="input-group">
-                                        <span class="input-group-text">
-                                            <svg class="bi d-block mx-auto" width="16" height="16"><use xlink:href="#calendar-year"></use></svg>
-                                        </span>
-                                        <input type="text" name="year" id="id_year" class="form-control" placeholder="YYYY">
+                                <div class="row mt-3">
+                                    <div class="col-md-4 form-group">
+                                        <label for="id_date_watched" class="form-label"><b>Date Watched:</b></label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">
+                                                <svg class="bi d-block mx-auto" width="16" height="16"><use xlink:href="#calendar-day"></use></svg>
+                                            </span>
+                                            <input type="date" name="date_watched" id="id_date_watched" class="form-control" placeholder="YYYY-MM-DD">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 form-group">
+                                        <label for="id_service" class="form-label"><b>Service:</b></label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">
+                                                <svg class="bi d-block mx-auto" width="16" height="16"><use xlink:href="#play"></use></svg>
+                                            </span>
+                                            <select name="service" id="id_service" class="form-control">
+                                                <option label=" "></option>
+                                                <option value="Netflix">Netflix</option>
+                                                <option value="Hulu">Hulu</option>
+                                                <option value="Max">Max</option>
+                                                <option value="Disney Plus">Disney Plus</option>
+                                                <option value="Apple TV Plus">Apple TV Plus</option>
+                                                <option value="Amazon Prime Video">Amazon Prime Video</option>
+                                                <option value="Peacock Premium">Peacock Premium</option>
+                                                <option value="Paramount Plus">Paramount Plus</option>
+                                                <option value="Paramount+ Amazon Channel">Paramount+ Amazon Channel</option>
+                                                <option value="Tubi TV">Tubi TV</option>
+                                                <option value="Freevee">Freevee</option>
+                                                <option value="TNT">TNT</option>
+                                                <option value="TBS">TBS</option>
+                                                <option value="Youtube">Youtube</option>
+                                                <option value="Youtube Movies">Youtube Movies</option>
+                                                <option value="Tik Tok">Tik Tok</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 form-group">
+                                        <label for="id_theaters" class="form-label"><b>Seen in Theaters?</b></label>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="on" id="id_theaters" name="theaters">
+                                            <label class="form-check-label" for="id_theaters">
+                                                True
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="col-md-4 form-group">
-                                    <label for="id_rating" class="form-label"><b>Rating:</b></label>
-                                    <div class="input-group">
-                                        <span class="input-group-text">
-                                            <svg class="bi d-block mx-auto" width="16" height="16"><use xlink:href="#star"></use></svg>
-                                        </span>
-                                        <input type="number" name="rating" id="id_rating" class="form-control" placeholder="{ &#9733; | 0.0 - 5.0 }" min="0.5" max="5.0" step="0.5">
+                                <div class="row mt-3">
+                                    <div class="col-md-12 form-group">
+                                        <label for="id_review" class="form-label"><b>Review:</b></label>
+                                        <textarea name="review" id="id_review" class="form-control"></textarea>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row mt-3">
-                                <div class="col-md-4 form-group">
-                                    <label for="id_date_watched" class="form-label"><b>Date Watched:</b></label>
-                                    <div class="input-group">
-                                        <span class="input-group-text">
-                                            <svg class="bi d-block mx-auto" width="16" height="16"><use xlink:href="#calendar-day"></use></svg>
-                                        </span>
-                                        <input type="date" name="date_watched" id="id_date_watched" class="form-control" placeholder="YYYY-MM-DD">
-                                    </div>
+                                <br>
+                                <div class="col-md-4">
+                                    <button class="btn btn-secondary" type="submit">Submit</button>
                                 </div>
-                                <div class="col-md-4 form-group">
-                                    <label for="id_service" class="form-label"><b>Service:</b></label>
-                                    <div class="input-group">
-                                        <span class="input-group-text">
-                                            <svg class="bi d-block mx-auto" width="16" height="16"><use xlink:href="#play"></use></svg>
-                                        </span>
-                                        <select name="service" id="id_service" class="form-control">
-                                            <option label=" "></option>
-                                            <option value="Netflix">Netflix</option>
-                                            <option value="Hulu">Hulu</option>
-                                            <option value="Max">Max</option>
-                                            <option value="Disney Plus">Disney Plus</option>
-                                            <option value="Apple TV Plus">Apple TV Plus</option>
-                                            <option value="Amazon Prime Video">Amazon Prime Video</option>
-                                            <option value="Peacock Premium">Peacock Premium</option>
-                                            <option value="Paramount Plus">Paramount Plus</option>
-                                            <option value="Paramount+ Amazon Channel">Paramount+ Amazon Channel</option>
-                                            <option value="Tubi TV">Tubi TV</option>
-                                            <option value="Freevee">Freevee</option>
-                                            <option value="TNT">TNT</option>
-                                            <option value="TBS">TBS</option>
-                                            <option value="Youtube">Youtube</option>
-                                            <option value="Youtube Movies">Youtube Movies</option>
-                                            <option value="Tik Tok">Tik Tok</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-4 form-group">
-                                    <label for="id_theaters" class="form-label"><b>Seen in Theaters?</b></label>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" value="on" id="id_theaters" name="theaters">
-                                        <label class="form-check-label" for="id_theaters">
-                                            True
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row mt-3">
-                                <div class="col-md-12 form-group">
-                                    <label for="id_review" class="form-label"><b>Review:</b></label>
-                                    <textarea name="review" id="id_review" class="form-control"></textarea>
-                                </div>
-                            </div>
-                            <br>
-                            <div class="col-md-4">
-                                <button class="btn btn-secondary" type="submit">Submit</button>
-                            </div>
-                        </form>     
-                    </div>        
-                </div>        
-                <table id="log" class="compact hover nowrap row-border stripe">
+                            </form>     
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                {% comment %} <div class="card-header">
+                    <!-- Place pagination and search elements here -->
+                    <div class="d-flex justify-content-between">
+                        <div class="dataTables_length">
+                            <!-- Length Menu -->
+                        </div>
+                        <div class="dataTables_filter">
+                            <!-- Search Input -->
+                        </div>
+                    </div>
+                </div>         {% endcomment %}
+                <table id="log" class="compact hover nowrap row-border stripe" width="100%">
                     <thead>
                         <th style="width: 4%;"></th>
                         <th>Title</th>
@@ -157,7 +181,10 @@
                     {% for instance in data %}
                         <tr>
                             <td><img class="poster" src="{{ instance.posterLink }}" height="50%" width="50%"></img></td>
-                            <td>{{ instance.title }}</td>
+                            <td>
+                                <a class="movie-title" data-bs-toggle="offcanvas" href="#{{instance.TMDB_ID}}" role="button">
+                                {{ instance.title }}</a>
+                            </td>
                             <td>{{ instance.year }}</td>
                             <td>{{ instance.rating|default:""}}</td>
                             <td>{{ instance.date|date:"Y-m-d" }}</td>
@@ -182,6 +209,9 @@
                     {% endfor %}
                 </table>
             </div>
+            {% comment %} {% for instance in data %}
+                {% include "./offcanvas_movie.html" with movie=instance %}
+            {% endfor %} {% endcomment %}
         </div>
     </div>
 </div>

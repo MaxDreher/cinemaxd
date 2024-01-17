@@ -1,19 +1,23 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Your App{% endblock %}</title>
+    <title>{% block title %}CineMax'D{% endblock %}</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <link rel="stylesheet" href="{% static 'watchlist/css/color-scheme.css' %}">
     {% block css %}{% endblock %}
     {% load static %}
     <link rel="stylesheet" href="{% static 'watchlist/css/style.css' %}">
     <link rel="shortcut icon" type="image/x-icon" href="{% static 'watchlist/favicon.ico' %}">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- <script src="{% static 'watchlist/js/standard.js' %}"></script> -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="{% static 'watchlist/js/standard.js' %}"></script>
 </head>
-<body class="base-bg" data-bs-theme="dark">
+<body data-bs-theme="dark" class="bg-dark-subtle">
     <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
         <symbol id="speedometer2" viewBox="0 0 16 16">
             <path d="M8 4a.5.5 0 0 1 .5.5V6a.5.5 0 0 1-1 0V4.5A.5.5 0 0 1 8 4zM3.732 5.732a.5.5 0 0 1 .707 0l.915.914a.5.5 0 1 1-.708.708l-.914-.915a.5.5 0 0 1 0-.707zM2 10a.5.5 0 0 1 .5-.5h1.586a.5.5 0 0 1 0 1H2.5A.5.5 0 0 1 2 10zm9.5 0a.5.5 0 0 1 .5-.5h1.5a.5.5 0 0 1 0 1H12a.5.5 0 0 1-.5-.5zm.754-4.246a.389.389 0 0 0-.527-.02L7.547 9.31a.91.91 0 1 0 1.302 1.258l3.434-4.297a.389.389 0 0 0-.029-.518z"></path>
@@ -64,44 +68,41 @@
         </symbol>
     </svg>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg py-1 bg-dark border-bottom border-dark">
+    <nav id="navbar" class="navbar sticky-top navbar-expand-lg px-3 bg-black shadow-lg">
         <div class="d-flex flex-wrap me-auto">
-            <a href="/" class="d-flex align-items-center mb-3 mb-lg-0 me-lg-auto text-decoration-none">
-                <span class="ascii-logo">
-                    <pre style="margin-bottom: 0; margin-top: 1;"><tt>
-    ████████╗██╗  ██╗███████╗    ██╗    ██╗ █████╗ ████████╗ ██████╗██╗  ██╗██╗     ██╗███████╗████████╗
-    ╚══██╔══╝██║  ██║██╔════╝    ██║    ██║██╔══██╗╚══██╔══╝██╔════╝██║  ██║██║     ██║██╔════╝╚══██╔══╝
-       ██║   ███████║█████╗      ██║ █╗ ██║███████║   ██║   ██║     ███████║██║     ██║███████╗   ██║   
-       ██║   ██╔══██║██╔══╝      ██║███╗██║██╔══██║   ██║   ██║     ██╔══██║██║     ██║╚════██║   ██║   
-       ██║   ██║  ██║███████╗    ╚███╔███╔╝██║  ██║   ██║   ╚██████╗██║  ██║███████╗██║███████║   ██║   
-       ╚═╝   ╚═╝  ╚═╝╚══════╝     ╚══╝╚══╝ ╚═╝  ╚═╝   ╚═╝    ╚═════╝╚═╝  ╚═╝╚══════╝╚═╝╚══════╝   ╚═╝</tt></pre>
-                </span>
+            <a href="/" class="d-flex navbar-brand align-items-center mb-3 mb-lg-0 me-lg-auto text-decoration-none">
+                <img src="{% static 'watchlist/images/site-logo-g.png' %}" height="50px" alt="Bootstrap">
             </a>
         </div>
-        <div class="ms-auto">
-            <ul class="nav ms-auto">
-                <li class="nav-item"><a href="{% url 'dashboard' %}" class="nav-link raleway hoverlink">
-                    <svg class="bi d-block mx-auto green" width="16" height="16"><use xlink:href="#speedometer2"></use></svg>DASHBOARD</a></li>
-                <li class="nav-item"><a href="{% url 'watchlog' %}" class="nav-link raleway hoverlink">
-                    <svg class="bi d-block mx-auto green" width="16" height="16"><use xlink:href="#film"></use></svg>WATCHLOG</a></li>
-                <li class="nav-item"><a href="{% url 'watchlist' %}" class="nav-link raleway hoverlink">
-                    <svg class="bi d-block mx-auto green" width="16" height="16"><use xlink:href="#camera"></use></svg>WATCHLIST</a></li>
-                <li class="nav-item"><a href="{% url 'rankings' %}" class="nav-link raleway hoverlink">
-                    <svg class="bi d-block mx-auto green" width="16" height="16"><use xlink:href="#list"></use></svg>RANKINGS</a></li>
-                <li class="nav-item"><a href="{% url 'elo' %}" class="nav-link raleway hoverlink">
-                    <svg class="bi d-block mx-auto green" width="16" height="16"><use xlink:href="#joystick"></use></svg>ELO</a></li>
-            </ul>
+        <div id="statbar">
+            <small>{{ movie_total }} movies </small>
+            <small>{{ series_total }} series </small>
         </div>
+        <nav class="nav nav-pills nav-item ms-auto">
+            {% with current_url=request.path %}
+                <a href="{% url 'dashboard' %}" class="nav-link{% if current_url == '/watchlist/dashboard/' %} active{% endif %} raleway d-flex justify-content-between">
+                    <svg class="bi inline-block align-middle mx-1 green" width="20" height="20"><use xlink:href="#speedometer2"></use></svg>
+                    DASHBOARD
+                </a>
+                <a href="{% url 'watchlog' %}" class="nav-link{% if current_url == '/watchlist/watchlog/' %} active{% endif %} raleway d-flex justify-content-between">
+                    <svg class="bi inline-block mx-1 green" width="20" height="20"><use xlink:href="#film"></use></svg>
+                    WATCHLOG
+                </a>
+                <a href="{% url 'watchlist' %}" class="nav-link{% if current_url == '/watchlist/watchlist/' %} active{% endif %} raleway hoverlink">
+                    <svg class="bi inline-block mx-1 green" width="20" height="20"><use xlink:href="#camera"></use></svg>
+                    WATCHLIST
+                </a>
+                <a href="{% url 'rankings' %}" class="nav-link{% if current_url == '/watchlist/rankings/' %} active{% endif %} raleway hoverlink">
+                    <svg class="bi inline-block mx-1 green" width="20" height="20"><use xlink:href="#list"></use></svg>
+                    RANKINGS
+                </a>
+                <a href="{% url 'elo' %}" class="nav-link{% if current_url == '/watchlist/elo/' %} active{% endif %} raleway hoverlink">
+                    <svg class="bi inline-block mx-1 green" width="20" height="20"><use xlink:href="#joystick"></use></svg>
+                    ELO
+                </a>
+            {% endwith %}
+        </nav>
     </nav>
-    <header class="blackout sticky-top">
-        <div class="d-flex flex-wrap">
-            <ul class="nav ms-auto">
-                <li class="nav-item"><a href="{% url 'add_movie' %}" class="nav-link px-3 raleway-nb hoverlink">ADD TO WATCHLOG</a></li>
-                <li class="nav-item"><a href="{% url 'add_watchlist' %}" class="nav-link px-3 raleway-nb hoverlink">ADD TO WATCHLIST</a></li>
-                <li class="nav-item"><a href="{% url 'edit_movie' %}" class="nav-link px-3 raleway-nb hoverlink">EDIT ENTRY</a></li>
-            </ul>
-        </div>
-    </header>
     {% block sidebar %}{% endblock %}
     {% block content %}{% endblock %}
     {% block js %}{% endblock %}
