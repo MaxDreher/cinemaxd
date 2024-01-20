@@ -2,7 +2,7 @@ from django.http import JsonResponse
 from django.db.models import Prefetch, Case, When, IntegerField, Avg, Count, Min, Sum, Q, Func
 from django.db.models.functions import ExtractWeekDay
 from django.shortcuts import render, redirect
-from django.core import serializers
+from django.template.loader import render_to_string
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from .forms import MovieForm, WatchlistForm, RankingForm
@@ -11,6 +11,8 @@ from .models import *
 import datetime
 import json 
 import random
+import os
+from dotenv import load_dotenv
 from .api_calls import get_OMDB
 from .utils import make_api_calls_and_update_database, make_api_calls_and_update_watchlist  # Create this function
 
@@ -19,6 +21,44 @@ class Round(Func):
     template = '%(function)s(%(expressions)s, 2)'
 
 # ACTIVE:
+
+def get_random_movies(request):
+    idlist = [i.TMDB_ID for i in WatchlistMovie.objects.filter(provider__isnull=False)]
+    rand_ids = random.sample(idlist, 5)
+    rand_movies = [WatchlistMovie.objects.get(pk=i) for i in rand_ids]
+    context = {
+        'random': rand_movies,
+        'url_start': 'https://www.themoviedb.org/t/p/w90_and_h90_face',
+    }
+    return render(request, 'watchlist/randomMovies.html', context)
+
+    return
+
+def get_movie_info(request):
+    # Get movie name and year from the request
+    title = request.GET.get('id_title')
+    year = request.GET.get('id_year')
+
+    load_dotenv()
+    OMDB_KEY = os.getenv("OMDB_KEY")
+    omdb = get_OMDB(OMDB_KEY, title, year)
+
+    # Process the API response (replace this with your actual response processing)
+    poster_url = omdb["Poster"]
+
+    return JsonResponse({'poster_url': poster_url})
+
+def sidebar_ajax(request, movie_id):
+    try:
+        movie = Movie.objects.get(pk=movie_id)
+    except:
+        movie = WatchlistMovie.objects.get(pk=movie_id)
+    context = {
+        'movie': movie,
+        'url_start': 'https://www.themoviedb.org/t/p/w90_and_h90_face',
+    }
+    return render(request, 'watchlist/offcanvas_movie.html', context)
+
 class WatchlogView(View):
     template_name = 'watchlist/watchlog.html'
 
@@ -61,7 +101,16 @@ class WatchlogView(View):
             except Movie.DoesNotExist:
                 make_api_calls_and_update_database(title, year, rating, review, theaters, date_watched, service)
 
-            return redirect('watchlog')  # Redirect to the same page after adding a movie
+            # Fetch the updated data after saving
+            data = Movie.objects.all()
+            title_year = f'<span><i class="bi bi-check-circle-fill"></i>&nbsp;&nbsp;{title} ({year}) has been successfully added!<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></span>'
+            # Render the table HTML using Django template
+            response_data = {
+                'title_year': title_year,
+                'table_html': render_to_string('watchlist/watchlog-table.html', {'data': data})
+            }
+
+            return JsonResponse(response_data)
         else:
             print(form.errors)
         
@@ -81,6 +130,7 @@ class WatchlistView(View):
         context = {
             'data': data,
             'form': form,
+            'url_start': 'https://www.themoviedb.org/t/p/w90_and_h90_face',
         }
         return render(request, self.template_name, context)
     
@@ -92,9 +142,28 @@ class WatchlistView(View):
             date_added = form.cleaned_data['date_added']
             reason = form.cleaned_data['reason']
 
-            make_api_calls_and_update_watchlist(title, year, reason, date_added)
+            cleaned = {
+                'title': title,
+                'year': year,
+                'date': date_added,
+                'reason': reason,
+            }
 
-            return redirect('watchlist')  # Redirect to the same page after adding a movie
+            try:
+                update_object = WatchlistMovie.objects.get(title=title, year=year)
+                for key, value in cleaned.items():
+                    if getattr(update_object, key) != value:
+                        setattr(update_object, key, value)
+                update_object.save()
+            except WatchlistMovie.DoesNotExist:
+                make_api_calls_and_update_watchlist(title, year, reason, date_added)
+            data = WatchlistMovie.objects.all()
+            title_year = f'<span><i class="bi bi-check-circle-fill"></i>&nbsp;&nbsp;{title} ({year}) has been successfully added!<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></span>'
+            response_data = {
+                'title_year': title_year,
+                'table_html': render_to_string('watchlist/watchlist-table.html', {'data': data})
+            }
+            return JsonResponse(response_data)
         else:
             print(form.errors)
         

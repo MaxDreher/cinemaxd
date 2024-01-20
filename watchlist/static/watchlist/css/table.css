@@ -1,3 +1,11 @@
+:root {
+  --dt-row-selected: 21, 211, 124;
+}
+
+table.dataTable > thead > tr > th, table.dataTable > thead > tr > td {
+  border: none;
+}
+
 /* APPLY GENERIC FONT TO SIDEBAR */
 #sidebar {
     font-family: 'Roboto', sans-serif !important;
@@ -97,90 +105,26 @@ div.dataTables_wrapper div.dataTables_length option {
   background-color: #212529; /* Set the background color to the dark theme background */
 }
 
-
-
-/* div.dtsp-panesContainer div.dtsp-searchPane div.dtsp-topRow div.dtsp-subRow1 input:hover {
-    background-color: #6c757d;
-    height: None;
-} */
-
-/* div.dtsp-panesContainer div.dtsp-title {
-    margin-top: 0px !important;
-} */
-
-/* div.dtsp-panesContainer div.dtsp-searchPane div.dtsp-topRow {
-    border: None;
-} */
-
-/* div.dtsp-searchPane div.dataTables_wrapper div.dataTables_scrollBody {
-  background: #252729 !important;
-  height: 140px !important;
-} */
-
-/* div.dtsp-searchPane div.dataTables_wrapper div.dataTables_scrollBody:hover {
-    background: #252729 !important;
-    border:None;
-} */
-
-/* div.dtsp-searchPane input.dtsp-paneInputButton, div.dtsp-searchPane button.dtsp-paneButton {
-    height: 35px;
-    margin: 0px;
-} */
-
-/* div.dtsp-panesContainer div.dtsp-searchPane div.dataTables_wrapper div.dtsp-nameCont span.badge {
-    margin-top: 0px;
-} */
-
-/* table.dataTable tbody tr {
-    background-color: #202224;
-} */
-
-/* div.dataTables_wrapper div.dataTables_filter {
-    text-align: right;
-    float: right;
-    padding-bottom: 10px;
-} */
-
-/* .table>:not(caption)>*>* {
-    background-color: #252729;
-} */
-
-/* table.dataTable > thead > tr > th, table.dataTable > thead > tr > td {
-    border: none;
-} */
-
-/* .form-control {
-    border: 1px solid #6c757d;
+.form-control, #moviePosterContainer {
+    border: 1px solid #6c757d !important;
     font-family: 'Roboto', sans-serif !important;
     font-size: 10pt;
-    border-radius: 3px;
-    padding: 5px;
     background-color: transparent;
-    color: inherit;
-    margin-left: 3px;
-} */
+}
 
-/* .input-group-text {
+.input-group-text {
     border: 1px solid #6c757d;
     background-color: #6c757d;
-} */
+}
 
-/* .form-label {
+.form-label, .form-check {
     font-family: 'Roboto', sans-serif !important;
     font-size: 10pt
-} */
+}
 
-/* #addMovieControl {
-    border: 1px solid #202224;
-    font-family: 'Roboto', sans-serif !important;
-    font-size: 10pt;
-    border-radius: 7px;
-    padding: 18px;
-    background-color: #202224;
-    color: inherit;
-    margin-bottom: 10px;
-} */
-
+#successAlert {
+  font-family: 'Roboto', sans-serif !important;
+}
 /* div.dtsp-panesContainer button.btn-subtle:hover {
     background-color: #6c757d;
     color: #ffffff;
@@ -188,7 +132,6 @@ div.dataTables_wrapper div.dataTables_length option {
 } */
 
 /* BREAKPOINT */
-
 .poster {
   border: 1px solid #202224;
   border-radius: 4px;
@@ -241,4 +184,11 @@ div.dataTables_wrapper div.dataTables_length select {
 
 .dtsp-title {
   padding-top: 0.5em;
+}
+
+.badge-green {
+  color: #fff !important;
+  background-color: #109e5d !important;
+  font-family: 'Roboto', sans-serif !important;
+  font-size: 8.5pt;
 }

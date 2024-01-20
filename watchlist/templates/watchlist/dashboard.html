@@ -8,10 +8,8 @@
 {% block js %}
         <script src="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.45.0/apexcharts.min.js"></script>
         <script src="{% static 'watchlist/js/dashboard.js' %}"></script>
-
         {% include "./charts/heatmap.html" %}
         {% include "./charts/movperyear.html" %}
-        {% include "./charts/directors.html" %}
         {% include "./charts/piecharts.html" %}
         {% include "./charts/weekdays.html" %}
 {% endblock %}
@@ -26,7 +24,7 @@
                     <div class="card shadow">
                         <div class="row g-0">
                             <div class="col-md-4 shadow-lg">
-                                <img src="{{ newest.posterLink }}" class="img-fluid rounded-start" alt="{{ newest.title }} Poster">
+                                <img src="{{ newest.posterLink }}" class="img-fluid rounded-start" alt="{{ newest.title }} Poster" style="height: 305px; width: 205px">
                             </div>
                             <div class="col-md-8 d-flex flex-column">
                                 <div class="card-header section-heading">
@@ -47,9 +45,9 @@
                                         <p class="h6 card-subtitle mb-2 text-body-secondary stars">{{ newest.rating|convert_to_stars }}</p>
                                     </span>
                                     <p class="card-text"><small class="text-body-secondary">{{ newest.plot }}</small></p>
-                                    {% if newest.tagline %}
+                                    {% comment %} {% if newest.tagline %}
                                         <footer class="blockquote-footer mt-auto">{{ newest.tagline }}</footer>
-                                    {% endif %}
+                                    {% endif %} {% endcomment %}
                                 </div>
                                 <div class="card-footer">
                                     <small class="text-body-secondary">Seen on: {{ newest.date }}</small>
@@ -609,46 +607,15 @@
                 <div class="card-header section-heading">
                     <b>RANDOM SELECTIONS</b>
                 </div>
-                <div class="card-body">
-                    {% for randy in random %}
-                        {% if forloop.counter == 1 %}
-                            <div class="card shadow">
-                        {% else %}
-                            <div class="card shadow mt-3">
-                        {% endif %}
-                            <div class="row g-0">
-                                <div class="overlap col-md-3 d-flex shadow-lg">
-                                    <img src="{{ randy.posterLink }}" class="img-fluid shadow rounded-start" alt="{{ randy.title }} Poster">
-                                    <img class="poster shadow-lg img-2" src="/static/watchlist/images/{{ randy.provider.first.name|striptags }}.png" height="35px">
-                                </div>
-                                <div class="col-md-9 d-flex flex-column">
-                                    <div class="card-body p-2">
-                                        <span>
-                                            <small class="title">
-                                                <a class="movie-title" data-bs-toggle="offcanvas" href="#{{randy.TMDB_ID}}" role="button">
-                                                    <b>{{ randy.title }}</b></a>
-                                            </small>
-                                            <small class="smaller-year text-body-secondary">
-                                                {{ randy.year }}
-                                            </small>
-                                            <br>
-                                            <small class="card-subtitle text-body-secondary">
-                                                {{ randy.runtime }} mins
-                                            </small>
-                                            {% include "./offcanvas_movie.html" with movie=randy %}
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>                
-                        </div>
-                    {% endfor %}
+                <div id="randomSelections" class="card-body">
+                    {% include "./randomMovies.html" with random=random %}
                 </div>
                  <div class="card-footer">
                     <div class="row mx-1">
-                        <button class="btn btn-sm btn-secondary" type="submit">Randomize Selections</button>
+                        <button id="randomButton" class="btn btn-sm btn-secondary" type="button">Randomize Selections</button>
                     </div>
-                </div> 
-            </div>
+                </div>
+            </div>            
         </div>
     </div>
     <div class="row mt-0 g-3">

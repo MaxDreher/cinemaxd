@@ -1,106 +1,107 @@
 $(document).ready(function() {
-    var table = $('#log').DataTable( {
-        "autoWidth": true,
-        paging: true,
-        lengthMenu: [
-            [50, 100, 250, -1],
-            [50, 100, 250, 'All']
-        ],    
-        order: [[4, 'desc'], [1, 'asc']],
-        dom: '<"card-header d-flex justify-content-between"lf><"card-body py-0 "t><"card-footer d-flex justify-content-between"ip>',
-        // buttons:['colvis'],
-        searchPanes: {
-            order: ['Cast', 'Director', 'Production Companies', 'Genres', 'Rating', 'Year', 'Decade', 'Date Seen', 'Service', 'Theaters'], 
-            layout: 'columns-2',
-            orderable: false,
-            // cascadePanes: true,
-        },
-        columnDefs: [
-            {
-                targets: [0],
-                sortable: false
-            },
-            {
-                targets: [16,17,18,19,20,21],
-                visible: false,
-                searchable: true
-            },
-            {
-                targets: []
-            },
-            {
-                searchPanes: {
-                    show: true,
-                    orthogonal:'sp',
-                    dtOpts: {
-                        order: [[1, "desc"]]
-                    }
-                },
-                targets: [16,17,18,19,20],
-                render: function (data, type, row) {
-                    if (type === 'sp') {
-                        return data.split(', ')
-                    }
-                    return data;
-                }
-            },
-            {
-                searchPanes: {
-                    header: 'Year Seen',
-                    show: true,
-                    orthogonal:'sp',
-                    dtOpts: {
-                        order: [[0, "desc"]]
-                    }
-                },
-                targets: [4],
-                render: function (data, type, row) {
-                    if (type === 'sp') {
-                        return data.split('-')[0]
-                    }
-                    return data;
-                }
-            },
-            {
-                searchPanes: {
-                    options: [
-                        {
-                            label: 'Seen in Theaters',
-                            value: function(rowData, rowIdx) {
-                                return rowData[21] == "True";
-                            }
-                        },
-                        {
-                            label: 'Not Seen in Theaters',
-                            value: function(rowData, rowIdx) {
-                                return rowData[21] != "True";
-                            }
-                        },
-                    ]
-                },
-                targets: [21]
-            }
+    // Initialize variables for debouncing
+    let debounceTimer;
 
-        ],
-        initComplete: function( settings, json ) {
-            $('#container').show();
-            $('#log').DataTable().columns.adjust();
-        },
-    } );
-    table.searchPanes();
+    // Attach an event listener to the input fields
+    $('#id_title, #id_year').on('input', function() {
+        // Clear previous debounce timer
+        clearTimeout(debounceTimer);
 
-    // Append title row
-    $("div.dtsp-verticalPanes").append(table.searchPanes.container());
-    var divToMove = document.querySelector('.dtsp-titleRow');
-    var newContainer = document.getElementById('sidebar-header');
-    newContainer.appendChild(divToMove);
-    var titleRow = document.querySelector('.dtsp-titleRow');
-    var buttons = titleRow.querySelectorAll('.btn');
-    var buttonContainer = document.createElement('div');
-    buttonContainer.classList.add('d-flex', 'me-0');
-    buttons.forEach(function(button) {
-        buttonContainer.appendChild(button);
+        // Set a new debounce timer
+        debounceTimer = setTimeout(function() {
+            // Call the fetchMovieInfo function after the debounce time
+            fetchMovieInfo();
+        }, 500);
     });
-    titleRow.appendChild(buttonContainer);
-    
+
+    function fetchMovieInfo() {
+        // Check if both fields are filled
+        const movieName = $('#id_title').val();
+        const releaseYear = $('#id_year').val();
+
+        if (movieName && releaseYear) {
+            // Make AJAX request
+            $.ajax({
+                url: '/get_movie_info/',
+                type: 'GET',
+                data: {
+                    'id_title': movieName,
+                    'id_year': releaseYear,
+                },
+                success: function(response) {
+                    // Display the actual movie poster
+                    const posterUrl = response.poster_url;
+                    $('#moviePosterContainer').html(`<img src="${posterUrl}" class="img-fluid rounded" alt="Movie Poster">`);
+                },
+                error: function(error) {
+                    console.error('Error fetching movie info:', error);
+                    // If there's an error, you may want to show an error message or keep the placeholder
+                },
+            });
+        } else {
+            // If either field is empty, clear the poster and show the placeholder
+            $('#moviePosterContainer').html('<i class="bi bi-film" style="font-size: 2em; color: #6c757d;"></i>');
+        }
+    }
+});
+
+$(document).ready(function() {
+    // Submit form with AJAX
+    $('#watchlogInput').submit(function(e) {
+        e.preventDefault(); // Prevent the form from submitting traditionally
+
+        // Show loading spinner
+        $('#submitButton').addClass('disabled');
+        $('#submitText').addClass('d-none');
+        $('#loadingSpinner').removeClass('d-none');
+
+        // Make AJAX request
+        $.ajax({
+            url: '/watchlist/watchlog/',  // Replace with your Django endpoint
+            type: 'POST',
+            data: $(this).serialize(),
+            success: function(response) {
+                $('#searchPanes').html('');
+                $('#sidebar-header').html('');
+                $('#tableContainer').html('');
+                $('#tableContainer').html(response.table_html);
+                console.log(response.title_year)
+                $('#successAlert').html(response.title_year);
+                $('#successAlert').removeClass('d-none');
+            },
+            error: function(error) {
+                console.error('Error:', error);
+                // Handle error if necessary
+            },
+            complete: function() {
+                // Hide loading spinner when request is complete
+                $('#loadingSpinner').addClass('d-none');
+                $('#submitButton').removeClass('disabled');
+                $('#submitText').removeClass('d-none');        
+            }
+        });
+    });
+});
+
+$(document).ready(function() {
+    // Use event delegation for dynamically added elements
+    $(document).on('click', '.movie-title', function(e) {
+        // e.preventDefault();
+
+        var movieId = $(this).data('movie-id');
+        
+        $.ajax({
+            url: '/sidebar_ajax/' + movieId + '/',
+            method: 'GET',
+            success: function(response) {
+                // Append the response to the sidebar container
+                $('#sidebarContainer').html(response);
+                var myOffcanvas = new bootstrap.Offcanvas(document.getElementById(movieId));
+                myOffcanvas.toggle();
+            },
+            error: function(error) {
+                console.error('Error fetching sidebar content:', error);
+            }
+        });
+    });
 });

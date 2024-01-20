@@ -1,151 +1,126 @@
 {% extends 'watchlist/base.html' %}
 {% load static %}
 {% block css %}
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
-    <!-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css"> -->
+    <link rel="stylesheet" href="{% static 'watchlist/css/table.css' %}">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.7.0/css/select.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/searchpanes/2.2.0/css/searchPanes.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/searchpanes/2.2.0/css/searchPanes.bootstrap5.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.7.0/css/select.dataTables.min.css">
     <link rel="stylesheet" href="{% static 'watchlist/css/table.css' %}">
 {% endblock %}
 {% block js %}
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
-    <!-- <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.colVis.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.bootstrap5.min.js"></script> -->
-    <script src="https://cdn.datatables.net/select/1.7.0/js/dataTables.select.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.bootstrap5.min.js"></script>
     <script src="https://cdn.datatables.net/searchpanes/2.2.0/js/dataTables.searchPanes.min.js"></script>
     <script src="https://cdn.datatables.net/searchpanes/2.2.0/js/searchPanes.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/select/1.7.0/js/dataTables.select.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
     <script src="{% static 'watchlist/js/watchlist.js' %}"></script>
 {% endblock %}
-{% block sidebar %}
-<div id="superDiv" class="container-fluid" style="display:none">
-    <div class="row flex-nowrap">
-        <div id="sidebar" class="col-auto col-md-2 px-sm-2 px-0 bg-dark sidebar position-sticky">
-            <div class="dtsp-verticalContainer mt-3">
-                <div class="dtsp-verticalPanes position-sticky"></div>
-            </div>  
-        </div>      
-        {% endblock %}
-        {% block content %}
-        <div class="col-md-10 col-xl-10 mt-3">
-            <div class="container-fluid">
-                <div id="addMovieControl" class="container-fluid">
-                    <a class="btn btn-secondary" data-bs-toggle="collapse" data-bs-target="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+{% block content %}
+<div id="container" class="container-fluid" style="display:none">
+    <div class="row g-3 mt-1">
+        <div id="sidebar" class="sidebar col-xl-3">
+            <div class="card">
+                <div class="card-header">
+                    <div id="sidebar-header" class="row">
+                    </div>
+                </div>  
+                <div class="card-body py-0">
+                    <div class="dtsp-verticalContainer">
+                        <div id="searchPanes" class="dtsp-verticalPanes">
+                        </div>
+                    </div>  
+                </div>  
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <button class="btn btn-secondary" data-bs-toggle="collapse" data-bs-target="#formCollapse" role="button">
                         Show/Hide Add to Watchlist
-                    </a>
-                    <div class="collapse" id="collapseExample">
-                        <form method="post" action="{% url 'watchlist' %}">
+                    </button>
+                    <div class="collapse" id="formCollapse">
+                        <form id="watchlistInput" method="post" action="{% url 'watchlist' %}">
                             {% csrf_token %}
+                            <div class="row mt-1 g-3">
+                                <div class="col-md-1">
+                                    <div id="moviePosterContainer" class="d-flex align-items-center justify-content-center h-100 border rounded-2">
+                                        <i class="bi bi-film" style="font-size: 2em; color: #6c757d;"></i>
+                                    </div>
+                                </div>
+                                <div class="col-md-11">
+                                    <div class="row">
+                                        <div class="col-md-4 form-group">
+                                            <label for="id_title" class="form-label">Title</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text">
+                                                    <svg class="bi d-block mx-auto" width="16" height="16"><use xlink:href="#film"></use></svg>
+                                                </span>
+                                                <input type="text" name="title" id="id_title" class="form-control" placeholder="Title">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 form-group">
+                                            <label for="id_year" class="form-label">Year</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text">
+                                                    <svg class="bi d-block mx-auto" width="16" height="16"><use xlink:href="#calendar-year"></use></svg>
+                                                </span>
+                                                <input type="text" name="year" id="id_year" class="form-control" placeholder="YYYY">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 form-group">
+                                            <label for="id_date_watched" class="form-label">Date Added</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text">
+                                                    <svg class="bi d-block mx-auto" width="16" height="16"><use xlink:href="#calendar-day"></use></svg>
+                                                </span>
+                                                <input type="date" name="date_added" id="id_date_added" class="form-control" placeholder="YYYY-MM-DD">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-3">
+                                        <div class="col-md-12 form-group">
+                                            <label for="id_reason" class="form-label">Reason(s)</label>
+                                            <textarea name="reason" id="id_reason" class="form-control" rows="1"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>  
                             <div class="row mt-3">
-                                <div class="col-md-4">
-                                    <label for="id_title" class="form-label"><b>Title:</b></label>
-                                    <div class="input-group">
-                                        <span class="input-group-text">
-                                            <svg class="bi d-block mx-auto" width="16" height="16"><use xlink:href="#film"></use></svg>
+                                <div class="col-md-2">
+                                    <button class="btn btn-secondary" type="submit" id="submitButton">
+                                        <span>
+                                            <div id="submitText">
+                                                Submit
+                                            </div>
+                                            <div class="d-none" id="loadingSpinner">
+                                                <span>
+                                                    <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                                                    <span role="status">Loading...</span>
+                                                </span>
+                                            </div>
                                         </span>
-                                        <input type="text" name="title" id="id_title" class="form-control" placeholder="Title">
-                                        {{ form.title.errors }}
-                                    </div>
+                                    </button>
                                 </div>
-                                <div class="col-md-4 form-group">
-                                    <label for="id_year" class="form-label"><b>Year:</b></label>
-                                    <div class="input-group">
-                                        <span class="input-group-text">
-                                            <svg class="bi d-block mx-auto" width="16" height="16"><use xlink:href="#calendar-year"></use></svg>
-                                        </span>
-                                        <input type="text" name="year" id="id_year" class="form-control" placeholder="YYYY">
-                                        {{ form.year.errors }}
-                                    </div>
-                                </div>
-                                <div class="col-md-4 form-group">
-                                    <label for="id_date_watched" class="form-label"><b>Date Added:</b></label>
-                                    <div class="input-group">
-                                        <span class="input-group-text">
-                                            <svg class="bi d-block mx-auto" width="16" height="16"><use xlink:href="#calendar-day"></use></svg>
-                                        </span>
-                                        <input type="date" name="date_added" id="id_date_added" class="form-control" placeholder="YYYY-MM-DD">
-                                        {{ form.date_added.errors }}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row mt-3">
-                                <div class="col-md-12 form-group">
-                                    <label for="id_review" class="form-label"><b>Reason(s):</b></label>
-                                    <textarea name="reason" id="id_reason" class="form-control"></textarea>
-                                    {{ form.reason.errors }}
-                                </div>
-                            </div>
-                            <br>
-                            <div class="col-md-4">
-                                <button class="btn btn-secondary" type="submit">Submit</button>
                             </div>
                         </form>     
-                    </div>        
-                </div>        
-                <table id="watchlist" class="compact hover nowrap row-border stripe">
-                    <thead>
-                        <th style="width: 4%;"></th>
-                        <th>Title</th>
-                        <th>Year</th>
-                        <th>Provider</th>
-                        <th>Reason</th>
-                        <th>Date Added</th>
-                        <th>Runtime</th>
-                        <th>Release Date</th>
-                        <th>Decade</th>
-                        <th>MPA</th>
-                        <th class="imdb_rating centered-col"><img src="{% static 'watchlist/images/imdb_logo.png' %}" alt="IMDB" height="20px" width="20px"></img></th>
-                        <th class="centered-col"><img src="{% static 'watchlist/images/tmdb_logo.png' %}" height="20px" width="20px"></img></th>
-                        <th class="centered-col"><img src="{% static 'watchlist/images/mc_logo.png' %}" height="20px" width="20px"></img></th>
-                        <th class="centered-col"><img src="{% static 'watchlist/images/rtcritic_logo.png' %}" height="20px" width="20px"></img></th>
-                        <th class="centered-col"><img src="{% static 'watchlist/images/rtuser_logo.png' %}" height="20px" width="20px"></img></th>
-                        <th class="centered-col"><img src="{% static 'watchlist/images/lbxd_logo.png' %}" height="20px" width="20px"></img></th>
-                        <th>Avg.</th>
-                        <th>Cast</th>
-                        <th>Director</th>
-                        <th>Genres</th>
-                        <th>Production Companies</th>
-                        <th>Providers</th>
-                    </thead>
-                    {% for instance in data %}
-                        <tr>
-                            <td><img src="{{ instance.posterLink }}" height="50%" width="50%"></img></td>
-                            <td>{{ instance.title }}</td>
-                            <td>{{ instance.year }}</td>
-                            {% if instance.provider.all %}
-                            <td>
-                                <img class="poster" src="/static/watchlist/images/{% if instance.provider.all %}{{ instance.provider.first.name|striptags }}.png{% endif %}" height="30%" width="30%">
-                            </td>
-                            {% else %}
-                                <td></td>
-                            {% endif %}
-                            <td>{{ instance.reason|default:""}}</td>
-                            <td>{{ instance.date|date:"Y-m-d" }}</td>
-                            <td>{{ instance.runtime|default:"" }}</td>
-                            <td>{{ instance.releaseDate|date:"Y-m-d" }}</td>
-                            <td>{{ instance.decade }}</td>
-                            <td>{{ instance.MPA|default:""}}</td>
-                            <td>{{ instance.IMDB|default:""}}</td>
-                            <td>{{ instance.TMDB|default:""}}</td>
-                            <td>{{ instance.MC|default:""}}</td>
-                            <td>{{ instance.RTCritic|default:""}}</td>
-                            <td>{{ instance.RTUser|default:""}}</td>
-                            <td>{{ instance.LBXD|default:""}}</td>
-                            <td>{{ instance.calculate_average_rating}}</td>
-                            <td>{% for actor in instance.cast.all %}{{actor.name|striptags}}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
-                            <td>{% for director in instance.director.all %}{{director.name|striptags}}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
-                            <td>{% for genre in instance.genres.all %}{{genre.name|striptags}}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
-                            <td>{% for company in instance.prodCompany.all %}{{company.name|striptags}}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
-                            <td>{% for prov in instance.provider.all %}{{prov.name|striptags}}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
-                        </tr>
-                    {% endfor %}
-                </table>
+                    </div>
+                </div>
+            </div>
+            <!-- Bootstrap alert -->
+            <div class="alert alert-success alert-dismissible fade show d-none" role="alert" id="successAlert">
+                Operation successful!
+            </div>
+            <div id="tableContainer">
+                {% include "./watchlist-table.html" with data=data %}
             </div>
         </div>
     </div>
+    <div id="sidebarContainer"></div>
 </div>
 {% endblock %}

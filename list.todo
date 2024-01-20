@@ -5,6 +5,28 @@
         "key": 1705477178694,
         "children": [
           {
+            "key": 1705492997004,
+            "children": [],
+            "todo": {
+              "content": "Redo all of the .svg graphics using the icon font",
+              "id": 1705492997004,
+              "level": "default",
+              "done": false,
+              "start": 1705492997004
+            }
+          },
+          {
+            "key": 1705478198602,
+            "children": [],
+            "todo": {
+              "content": "Add a footer with site info, my personal info.",
+              "id": 1705478198602,
+              "level": "default",
+              "done": false,
+              "start": 1705478198602
+            }
+          },
+          {
             "key": 1705477201138,
             "children": [
               {
@@ -77,14 +99,29 @@
             "key": 1705477481508,
             "children": [
               {
+                "key": 1705561749890,
+                "children": [],
+                "todo": {
+                  "content": "Fix the order and ordering of the sidePanes",
+                  "id": 1705561749890,
+                  "level": "default",
+                  "done": true,
+                  "start": 1705561749890,
+                  "focus": false,
+                  "end": 1705720098841
+                }
+              },
+              {
                 "key": 1705477861120,
                 "children": [],
                 "todo": {
                   "content": "Add sidebar integration, as on homepage using offcanvas_movies.html",
                   "id": 1705477861120,
                   "level": "default",
-                  "done": false,
-                  "start": 1705477861120
+                  "done": true,
+                  "start": 1705477861120,
+                  "focus": false,
+                  "end": 1705720102052
                 }
               },
               {
@@ -124,10 +161,12 @@
                           "content": "Alerts",
                           "id": 1705477807078,
                           "level": "default",
-                          "done": false,
+                          "done": true,
                           "start": 1705477807078,
                           "fileLink": "",
-                          "link": "https://getbootstrap.com/docs/5.3/components/alerts/"
+                          "link": "https://getbootstrap.com/docs/5.3/components/alerts/",
+                          "focus": false,
+                          "end": 1705561727862
                         }
                       },
                       {
@@ -137,9 +176,11 @@
                           "content": "Spinners",
                           "id": 1705477686157,
                           "level": "default",
-                          "done": false,
+                          "done": true,
                           "start": 1705477686157,
-                          "link": "https://getbootstrap.com/docs/5.3/components/spinners/"
+                          "link": "https://getbootstrap.com/docs/5.3/components/spinners/",
+                          "focus": false,
+                          "end": 1705561727493
                         }
                       },
                       {
@@ -149,9 +190,11 @@
                           "content": "Toasts",
                           "id": 1705477659030,
                           "level": "default",
-                          "done": false,
+                          "done": true,
                           "start": 1705477659030,
-                          "link": "https://getbootstrap.com/docs/5.3/components/toasts/"
+                          "link": "https://getbootstrap.com/docs/5.3/components/toasts/",
+                          "focus": false,
+                          "end": 1705561727186
                         }
                       },
                       {
@@ -161,9 +204,11 @@
                           "content": "Progress Bars",
                           "id": 1705477617881,
                           "level": "default",
-                          "done": false,
+                          "done": true,
                           "start": 1705477617881,
-                          "link": "https://getbootstrap.com/docs/5.3/components/progress/"
+                          "link": "https://getbootstrap.com/docs/5.3/components/progress/",
+                          "focus": false,
+                          "end": 1705561726895
                         }
                       }
                     ],
@@ -171,8 +216,10 @@
                       "content": "Add some form of popup recognition / progress animation for form",
                       "id": 1705477532769,
                       "level": "default",
-                      "done": false,
-                      "start": 1705477532769
+                      "done": true,
+                      "start": 1705477532769,
+                      "focus": false,
+                      "end": 1705561724051
                     }
                   },
                   {
@@ -182,8 +229,10 @@
                       "content": "Convert to AJAX to prevent page reload",
                       "id": 1705477518036,
                       "level": "default",
-                      "done": false,
-                      "start": 1705477518036
+                      "done": true,
+                      "start": 1705477518036,
+                      "focus": false,
+                      "end": 1705561732257
                     }
                   }
                 ],
@@ -202,8 +251,10 @@
                   "content": "Update Bootstrap Formatting",
                   "id": 1705477500931,
                   "level": "default",
-                  "done": false,
-                  "start": 1705477500931
+                  "done": true,
+                  "start": 1705477500931,
+                  "focus": false,
+                  "end": 1705561734407
                 }
               }
             ],
@@ -225,8 +276,10 @@
                   "content": "Apply all changes from Watchlog to Watchlist",
                   "id": 1705477922174,
                   "level": "default",
-                  "done": false,
-                  "start": 1705477922174
+                  "done": true,
+                  "start": 1705477922174,
+                  "focus": false,
+                  "end": 1705720118787
                 }
               }
             ],
@@ -234,18 +287,31 @@
               "content": "Update Watchlist Page",
               "id": 1705477490660,
               "level": "default",
-              "done": false,
-              "start": 1705477490660
+              "done": true,
+              "start": 1705477490660,
+              "focus": false,
+              "end": 1705720119173
             }
           },
           {
             "key": 1705477907670,
             "children": [
               {
+                "key": 1705486009953,
+                "children": [],
+                "todo": {
+                  "content": "Add placeholders when movie for month/week/year is broken",
+                  "id": 1705486009953,
+                  "level": "default",
+                  "done": false,
+                  "start": 1705486009953
+                }
+              },
+              {
                 "key": 1705478998595,
                 "children": [],
                 "todo": {
-                  "content": "Some kind of chart comparing my ratings to critical ratings in generel. Similar to spreadsheet chart",
+                  "content": "Some kind of chart comparing my ratings to critical ratings in general. Similar to spreadsheet chart",
                   "id": 1705478998595,
                   "level": "default",
                   "done": false,
@@ -304,8 +370,10 @@
                   "content": "Make the random button work somehow",
                   "id": 1705478187718,
                   "level": "default",
-                  "done": false,
-                  "start": 1705478187718
+                  "done": true,
+                  "start": 1705478187718,
+                  "focus": false,
+                  "end": 1705720201741
                 }
               },
               {
@@ -317,6 +385,29 @@
                   "level": "default",
                   "done": false,
                   "start": 1705478135703
+                }
+              }
+            ],
+            "todo": {
+              "content": "Dashboard Features",
+              "id": 1705477907670,
+              "level": "default",
+              "done": false,
+              "start": 1705477907670
+            }
+          },
+          {
+            "key": 1705478353441,
+            "children": [
+              {
+                "key": 1705478091187,
+                "children": [],
+                "todo": {
+                  "content": "Actor/Director popouts",
+                  "id": 1705478091187,
+                  "level": "secondary",
+                  "done": false,
+                  "start": 1705478091187
                 }
               },
               {
@@ -330,40 +421,6 @@
                   "start": 1705478124487
                 }
               },
-              {
-                "key": 1705478091187,
-                "children": [],
-                "todo": {
-                  "content": "Actor/Director popouts",
-                  "id": 1705478091187,
-                  "level": "secondary",
-                  "done": false,
-                  "start": 1705478091187
-                }
-              }
-            ],
-            "todo": {
-              "content": "Dashboard Features",
-              "id": 1705477907670,
-              "level": "default",
-              "done": false,
-              "start": 1705477907670
-            }
-          },
-          {
-            "key": 1705478198602,
-            "children": [],
-            "todo": {
-              "content": "Add a footer with site info, my personal info.",
-              "id": 1705478198602,
-              "level": "default",
-              "done": false,
-              "start": 1705478198602
-            }
-          },
-          {
-            "key": 1705478353441,
-            "children": [
               {
                 "key": 1705478888857,
                 "children": [],
@@ -452,11 +509,10 @@
     ],
     "expandKeys": [
       1705477213097,
-      1705477532769,
       1705477737890,
-      1705478590553,
       1705478733655,
-      1705477178694
+      1705477178694,
+      1705478590553
     ],
     "schema": "https://github.com/Saber2pr/vsc-ext-todolist/blob/master/src/api/type.ts#L3",
     "add_mode": "top",
@@ -470,6 +526,6 @@
     "showEndTime": false,
     "simpleMode": false,
     "lang": "en",
-    "version": "1705479080945"
+    "version": "1705720224209"
   }
 }

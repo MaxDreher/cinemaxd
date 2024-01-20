@@ -31,7 +31,7 @@ t1 = time.time()
 load_dotenv()
 TMDB_KEY = os.getenv("TMDB_KEY")
 
-for item in [10228, 10991, 12599, 25961, 39057, 150213, 303903, 350499]:
+for item in [226979, 26914]:
     dele = Movie.objects.get(pk=item)
     dele.delete()
 
