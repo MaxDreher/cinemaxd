@@ -13,5 +13,38 @@ function generateData(count, yrange) {
       i++;
     }
     return series;
-    }
+}
+
+$(document).ready(function() {
+  // Submit form with AJAX
+  $('#randomButton').click(function(e) {
+    console.log("BUTTON PRESSED");
+      // Show loading spinner
+      // $('#submitButton').addClass('disabled');
+      // $('#submitText').addClass('d-none');
+      // $('#loadingSpinner').removeClass('d-none');
+
+      // Make AJAX request
+      $.ajax({
+          url: '/get_random_movies/',  // Replace with your Django endpoint
+          type: 'GET',
+          data: $(this).serialize(),
+          success: function(response) {
+            console.log(response)
+              $('#randomSelections').html(response);
+          },
+          error: function(error) {
+              console.error('Error:', error);
+              // Handle error if necessary
+          },
+          complete: function() {
+              // Hide loading spinner when request is complete
+              // $('#loadingSpinner').addClass('d-none');
+              // $('#submitButton').removeClass('disabled');
+              // $('#submitText').removeClass('d-none');        
+          }
+      });
+  });
+});
+
     

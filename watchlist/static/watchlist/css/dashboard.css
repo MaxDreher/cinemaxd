@@ -1,3 +1,13 @@
+/* .card {
+    --bs-body-bg: #202224;
+    --bs-body-color-rgb: 26, 28, 30;
+    --bs-card-border-color: #252729;
+} */
+  
+.roboto {
+    font-family: 'Roboto';
+}
+
 .chart-bg {
     padding: 1%;
     font-family: 'Roboto';
@@ -9,27 +19,132 @@
 
 .section-heading {
     font-family: 'Roboto';
-    font-size: 12pt;
+    text-transform: uppercase;
     color: #686d71;
 }
 
-.sidebar-title {
+.title {
     font-family: "Raleway";
-    font-size: 14px;
 }
 
-.little-stars {
+.smaller-title {
+    font-family: "Raleway";
+    font-size: 10pt;
+}
+
+.smaller-title {
+    font-family: 'Roboto', sans-serif !important;
+    font-size: 8pt;
+}
+
+.stars {
     color: #15d37c !important;
-    font-size: 12px;
 }
 
 .year {
     font-family: 'Roboto', sans-serif !important;
-    font-size: 8pt;
-    filter:brightness(80%)
 }
 
 .poster {
     border: 1px solid #202224;
     border-radius: 7px;
+}
+
+.year-labels {
+    text-transform: uppercase;
+}
+
+.portrait {
+    border: 1px solid #202224;
+    border-radius: 24px;
+}
+
+.big-number-card {
+    font-family: 'Montserrat';
+    text-align: center;
+}
+
+.small-number-card {
+    font-family: 'Roboto';
+    filter: brightness(80%);
+}
+
+.carousel-caption {
+    top: 75%;
+    color: #6c757d !important;
+}
+
+.carousel-indicators [data-bs-target] {
+    top: 99%;
+    transform: translateY(50%);
+    width: 10px;
+    height: 10px;
+    border-radius: 100%;
+    border: 2px solid #6c757d;
+    background: transparent;
+    background-color: #6c757d !important;
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+    top: 80%;
+    width: 10%;
+    height: 20%;
+    border-top-right-radius: 100%;
+    border-bottom-right-radius: 100%;
+}
+
+.carousel-control-next-icon {
+    color: #6c757d;
+}
+
+.smaller {
+  top: 80%;
+}
+
+
+.heatmap-date {
+    background: #141414;
+    color: #fff;
+    padding: 5px;
+    border-radius: 5px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 12px;
+}
+
+.heatmap-date span {
+    display: block;
+    margin-bottom: 5px;
+}
+
+#heatmap-container {
+    margin: 0;
+    padding: 0;
+}
+
+.img-2 {
+    border: none;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    transform: translate(10%, -10%); /* Adjust the values as needed */
+}
+
+.nav-pills .nav-link.active, .nav-pills .show>.nav-link {
+    background-color: #6c757d;
+}
+
+.badge-green {
+    color: #fff !important;
+    background-color: #109e5d !important;
+}
+
+.badge-gray {
+    color: #fff !important;
+    background-color: #6c757d !important;
+}
+.container-fluid .nav {
+    font-family: 'Roboto', sans-serif;
+    font-size: 10pt;
+    text-decoration: bold;
 }

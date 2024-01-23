@@ -1,0 +1,531 @@
+{
+  "todotree": {
+    "tree": [
+      {
+        "key": 1705477178694,
+        "children": [
+          {
+            "key": 1705492997004,
+            "children": [],
+            "todo": {
+              "content": "Redo all of the .svg graphics using the icon font",
+              "id": 1705492997004,
+              "level": "default",
+              "done": false,
+              "start": 1705492997004
+            }
+          },
+          {
+            "key": 1705478198602,
+            "children": [],
+            "todo": {
+              "content": "Add a footer with site info, my personal info.",
+              "id": 1705478198602,
+              "level": "default",
+              "done": false,
+              "start": 1705478198602
+            }
+          },
+          {
+            "key": 1705477201138,
+            "children": [
+              {
+                "key": 1705477447988,
+                "children": [],
+                "todo": {
+                  "content": "Watchlist Length",
+                  "id": 1705477447988,
+                  "level": "default",
+                  "done": false,
+                  "start": 1705477447988
+                }
+              },
+              {
+                "key": 1705477437232,
+                "children": [],
+                "todo": {
+                  "content": "Episodes / Seasons ?",
+                  "id": 1705477437232,
+                  "level": "default",
+                  "done": false,
+                  "start": 1705477437232
+                }
+              },
+              {
+                "key": 1705477418163,
+                "children": [],
+                "todo": {
+                  "content": "Hours / Mins ?",
+                  "id": 1705477418163,
+                  "level": "default",
+                  "done": false,
+                  "start": 1705477418163
+                }
+              },
+              {
+                "key": 1705477409768,
+                "children": [],
+                "todo": {
+                  "content": "Total Series",
+                  "id": 1705477409768,
+                  "level": "default",
+                  "done": false,
+                  "start": 1705477409768
+                }
+              },
+              {
+                "key": 1705477213097,
+                "children": [],
+                "todo": {
+                  "content": "Total Movies",
+                  "id": 1705477213097,
+                  "level": "default",
+                  "done": false,
+                  "start": 1705477213097
+                }
+              }
+            ],
+            "todo": {
+              "content": "Add Stats in NavBar",
+              "id": 1705477201138,
+              "level": "default",
+              "done": false,
+              "start": 1705477201138,
+              "focus": false,
+              "end": 1705477360107
+            }
+          },
+          {
+            "key": 1705477481508,
+            "children": [
+              {
+                "key": 1705561749890,
+                "children": [],
+                "todo": {
+                  "content": "Fix the order and ordering of the sidePanes",
+                  "id": 1705561749890,
+                  "level": "default",
+                  "done": true,
+                  "start": 1705561749890,
+                  "focus": false,
+                  "end": 1705720098841
+                }
+              },
+              {
+                "key": 1705477861120,
+                "children": [],
+                "todo": {
+                  "content": "Add sidebar integration, as on homepage using offcanvas_movies.html",
+                  "id": 1705477861120,
+                  "level": "default",
+                  "done": true,
+                  "start": 1705477861120,
+                  "focus": false,
+                  "end": 1705720102052
+                }
+              },
+              {
+                "key": 1705477511837,
+                "children": [
+                  {
+                    "key": 1705477737890,
+                    "children": [
+                      {
+                        "key": 1705477763827,
+                        "children": [],
+                        "todo": {
+                          "content": "Modals",
+                          "id": 1705477763827,
+                          "level": "default",
+                          "done": false,
+                          "start": 1705477763827,
+                          "link": "https://getbootstrap.com/docs/5.3/components/modal/"
+                        }
+                      }
+                    ],
+                    "todo": {
+                      "content": "Add some kind of error response to avoid Bootstrap debug menu",
+                      "id": 1705477737890,
+                      "level": "default",
+                      "done": false,
+                      "start": 1705477737890
+                    }
+                  },
+                  {
+                    "key": 1705477532769,
+                    "children": [
+                      {
+                        "key": 1705477807078,
+                        "children": [],
+                        "todo": {
+                          "content": "Alerts",
+                          "id": 1705477807078,
+                          "level": "default",
+                          "done": true,
+                          "start": 1705477807078,
+                          "fileLink": "",
+                          "link": "https://getbootstrap.com/docs/5.3/components/alerts/",
+                          "focus": false,
+                          "end": 1705561727862
+                        }
+                      },
+                      {
+                        "key": 1705477686157,
+                        "children": [],
+                        "todo": {
+                          "content": "Spinners",
+                          "id": 1705477686157,
+                          "level": "default",
+                          "done": true,
+                          "start": 1705477686157,
+                          "link": "https://getbootstrap.com/docs/5.3/components/spinners/",
+                          "focus": false,
+                          "end": 1705561727493
+                        }
+                      },
+                      {
+                        "key": 1705477659030,
+                        "children": [],
+                        "todo": {
+                          "content": "Toasts",
+                          "id": 1705477659030,
+                          "level": "default",
+                          "done": true,
+                          "start": 1705477659030,
+                          "link": "https://getbootstrap.com/docs/5.3/components/toasts/",
+                          "focus": false,
+                          "end": 1705561727186
+                        }
+                      },
+                      {
+                        "key": 1705477617881,
+                        "children": [],
+                        "todo": {
+                          "content": "Progress Bars",
+                          "id": 1705477617881,
+                          "level": "default",
+                          "done": true,
+                          "start": 1705477617881,
+                          "link": "https://getbootstrap.com/docs/5.3/components/progress/",
+                          "focus": false,
+                          "end": 1705561726895
+                        }
+                      }
+                    ],
+                    "todo": {
+                      "content": "Add some form of popup recognition / progress animation for form",
+                      "id": 1705477532769,
+                      "level": "default",
+                      "done": true,
+                      "start": 1705477532769,
+                      "focus": false,
+                      "end": 1705561724051
+                    }
+                  },
+                  {
+                    "key": 1705477518036,
+                    "children": [],
+                    "todo": {
+                      "content": "Convert to AJAX to prevent page reload",
+                      "id": 1705477518036,
+                      "level": "default",
+                      "done": true,
+                      "start": 1705477518036,
+                      "focus": false,
+                      "end": 1705561732257
+                    }
+                  }
+                ],
+                "todo": {
+                  "content": "Update Form Request",
+                  "id": 1705477511837,
+                  "level": "default",
+                  "done": false,
+                  "start": 1705477511837
+                }
+              },
+              {
+                "key": 1705477500931,
+                "children": [],
+                "todo": {
+                  "content": "Update Bootstrap Formatting",
+                  "id": 1705477500931,
+                  "level": "default",
+                  "done": true,
+                  "start": 1705477500931,
+                  "focus": false,
+                  "end": 1705561734407
+                }
+              }
+            ],
+            "todo": {
+              "content": "Update Watchlog Page",
+              "id": 1705477481508,
+              "level": "default",
+              "done": false,
+              "start": 1705477481508
+            }
+          },
+          {
+            "key": 1705477490660,
+            "children": [
+              {
+                "key": 1705477922174,
+                "children": [],
+                "todo": {
+                  "content": "Apply all changes from Watchlog to Watchlist",
+                  "id": 1705477922174,
+                  "level": "default",
+                  "done": true,
+                  "start": 1705477922174,
+                  "focus": false,
+                  "end": 1705720118787
+                }
+              }
+            ],
+            "todo": {
+              "content": "Update Watchlist Page",
+              "id": 1705477490660,
+              "level": "default",
+              "done": true,
+              "start": 1705477490660,
+              "focus": false,
+              "end": 1705720119173
+            }
+          },
+          {
+            "key": 1705477907670,
+            "children": [
+              {
+                "key": 1705486009953,
+                "children": [],
+                "todo": {
+                  "content": "Add placeholders when movie for month/week/year is broken",
+                  "id": 1705486009953,
+                  "level": "default",
+                  "done": false,
+                  "start": 1705486009953
+                }
+              },
+              {
+                "key": 1705478998595,
+                "children": [],
+                "todo": {
+                  "content": "Some kind of chart comparing my ratings to critical ratings in general. Similar to spreadsheet chart",
+                  "id": 1705478998595,
+                  "level": "default",
+                  "done": false,
+                  "start": 1705478998595
+                }
+              },
+              {
+                "key": 1705478984700,
+                "children": [],
+                "todo": {
+                  "content": "Rating distribution chart",
+                  "id": 1705478984700,
+                  "level": "default",
+                  "done": false,
+                  "start": 1705478984700
+                }
+              },
+              {
+                "key": 1705478708829,
+                "children": [
+                  {
+                    "key": 1705478782825,
+                    "children": [],
+                    "todo": {
+                      "content": "Make a dropdown button WITHIN the tab, not on the actual week/month/year tab",
+                      "id": 1705478782825,
+                      "level": "default",
+                      "done": false,
+                      "start": 1705478782825
+                    }
+                  },
+                  {
+                    "key": 1705478733655,
+                    "children": [],
+                    "todo": {
+                      "content": "Could be only Jan-Dec starting 2024, or could include all months previous compiled.",
+                      "id": 1705478733655,
+                      "level": "default",
+                      "done": false,
+                      "start": 1705478733655
+                    }
+                  }
+                ],
+                "todo": {
+                  "content": "Add a way to check previous months via dropdown",
+                  "id": 1705478708829,
+                  "level": "default",
+                  "done": false,
+                  "start": 1705478708829
+                }
+              },
+              {
+                "key": 1705478187718,
+                "children": [],
+                "todo": {
+                  "content": "Make the random button work somehow",
+                  "id": 1705478187718,
+                  "level": "default",
+                  "done": true,
+                  "start": 1705478187718,
+                  "focus": false,
+                  "end": 1705720201741
+                }
+              },
+              {
+                "key": 1705478135703,
+                "children": [],
+                "todo": {
+                  "content": "Small button in bottom corner to add items to the watchlist / log",
+                  "id": 1705478135703,
+                  "level": "default",
+                  "done": false,
+                  "start": 1705478135703
+                }
+              }
+            ],
+            "todo": {
+              "content": "Dashboard Features",
+              "id": 1705477907670,
+              "level": "default",
+              "done": false,
+              "start": 1705477907670
+            }
+          },
+          {
+            "key": 1705478353441,
+            "children": [
+              {
+                "key": 1705478091187,
+                "children": [],
+                "todo": {
+                  "content": "Actor/Director popouts",
+                  "id": 1705478091187,
+                  "level": "secondary",
+                  "done": false,
+                  "start": 1705478091187
+                }
+              },
+              {
+                "key": 1705478124487,
+                "children": [],
+                "todo": {
+                  "content": "Year popouts",
+                  "id": 1705478124487,
+                  "level": "secondary",
+                  "done": false,
+                  "start": 1705478124487
+                }
+              },
+              {
+                "key": 1705478888857,
+                "children": [],
+                "todo": {
+                  "content": "Add somekind of tooltip or popout when cursor is over a poster.",
+                  "id": 1705478888857,
+                  "level": "secondary",
+                  "done": false,
+                  "start": 1705478888857
+                }
+              },
+              {
+                "key": 1705478649892,
+                "children": [],
+                "todo": {
+                  "content": "Replicate featured / popular tab from spreadsheet",
+                  "id": 1705478649892,
+                  "level": "secondary",
+                  "done": false,
+                  "start": 1705478649892
+                }
+              },
+              {
+                "key": 1705478590553,
+                "children": [
+                  {
+                    "key": 1705478617384,
+                    "children": [],
+                    "todo": {
+                      "content": "Oscars Nominee integration?",
+                      "id": 1705478617384,
+                      "level": "secondary",
+                      "done": false,
+                      "start": 1705478617384
+                    }
+                  }
+                ],
+                "todo": {
+                  "content": "Add priority of some kind to Watchlist",
+                  "id": 1705478590553,
+                  "level": "secondary",
+                  "done": false,
+                  "start": 1705478590553
+                }
+              },
+              {
+                "key": 1705478456358,
+                "children": [],
+                "todo": {
+                  "content": "Add secondary navbar with All-Time favorites, featured films.",
+                  "id": 1705478456358,
+                  "level": "secondary",
+                  "done": false,
+                  "start": 1705478456358
+                }
+              },
+              {
+                "key": 1705478395845,
+                "children": [],
+                "todo": {
+                  "content": "Add trailers to the Watchlist model",
+                  "id": 1705478395845,
+                  "level": "secondary",
+                  "done": false,
+                  "start": 1705478395845
+                }
+              }
+            ],
+            "todo": {
+              "content": "Potential features",
+              "id": 1705478353441,
+              "level": "secondary",
+              "done": false,
+              "start": 1705478353441
+            }
+          }
+        ],
+        "todo": {
+          "content": "Watchlist",
+          "id": 1705477178694,
+          "level": "default",
+          "done": false,
+          "start": 1705477178694
+        }
+      }
+    ],
+    "expandKeys": [
+      1705477213097,
+      1705477737890,
+      1705478733655,
+      1705477178694,
+      1705478590553
+    ],
+    "schema": "https://github.com/Saber2pr/vsc-ext-todolist/blob/master/src/api/type.ts#L3",
+    "add_mode": "top",
+    "virtual": false,
+    "timelines": [],
+    "showLine": false,
+    "restDays": [],
+    "playFontSize": 24,
+    "title": "list",
+    "autoSort": false,
+    "showEndTime": false,
+    "simpleMode": false,
+    "lang": "en",
+    "version": "1705720224209"
+  }
+}

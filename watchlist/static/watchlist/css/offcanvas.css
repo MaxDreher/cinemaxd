@@ -1,0 +1,24 @@
+.imdb {
+    color: #000!important;
+    background-color: #f5c518 !important;
+}
+
+.tmdb {
+    color: #fff!important;
+    background-color: #032541 !important;
+}
+
+.metacritic {
+    color: #fff!important;
+    background-color: #000 !important;
+}
+
+.rt {
+    color: #fff!important;
+    background-color: #fa320a !important;
+}
+
+.lb {
+    color: #778899!important;
+    background-color: #14181c !important;
+}

@@ -1,0 +1,277 @@
+{% load custom_filters %}
+{% load static %}
+
+<div class="offcanvas offcanvas-start" data-bs-scroll="true" tabindex="-1" id="{{ movie.TMDB_ID }}">
+    <div class="offcanvas-body">
+        <div class="row">
+            <div class="float-end">
+                <button type="button" class="btn-close mb-3 float-end" data-bs-dismiss="offcanvas"></button>
+            </div>
+        </div>
+        <div class="card border-0">
+            <div class="row g-3">
+                <div class="col-md-6 d-flex">
+                    <img src="{{ movie.posterLink }}" class="img-fluid rounded shadow" alt="{{ movie.title }} Poster">
+                </div>
+                <div class="col-md-6 d-flex flex-column">
+                    <div class="row">
+                        <span>
+                            <span class="h4 title">
+                                <b>{{ movie.title }}</b>
+                                <small class="card-subtitle roboto text-body-secondary">{{ movie.year }}</small>    
+                            </span><br>
+                            <span>
+                                {% if movie.rating != None %}
+                                    <p class="h6 badge text-bg-secondary card-subtitle mt-1">{{ movie.rating|convert_to_stars }}</p>
+                                {% endif %}
+                                <p class="h6 badge text-bg-secondary card-subtitle mt-1">{{ movie.runtime }} mins</p>
+                            </span>
+                        </span>
+                    </div>
+                    <div class="row p-2">
+                        <table class="table table-striped">
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <small class="text-body-secondary">
+                                            Released: {{ movie.releaseDate }}
+                                        </small>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <small class="text-body-secondary">
+                                            {% if movie.timesSeen != None %}
+                                                Seen on: {{ movie.date }}
+                                            {% else %}
+                                                Added: {{ movie.date }}
+                                            {% endif %}
+                                        </small>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row g-1">
+                        {% if movie.provider.all %}
+                            {% for service in movie.provider.all %}
+                                <div class="col-xl-3">
+                                    <img class="poster" src="/static/watchlist/images/{{ service.name|striptags }}.png" height="100%" width="100%">
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr>
+        {% comment %} RATINGS {% endcomment %}
+        <div class="row g-0">
+            <div class="col-md-7">
+                {% if movie.IMDB != None %}
+                    <span class="mb-1 me-1 badge rounded-pill roboto imdb">
+                        <img src="{% static 'watchlist/images/imdb_logo.png' %}" alt="IMDB" height="16px" width="16px"></img>
+                        <small>&nbsp;{{ movie.IMDB}}</small>
+                    </span>
+                {% endif %}
+                {% if movie.TMDB != None %}
+                    <span class="me-1 badge rounded-pill roboto tmdb">
+                        <img src="{% static 'watchlist/images/tmdb_logo.png' %}" height="16px" width="18px"></img>
+                        <small>&nbsp;{{ movie.TMDB}}</small>
+                    </span>
+                {% endif %}
+                {% if movie.MC != None %}
+                    <span class="me-1 badge rounded-pill roboto metacritic">
+                        <img src="{% static 'watchlist/images/mc_logo.png' %}" height="16px" width="16px"></img>
+                        <small>&nbsp;{{ movie.MC}}</small>
+                    </span>
+                {% endif %}
+                {% if movie.RTCritic != None %}
+                    <span class="me-1 badge rounded-pill roboto rt">
+                        <img src="{% static 'watchlist/images/rtcritic_logo.png' %}" height="16px" width="16px"></img>
+                        <small>&nbsp;{{ movie.RTCritic}}%</small>
+                    </span>
+                {% endif %}
+                {% if movie.RTUser != None %}
+                    <span class="me-1 badge rounded-pill roboto rt">
+                        <img src="{% static 'watchlist/images/rtuser_logo.png' %}" height="16px" width="16px"></img>
+                        <small>&nbsp;{{ movie.RTUser}}%</small>
+                    </span>
+                {% endif %}
+                {% if movie.LBXD != None %}
+                    <span class="me-1 badge rounded-pill roboto lb">
+                        <img src="{% static 'watchlist/images/lbxd_logo.png' %}" height="16px" width="16px"></img>
+                        <small>&nbsp;{{ movie.LBXD}}</small>
+                    </span>
+                {% endif %}
+            </div>
+            <div class="col-md-5">
+                <div class="text-center d-flex flex-column justify-content-center">
+                    <span><b class="h4 big-number-card">{{ movie.calculate_average_rating }}</b></span>
+                    <b class="small-number-card">CRITICAL AVG.</b>
+                </div>
+            </div>
+        </div>
+        <hr>
+        {% comment %} SYNOPSIS {% endcomment %}
+        <div class="row mb-0">
+            <span class="h5 section-heading">
+                <b>SYNOPSIS</b>
+            </span>
+            <div>
+                {{ movie.plot }}
+            </div>
+            {% comment %} <span class="mx-0 mt-0 mb-0">
+                {% if movie.tagline %}
+                    <small class="blockquote-footer mt-auto">{{ movie.tagline }}</small>
+                {% endif %}
+            </span>     {% endcomment %}
+        </div>
+        {% comment %} REVIEW {% endcomment %}
+        {% if movie.review != "" and movie.review != None %}
+            <hr>
+            <div class="row">
+                <span class="h5 section-heading">
+                    <b>REVIEW</b>
+                </span>
+                <div>
+                    {{ movie.review }}
+                </div>
+            </div>
+        {% endif %}
+        <hr>
+        {% comment %} DIRECTOR {% endcomment %}
+        <div class="row mb-3">
+            <span class="h5 section-heading">
+                <b>DIRECTOR</b>
+            </span>
+            <div>
+                {% for director in movie.director.all %}
+                <div class="card mb-3">
+                    <div class="card-body p-0">
+                        <div class="row g-2">
+                            <div class="col-md-2">
+                                {% if director.imgLink %}
+                                    <img src="{{ url_start }}{{ director.imgLink }}" class="img-fluid rounded shadow" alt="{{ director.imgLink }} Poster">
+                                {% else %}
+                                    <i class="bi bi-person-circle"></i>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-9">
+                                {{ director.name }}
+                            </div>
+                            <div class="col-md-1 p-2">
+                                <small>
+                                    <a class="badge rounded-pill text-bg-secondary" data-bs-toggle="collapse" data-bs-target="#{{ director.TMDB_ID }}_director_collapse" role="button">
+                                        <svg class="text-body-secondary" fill="#ffffff" width="16" height="16"><use xlink:href="#expand"></use></svg>
+                                    </a>
+                                </small>
+                            </div>
+                        </div>
+                        <div class="collapse multi-collapse" id="{{ director.TMDB_ID }}_director_collapse">
+                            <div class="card-body mt-1 mb-1">
+                                <div class="row g-3">
+                                    {% for film in director.movie_set.all %}
+                                    <div class="col-md-3">
+                                        <img src="{{ film.posterLink }}" class="img-fluid rounded shadow" alt="{{ film.title }} Poster">
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <hr>
+        {% comment %} CAST {% endcomment %}
+        <div class="row mb-3">
+            <span class="h5 section-heading">
+                <b>CAST</b>
+            </span>
+            <div>
+                {% if movie.movieactor_set.all %}
+                    {% for movieactor in movie.movieactor_set.all %}
+                    <div class="card mb-3">
+                        <div class="card-body p-0">
+                            <div class="row g-2">
+                                <div class="col-md-2">
+                                    {% if movieactor.actor.imgLink %}
+                                        <img src="{{ url_start }}{{ movieactor.actor.imgLink }}" class="img-fluid rounded shadow" alt="{{ movieactor.actor.imgLink }} Poster">
+                                    {% else %}
+                                    <div class="d-flex align-items-center justify-content-center h-100">
+                                        <i class="bi bi-person-circle" style="font-size: 2em; color: #6c757d;"></i>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-9">
+                                    {{ movieactor.actor.name }}<br>
+                                    <small class="text-body-secondary">{{ movieactor.role }}</small>
+                                </div>
+                                <div class="col-md-1 p-2">
+                                    <small>
+                                        <a class="badge rounded-pill text-bg-secondary" data-bs-toggle="collapse" data-bs-target="#{{ movieactor.actor.TMDB_ID }}_actor_collapse" role="button">
+                                            <svg class="text-body-secondary" fill="#ffffff" width="16" height="16"><use xlink:href="#expand"></use></svg>
+                                        </a>
+                                    </small>
+                                </div> 
+                            </div>
+                            <div class="collapse multi-collapse" id="{{ movieactor.actor.TMDB_ID }}_actor_collapse">
+                                <div class="card-body mt-1 mb-1">
+                                    <div class="row g-3">
+                                        {% for film in movieactor.actor.movie_set.all %}
+                                        <div class="col-md-3">
+                                            <img src="{{ film.posterLink }}" class="img-fluid rounded shadow" alt="{{ film.title }} Poster">
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    {% for movieactor in movie.watchlistactor_set.all %}
+                    <div class="card mb-3">
+                        <div class="card-body p-0">
+                            <div class="row g-2">
+                                <div class="col-md-2">
+                                    {% if movieactor.actor.imgLink %}
+                                        <img src="{{ url_start }}{{ movieactor.actor.imgLink }}" class="img-fluid rounded shadow" alt="{{ movieactor.actor.imgLink }} Poster">
+                                    {% else %}
+                                        <div class="d-flex align-items-center justify-content-center h-100">
+                                            <i class="bi bi-person-circle" style="font-size: 2em; color: #6c757d;"></i>
+                                        </div>
+                                    {% endif %}                                </div>
+                                <div class="col-md-9">
+                                    {{ movieactor.actor.name }}<br>
+                                    <small class="text-body-secondary">{{ movieactor.role }}</small>
+                                </div>
+                                <div class="col-md-1 p-2">
+                                    <small>
+                                        <a class="badge rounded-pill text-bg-secondary" data-bs-toggle="collapse" data-bs-target="#{{ movieactor.actor.TMDB_ID }}_actor_collapse" role="button">
+                                            <svg class="text-body-secondary" fill="#ffffff" width="16" height="16"><use xlink:href="#expand"></use></svg>
+                                        </a>
+                                    </small>
+                                </div> 
+                            </div>
+                            <div class="collapse multi-collapse" id="{{ movieactor.actor.TMDB_ID }}_actor_collapse">
+                                <div class="card-body mt-1 mb-1">
+                                    <div class="row g-3">
+                                        {% for film in movieactor.actor.movie_set.all %}
+                                        <div class="col-md-3">
+                                            <img src="{{ film.posterLink }}" class="img-fluid rounded shadow" alt="{{ film.title }} Poster">
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>                                      

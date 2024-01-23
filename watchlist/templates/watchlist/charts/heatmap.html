@@ -1,0 +1,118 @@
+<script>
+    var heatmap_options = {
+        series: [
+            {
+                name: 'Sunday',
+                data: {{ sunday|safe }}
+            },
+            {   
+                name: 'Saturday',
+                data: {{ saturday|safe }}
+            },
+            {
+                name: 'Friday',
+                data: {{ friday|safe }}
+            },
+            {
+                name: 'Thursday',
+                data: {{ thursday|safe }}
+            },
+            {
+                name: 'Wednesday',
+                data: {{ wednesday|safe }}
+            },
+            {
+                name: 'Tuesday',
+                data: {{ tuesday|safe }}
+            },
+            {
+                name: 'Monday',
+                data: {{ monday|safe }}
+            }
+        ],
+        chart: {
+            toolbar: {
+                show: false
+            },
+            height: 300,
+            width: 300,
+            type: 'heatmap',
+        },
+        grid: {
+            show: false,
+        },
+        xaxis: {
+            labels: {
+                show: false,
+            },
+            axisTicks: {
+                show: false
+            },
+            axisBorder: {
+                show: false
+            },
+            tooltip: {
+                enabled: false
+            }
+        },
+        yaxis: {
+            labels: {
+                show: false,
+            },
+            axisTicks: {
+                show: false
+            }
+        },
+        tooltip: {
+            enabled: true,
+            theme: 'dark',
+            custom: function ({ series, seriesIndex, dataPointIndex, w }) {
+                var date = w.config.series[seriesIndex].data[dataPointIndex].date;
+                var count = w.config.series[seriesIndex].data[dataPointIndex].y;
+                var seriesName = w.config.series[seriesIndex].name;        
+                return '<div class="custom-tooltip heatmap-date">' + seriesName + ': ' + date + 
+                    '<span>Movies: ' + count + '</span>' + '</div>';
+            }
+        },
+        dataLabels: {
+            enabled: false
+        },
+        stroke: {
+            show: true,
+            curve: 'smooth',
+            colors: ['#212529'],
+        },
+        legend: {
+            show: false,
+        },
+        plotOptions: {
+            heatmap: {
+                shadeIntensity: 1,
+                radius: 8,
+                colorScale: {
+                    ranges: [
+                    {
+                        from: 0,
+                        to: 0,
+                        color: '#25292D'
+                    },
+                    {
+                        from: 1,
+                        to: 3,
+                        color: '#15d37c'
+                    },
+                    {
+                        from: 4,
+                        to: 6,
+                        color: '#21573e'
+                    },
+
+                    ]
+                }
+            },
+        }
+    };
+
+    var heatmap = new ApexCharts(document.querySelector("#heatmap"), heatmap_options);
+    heatmap.render();
+</script>

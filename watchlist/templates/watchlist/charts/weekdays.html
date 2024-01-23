@@ -1,0 +1,166 @@
+<script>
+    var weekdayCount = {
+        colors: ['#6c757d'],
+        series: [
+            {
+                name: 'Count',
+                data: {{ weekday_counts }}
+            }, 
+        ],
+        chart: {
+            toolbar: {
+                show: false
+            },
+            type: 'bar',
+            height: 284
+        },
+        legend: {
+            show: false
+        },
+        plotOptions: {
+            bar: {
+                horizontal: true,
+                dataLabels: {
+                    position: 'top',
+                },
+                borderRadius: 11, // radius of bars
+                borderRadiusApplication: 'around', // end, around
+            }
+        },
+        dataLabels: {
+            enabled: true,
+            offsetX: -16,
+            style: {
+                fontFamily: 'Roboto',
+            }
+        },
+        grid: {
+            show: false,
+            padding: {
+                top: 0,
+                bottom: 0
+            }
+        },
+        xaxis: {
+            categories: ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'],
+            labels: {
+                show: false,
+            },
+            position: 'bottom',
+            axisTicks: {
+                show: false
+            },
+            axisBorder: {
+                show: false,
+            }
+        },
+        yaxis: {
+            labels: {
+                show: true,
+                style: {
+                    fontFamily: 'Roboto',
+                    fontSize: '10px',
+                    colors: "#6c757d"
+                }
+            },
+        },
+        tooltip: {
+            enabled: true,
+            followCursor: false,
+            intersect: false,
+            theme: 'dark',
+            style: {
+              fontSize: '12px',
+              fontFamily: 'Roboto'
+            },
+            onDatasetHover: {
+                highlightDataSeries: false,
+            },
+        },
+
+    };
+
+    var weekdayRatings = {
+        colors: ['#15d37c'],
+        series: [
+            {
+                name: 'Avg. Rating',
+                data: {{ weekday_avg }}
+            }, 
+        ],
+        chart: {
+            toolbar: {
+                show: false
+            },
+            type: 'bar',
+            height: 284
+        },
+        legend: {
+            show: false
+        },
+        plotOptions: {
+            bar: {
+                horizontal: true,
+                dataLabels: {
+                    position: 'top',
+                },
+                borderRadius: 11, // radius of bars
+                borderRadiusApplication: 'around', // end, around
+            }
+        },
+        dataLabels: {
+            enabled: true,
+            offsetX: -16,
+            formatter: function (val, opts) {
+                return (val + "★")
+            },
+            style: {
+                fontFamily: 'Roboto',
+            }
+        },
+        grid: {
+            show: false
+        },
+        xaxis: {
+            categories: ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'],
+            labels: {
+                show: false,
+            },
+            position: 'bottom',
+            axisTicks: {
+                show: false
+            },
+            axisBorder: {
+                show: false,
+            }
+        },
+        yaxis: {
+            labels: {
+                show: true,
+                style: {
+                    fontFamily: 'Roboto',
+                    fontSize: '10px',
+                    colors: "#6c757d"
+                }
+            },
+        },
+        tooltip: {
+            enabled: true,
+            followCursor: false,
+            intersect: false,
+            theme: 'dark',
+            style: {
+              fontSize: '12px',
+              fontFamily: 'Roboto'
+            },
+            onDatasetHover: {
+                highlightDataSeries: false,
+            },
+        },
+
+    };
+    var chart = new ApexCharts(document.querySelector("#weekdayCount"), weekdayCount);
+    var chart2 = new ApexCharts(document.querySelector("#weekdayRatings"), weekdayRatings);
+    chart.render();
+    chart2.render();
+</script>

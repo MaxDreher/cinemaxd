@@ -7,7 +7,7 @@ import xml.etree.ElementTree as ET
 from dotenv import load_dotenv
 from slugify import slugify
 from datetime import datetime
-from watchlist.models import Movie, Actor, Director, Genre, ProdCompany, Provider, WatchlistMovie
+from watchlist.models import Movie, Actor, MovieActor, Director, Genre, ProdCompany, Provider, WatchlistMovie, WatchlistActor
 from watchlist.api_calls import *  
 import concurrent.futures
 from django.db import transaction
@@ -26,7 +26,8 @@ def getRottenTomatoes(title, year):
 
 def getCast(tmdbData, num):
     cast = [tmdbData["credits"]["cast"][i]["id"] for i in range(num) if i < len(tmdbData["credits"]["cast"])] or None
-    return cast
+    roles = [tmdbData["credits"]["cast"][i]["character"] for i in range(num) if i < len(tmdbData["credits"]["cast"])] or None
+    return cast, roles
 
 def getDirectors(omdbData, tmdbData, type, num):
     if (type == 'series'): 
@@ -249,14 +250,15 @@ def make_api_calls_and_update_database(title, year, rating, review, theaters, da
         logging.error(f"Error updating database for {title}: {e}")
         return
 
-    cast = getCast(tmdb, num)
+    cast, roles = getCast(tmdb, num)
     if cast:
         with concurrent.futures.ThreadPoolExecutor() as executor:
             # Use executor.map to process each actor_id concurrently
             actors = list(executor.map(partial(process_actor, TMDB_KEY), cast))
 
-        for actor in actors:
-            movie.cast.add(actor)
+        for actor, role in zip(actors, roles):
+            print(actor.name, role)
+            MovieActor.objects.create(movie=movie, actor=actor, role=role)
     else:
         pass
 
@@ -346,14 +348,15 @@ def make_api_calls_and_update_watchlist(title, year, reason, date_Watched=None):
     # Update the database
     movie.save(using='library_db')
 
-    cast = getCast(tmdb, num)
+    cast, roles = getCast(tmdb, num)
     if cast:
         with concurrent.futures.ThreadPoolExecutor() as executor:
             # Use executor.map to process each actor_id concurrently
             actors = list(executor.map(partial(process_actor, TMDB_KEY), cast))
 
-        for actor in actors:
-            movie.cast.add(actor)
+        for actor, role in zip(actors, roles):
+            print(actor.name, role)
+            WatchlistActor.objects.create(movie=movie, actor=actor, role=role)
     else:
         pass
 
