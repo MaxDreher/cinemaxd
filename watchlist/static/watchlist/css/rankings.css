@@ -82,13 +82,6 @@ div.dtsp-panesContainer button.btn-subtle {
     border-radius: 10px;
 }
 
-.card {
-    border-width: 0px;
-    border-radius: 10px;
-    border-color: #202224;
-    background-color: #202224;
-}
-
 .year {
     font-family: 'Roboto', sans-serif !important;
     font-size: 8pt;
@@ -120,11 +113,6 @@ div.dtsp-panesContainer button.btn-subtle {
     font-family: 'Roboto';
     font-size: 12pt;
     filter: brightness(60%);
-}
-
-::before {
-    font-family: 'Karla';
-    font-size: 12pt;
 }
 
 .section-heading {

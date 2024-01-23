@@ -16,11 +16,12 @@
     font-family: 'Raleway', sans-serif !important;
 }
 
-.green {
-    fill: #15d37c;
+.nav-icon {
+    font-size: 1.25rem;
+    color: #15d37c;
 }
 
-.navbar .nav-pills  {
+.navbar .nav-text  {
     font-size: 10pt;
 }
 
@@ -28,7 +29,7 @@
     background-color: #24292d;
 }
 
-.navbar, .nav-link svg, .navbar-brand img{
+.navbar, .navbar-brand img, .nav-icon{
     transition: 200ms;
 }
 
@@ -40,12 +41,9 @@
     height: 35px;
 }
 
-.tiny .nav-link svg{
-    padding-right: 2px;
-    display: inline-block !important;
-    height: 20px;
-    width: 20px;
-}  
+.tiny .nav-icon{
+    font-size: 1.0rem;
+}
 
 .movie-title {
     color: inherit; /* blue colors for links too */
@@ -61,3 +59,22 @@
     display: flex;
     justify-content: space-between;
 }
+
+.btn-secondary {
+    --bs-btn-bg: #6c757d;
+    --bs-btn-border-color: #6c757d;
+    color:#000000;
+    font-family: 'Roboto', sans-serif !important;
+    font-size: 10pt;
+}
+
+.nav {
+    --bs-nav-link-hover-color: #fff;
+    --bs-link-color: #adb5bd;
+}
+
+.heading-stats {
+    font-family: 'Montserrat';
+    text-align: center;
+}
+

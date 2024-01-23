@@ -105,3 +105,21 @@ $(document).ready(function() {
         });
     });
 });
+
+var collapseButton = document.getElementById('collapseButton');
+var collapseIcon = document.getElementById('collapseIcon');
+
+collapseButton.addEventListener('click', function () {
+  // Toggle icon based on collapse state
+  if (collapseButton.getAttribute('aria-expanded') === 'true') {
+    collapseIcon.classList.remove('bi-plus-circle');
+    collapseIcon.classList.add('bi-dash-circle');
+  } else {
+    collapseIcon.classList.remove('bi-dash-circle');
+    collapseIcon.classList.add('bi-plus-circle');
+  }
+});
+
+const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+

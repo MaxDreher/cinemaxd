@@ -107,7 +107,7 @@
             </div>
             <div class="col-md-5">
                 <div class="text-center d-flex flex-column justify-content-center">
-                    <span><b class="h4 big-number-card">{{ movie.calculate_average_rating }}</b></span>
+                    <span><b class="h4 big-number-card">★ {{ movie.calculate_average_rating }}</b></span>
                     <b class="small-number-card">CRITICAL AVG.</b>
                 </div>
             </div>
@@ -116,7 +116,7 @@
         {% comment %} SYNOPSIS {% endcomment %}
         <div class="row mb-0">
             <span class="h5 section-heading">
-                <b>SYNOPSIS</b>
+                <b class="section-title">SYNOPSIS</b>
             </span>
             <div>
                 {{ movie.plot }}

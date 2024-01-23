@@ -28,7 +28,7 @@
                             </div>
                             <div class="col-md-8 d-flex flex-column">
                                 <div class="card-header section-heading">
-                                    <b>LAST SEEN</b>
+                                    <b><i class="bi bi-film"></i> LAST SEEN</b>
                                     {% if newest.date == date_today %}
                                         &nbsp;<span class="badge bg-secondary">New</span>                        
                                     {% endif %}
@@ -612,7 +612,10 @@
                 </div>
                  <div class="card-footer">
                     <div class="row mx-1">
-                        <button id="randomButton" class="btn btn-sm btn-secondary" type="button">Randomize Selections</button>
+                        <button id="randomButton" class="btn btn-sm btn-secondary" type="button">
+                            <i class="bi bi-shuffle"></i>
+                            Shuffle Selections
+                        </button>
                     </div>
                 </div>
             </div>            

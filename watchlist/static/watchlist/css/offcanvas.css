@@ -22,3 +22,18 @@
     color: #778899!important;
     background-color: #14181c !important;
 }
+
+/* .section-heading .section-title:before {
+    background: #15d37c;
+    border-radius: 4pt;
+    content: "";
+    margin-left: -.75rem;
+    align-self: flex-start;
+    position: absolute;
+    height: 20pt;
+    width: 4px;
+}
+
+.section-title {
+    margin-left: .75rem;
+} */

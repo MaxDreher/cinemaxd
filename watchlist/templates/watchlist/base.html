@@ -4,11 +4,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}CineMax'D{% endblock %}</title>
-    <!-- Bootstrap CSS -->
+    <title>
+        {% block title %}
+            CineMax'D
+        {% endblock %}
+    </title>
+    {% comment %} BOOTSTRAP 5.3.0 {% endcomment %}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="{% static 'watchlist/css/color-scheme.css' %}">
+    {% comment %} BOOTSTRAP ICONS 1.11.0 {% endcomment %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="{% static 'watchlist/css/offcanvas.css' %}">
 
     {% block css %}{% endblock %}
@@ -76,31 +80,88 @@
                 <img src="{% static 'watchlist/images/site-logo-g.png' %}" height="50px" alt="Bootstrap">
             </a>
         </div>
-        <div id="statbar">
-            <small>{{ movie_total }} movies </small>
-            <small>{{ series_total }} series </small>
+        <div id="statbar" class="hstack gap-3 py-2">
+            <div class="p-2 text-center">
+                <small class="h6 heading-stats">{{ total_time.runtime__sum }}</small>
+                <small> minutes</small>
+            </div>
+            <div class="vr"></div>
+            <div class="p-2 text-center">
+                <small class="h6 heading-stats">{{ movie_total }}</small>
+                <small> movies</small>
+            </div>
+            <div class="vr"></div>
+            <div class="p-2 text-center">
+                <small class="h6 heading-stats">{{ total_episodes.episodes__sum }}</small>
+                <small> episodes</small>
+            </div>
+            <div class="vr"></div>
+            <div class="p-2">
+                <small class="h6 heading-stats">{{ total_seasons.seasons__sum }}</small>
+                <small> seasons</small>
+            </div>
+            <div class="vr"></div>
+            <div class="p-2">
+                <small class="h6 heading-stats">{{ series_total }}</small>
+                <small> series</small>
+            </div>
+            <div class="vr"></div>
+            <div class="p-2">
+                <small class="h6 heading-stats">{{ watchlist_total }}</small>
+                <small> to watch</small>
+            </div>
         </div>
-        <nav class="nav nav-pills nav-item ms-auto">
+        <nav class="nav nav-pills nav-item nav-fill ms-auto">
             {% with current_url=request.path %}
-                <a href="{% url 'dashboard' %}" class="nav-link{% if current_url == '/watchlist/dashboard/' %} active{% endif %} raleway d-flex justify-content-between">
-                    <svg class="bi inline-block align-middle mx-1 green" width="20" height="20"><use xlink:href="#speedometer2"></use></svg>
-                    DASHBOARD
+                <a href="{% url 'dashboard' %}" class="nav-link{% if current_url == '/watchlist/dashboard/' %} active{% endif %} raleway">
+                    <div class="row">
+                        <div class="col d-flex align-items-center pe-1">
+                            <i class="bi nav-icon bi-grid-3x3-gap-fill"></i>
+                        </div>
+                        <div class="col d-flex align-items-center ps-0">
+                            <span class="nav-text text-center">DASHBOARD<span>
+                        </div>
+                    </div>
                 </a>
-                <a href="{% url 'watchlog' %}" class="nav-link{% if current_url == '/watchlist/watchlog/' %} active{% endif %} raleway d-flex justify-content-between">
-                    <svg class="bi inline-block mx-1 green" width="20" height="20"><use xlink:href="#film"></use></svg>
-                    WATCHLOG
+                <a href="{% url 'watchlog' %}" class="nav-link{% if current_url == '/watchlist/watchlog/' %} active{% endif %} raleway">
+                    <div class="row">
+                        <div class="col d-flex align-items-center pe-1">
+                            <i class="bi nav-icon bi-collection-play-fill"></i>
+                        </div>
+                        <div class="col d-flex align-items-center ps-0">
+                            <span class="nav-text text-center">WATCHLOG<span>
+                        </div>
+                    </div>
                 </a>
-                <a href="{% url 'watchlist' %}" class="nav-link{% if current_url == '/watchlist/watchlist/' %} active{% endif %} raleway hoverlink">
-                    <svg class="bi inline-block mx-1 green" width="20" height="20"><use xlink:href="#camera"></use></svg>
-                    WATCHLIST
+                <a href="{% url 'watchlist' %}" class="nav-link{% if current_url == '/watchlist/watchlist/' %} active{% endif %} raleway">
+                    <div class="row">
+                        <div class="col d-flex align-items-center pe-1">
+                            <i class="bi nav-icon bi-eye-fill"></i>
+                        </div>
+                        <div class="col d-flex align-items-center ps-0">
+                            <span class="nav-text text-center">WATCHLIST<span>
+                        </div>
+                    </div>
                 </a>
-                <a href="{% url 'rankings' %}" class="nav-link{% if current_url == '/watchlist/rankings/' %} active{% endif %} raleway hoverlink">
-                    <svg class="bi inline-block mx-1 green" width="20" height="20"><use xlink:href="#list"></use></svg>
-                    RANKINGS
+                <a href="{% url 'rankings' %}" class="nav-link{% if current_url == '/watchlist/rankings/' %} active{% endif %} raleway">
+                    <div class="row">
+                        <div class="col d-flex align-items-center pe-1">
+                            <i class="bi nav-icon bi-list-columns-reverse"></i>
+                        </div>
+                        <div class="col d-flex align-items-center ps-0">
+                            <span class="nav-text text-center">RANKINGS<span>
+                        </div>
+                    </div>
                 </a>
-                <a href="{% url 'elo' %}" class="nav-link{% if current_url == '/watchlist/elo/' %} active{% endif %} raleway hoverlink">
-                    <svg class="bi inline-block mx-1 green" width="20" height="20"><use xlink:href="#joystick"></use></svg>
-                    ELO
+                <a href="{% url 'elo' %}" class="nav-link{% if current_url == '/watchlist/elo/' %} active{% endif %} raleway">
+                    <div class="row">
+                        <div class="col d-flex align-items-center pe-1">
+                            <i class="bi nav-icon bi-calculator"></i>
+                        </div>
+                        <div class="col d-flex align-items-center ps-0">
+                            <span class="nav-text text-center">ELO<span>
+                        </div>
+                    </div>
                 </a>
             {% endwith %}
         </nav>

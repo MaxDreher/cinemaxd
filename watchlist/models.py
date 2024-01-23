@@ -63,7 +63,7 @@ class List(models.Model):
 # ------------------------------------------
 # CENTRAL MODELS
 
-class Movie(models.Model):
+class BaseMovie(models.Model):
     TMDB_ID = models.IntegerField(primary_key=True)
     IMDB_ID = models.CharField(max_length=255)
     type_choices = [
@@ -73,101 +73,64 @@ class Movie(models.Model):
     type = models.CharField(max_length=255, choices=type_choices)
     title = models.CharField(max_length=255)
     year = models.IntegerField()
+    date = models.DateField(null=True)
+    posterLink = models.CharField(max_length=255)
+    plot = models.TextField(null=True)
+    tagline = models.CharField(max_length=255, null=True)
+    releaseDate = models.DateField()
+    decade = models.CharField(max_length=255)
+    MPA = models.CharField(max_length=255, null=True)
+    runtime = models.IntegerField(null=True)
+    seasons = models.IntegerField(null=True)
+    episodes = models.IntegerField(null=True)
+    languages = models.CharField(max_length=255, null=True)
+    countrys = models.CharField(max_length=255, null=True)
+    IMDB = models.FloatField(null=True)
+    TMDB = models.FloatField(null=True)
+    MC = models.IntegerField(null=True)
+    RTCritic = models.IntegerField(null=True)
+    RTUser = models.IntegerField(null=True)
+    LBXD = models.FloatField(null=True)
+    genres = models.ManyToManyField(Genre)
+    cast = models.ManyToManyField(Actor)
+    director = models.ManyToManyField(Director)
+    prodCompany = models.ManyToManyField(ProdCompany)
+
+    def calculate_average_rating(self):
+        rating_fields = ['IMDB', 'TMDB', 'MC', 'RTCritic', 'RTUser', 'LBXD']
+        rating_score_maps = [10, 10, 1, 1, 1, 20]
+
+        ratings = [getattr(self, field) * rating_score for field, rating_score in zip(rating_fields, rating_score_maps) if getattr(self, field) is not None]
+
+        return round((sum(ratings) / 20) / len(ratings), 2) if ratings else None
+
+    class Meta:
+        abstract = True
+
+class Movie(BaseMovie):
     rating_choices = [
         (i / 2, str(i / 2)) for i in range(1, 11)
     ]
     rating = models.FloatField(validators=[MinValueValidator(0.5), MaxValueValidator(5)], choices=rating_choices, null=True)
     review = models.TextField(null=True)
-    date = models.DateField(null=True)
     datetime_added = models.DateTimeField(null=True)
     timesSeen = models.IntegerField()
-    posterLink = models.CharField(max_length=255)
-    plot = models.TextField(null=True)
-    tagline = models.CharField(max_length=255,null=True)
-    releaseDate = models.DateField()
-    decade = models.CharField(max_length=255)
-    MPA = models.CharField(max_length=255,null=True)
-    runtime = models.IntegerField(null=True)
-    seasons = models.IntegerField(null=True)
-    episodes = models.IntegerField(null=True)
-    languages = models.CharField(max_length=255,null=True)
-    countrys = models.CharField(max_length=255,null=True)
-    IMDB = models.FloatField(null=True)
-    TMDB = models.FloatField(null=True)
-    MC = models.IntegerField(null=True)
-    RTCritic = models.IntegerField(null=True)
-    RTUser = models.IntegerField(null=True)
-    LBXD = models.FloatField(null=True)
     service = models.TextField(null=True)
     theaters = models.BooleanField(null=True)
-    genres = models.ManyToManyField(Genre, through="MovieGenre")
-    cast = models.ManyToManyField(Actor, through="MovieActor")
-    director = models.ManyToManyField(Director, through="MovieDirector")
-    prodCompany = models.ManyToManyField(ProdCompany, through="MovieCompany")
 
-    def calculate_average_rating(self):
-        rating_fields = ['IMDB', 'TMDB', 'MC', 'RTCritic', 'RTUser', 'LBXD']
-        rating_score_maps = [10, 10, 1, 1, 1, 20]
-
-        ratings = [getattr(self, field) * rating_score for field, rating_score in zip(rating_fields, rating_score_maps) if getattr(self, field) is not None]
-
-        return round((sum(ratings) / 20) / len(ratings), 2) if ratings else None
-
-    def calculate_difference(self):
-        return round((self.calculate_average_rating() - getattr(self, 'rating')),2) if (getattr(self, 'rating')) else None
-        
     class Meta:
-        db_table = 'WATCHLOG'  # Set the table name to WATCHLIST
-        unique_together = [['title', 'releaseDate']]  # Enforce uniqueness of title and releaseDate combination
+        db_table = 'WATCHLOG'
+        unique_together = [['title', 'releaseDate']]
         app_label = 'watchlist'
         managed = True
 
-class WatchlistMovie(models.Model):
-    TMDB_ID = models.IntegerField(primary_key=True)
-    IMDB_ID = models.CharField(max_length=255)
-    type_choices = [
-        ('movie', 'Movie'),
-        ('series', 'Series'),
-    ]
-    type = models.CharField(max_length=255, choices=type_choices)
-    title = models.CharField(max_length=255)
-    year = models.IntegerField()
-    date = models.DateField(null=True)
+class WatchlistMovie(BaseMovie):
     reason = models.TextField(null=True)
-    posterLink = models.CharField(max_length=255)
-    plot = models.TextField(null=True)
-    tagline = models.CharField(max_length=255,null=True)
-    releaseDate = models.DateField()
-    decade = models.CharField(max_length=255)
-    MPA = models.CharField(max_length=255,null=True)
-    runtime = models.IntegerField(null=True)
-    seasons = models.IntegerField(null=True)
-    episodes = models.IntegerField(null=True)
-    languages = models.CharField(max_length=255,null=True)
-    countrys = models.CharField(max_length=255,null=True)
-    IMDB = models.FloatField(null=True)
-    TMDB = models.FloatField(null=True)
-    MC = models.IntegerField(null=True)
-    RTCritic = models.IntegerField(null=True)
-    RTUser = models.IntegerField(null=True)
-    LBXD = models.FloatField(null=True)
-    genres = models.ManyToManyField(Genre, through="WatchlistGenre")
-    cast = models.ManyToManyField(Actor, through="WatchlistActor")
-    director = models.ManyToManyField(Director, through="WatchlistDirector")
-    prodCompany = models.ManyToManyField(ProdCompany, through="WatchlistCompany")
-    provider = models.ManyToManyField(Provider, through="WatchlistProvider")
-
-    def calculate_average_rating(self):
-        rating_fields = ['IMDB', 'TMDB', 'MC', 'RTCritic', 'RTUser', 'LBXD']
-        rating_score_maps = [10, 10, 1, 1, 1, 20]
-
-        ratings = [getattr(self, field) * rating_score for field, rating_score in zip(rating_fields, rating_score_maps) if getattr(self, field) is not None]
-
-        return round((sum(ratings) / 20) / len(ratings), 2) if ratings else None
+    provider = models.ManyToManyField(Provider)
 
     class Meta:
-        db_table = 'WATCHLIST'  # Set the table name to WATCHLIST
-        unique_together = [['title', 'releaseDate']]  # Enforce uniqueness of title and releaseDate combination
+        db_table = 'WATCHLIST'
+        unique_together = [['title', 'releaseDate']]
         app_label = 'watchlist'
         managed = True
 
