@@ -16,7 +16,7 @@
                 <div class="card-body p-2">
                     <span>
                         <small class="title">
-                            <a class="movie-title" data-bs-toggle="offcanvas" href="#{{randy.TMDB_ID}}" role="button">
+                            <a class="movie-title" data-movie-id="{{randy.TMDB_ID}}" href="#{{randy.TMDB_ID}}" role="button">
                                 <b>{{ randy.title }}</b></a>
                         </small>
                         <small class="smaller-year text-body-secondary">
@@ -34,7 +34,7 @@
                         </small>
                     </div>
                 {% endif %} {% endcomment %}
-                {% include "./offcanvas_movie.html" with movie=randy %}
+                {% comment %} {% include "./offcanvas_movie.html" with movie=randy %} {% endcomment %}
             </div>
         </div>                
     </div>

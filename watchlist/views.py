@@ -39,9 +39,7 @@ def get_movie_info(request):
     title = request.GET.get('id_title')
     year = request.GET.get('id_year')
 
-    load_dotenv()
-    OMDB_KEY = os.getenv("OMDB_KEY")
-    omdb = get_OMDB(OMDB_KEY, title, year)
+    omdb = get_OMDB(title, year)
 
     # Process the API response (replace this with your actual response processing)
     poster_url = omdb["Poster"]
@@ -361,6 +359,10 @@ class DashboardView(View):
             (this_year - 24, this_year),
         ]
 
+        all_list = [i.TMDB_ID for i in Movie.objects.all()]
+        randomNum = random.sample(all_list, 1)
+        random_movie = Movie.objects.get(pk=randomNum[0])
+
         context = {
             'years1': json.dumps(years[0:25]),
             'movie_counts1': json.dumps(movie_counts[0:25]),
@@ -400,6 +402,7 @@ class DashboardView(View):
             'saturday': weekday_lists[5],
             'sunday': weekday_lists[6],
             'random': rand_movies,
+            'random_movie': random_movie,
             'actors': actors,
             'actor_avg': top_15_actors,
             'actor_bad_avg': bot_15_actors,

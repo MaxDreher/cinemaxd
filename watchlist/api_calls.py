@@ -1,7 +1,8 @@
 import requests
 import xml.etree.ElementTree as ET
+from watchlist.config import OMDB_KEY, TMDB_KEY
 
-def get_OMDB(OMDB_KEY, title, year):
+def get_OMDB(title, year):
     omdb_url = f"http://www.omdbapi.com/?apikey={OMDB_KEY}&t={title}&y={year}&r=json"
     omdb_response = requests.get(omdb_url)
 
@@ -11,7 +12,7 @@ def get_OMDB(OMDB_KEY, title, year):
         print(f"Error accessing OMDB API: {omdb_response.status_code}")
         return None
 
-def get_OMDB_from_id(OMDB_KEY, id):
+def get_OMDB_from_id(id):
     omdb_url = f"http://www.omdbapi.com/?apikey={OMDB_KEY}&i={id}&r=json"
     omdb_response = requests.get(omdb_url)
 
@@ -21,7 +22,7 @@ def get_OMDB_from_id(OMDB_KEY, id):
         print(f"Error accessing OMDB API: {omdb_response.status_code}")
         return None
 
-def get_TMDB(TMDB_KEY, omdb):
+def get_TMDB(omdb):
     imdb_id = omdb["imdbID"]
     type = omdb["Type"]
 
@@ -30,10 +31,10 @@ def get_TMDB(TMDB_KEY, omdb):
         tmdb_find_url = f"https://api.themoviedb.org/3/find/{imdb_id}?api_key={TMDB_KEY}&external_source=imdb_id"
         tmdb_find_response = requests.get(tmdb_find_url)
         tmdb_id = tmdb_find_response.json()["tv_results"][0]["id"]
-        tmdb_url = f"https://api.themoviedb.org/3/tv/{tmdb_id}?api_key={TMDB_KEY}&append_to_response=credits,watch/providers"
+        tmdb_url = f"https://api.themoviedb.org/3/tv/{tmdb_id}?api_key={TMDB_KEY}&append_to_response=credits,keywords,videos,watch/providers"
     # MOVIE
     else:
-        tmdb_url = f"https://api.themoviedb.org/3/movie/{imdb_id}?api_key={TMDB_KEY}&append_to_response=credits,watch/providers"
+        tmdb_url = f"https://api.themoviedb.org/3/movie/{imdb_id}?api_key={TMDB_KEY}&append_to_response=credits,keywords,videos,watch/providers"
 
     tmdb_response = requests.get(tmdb_url)
     if tmdb_response.status_code == 200:
@@ -42,13 +43,13 @@ def get_TMDB(TMDB_KEY, omdb):
         print(f"Error accessing TMDB API: {tmdb_response.status_code}")
         return None
 
-def get_TMDB_from_id(TMDB_KEY, id, type):
+def get_TMDB_from_id(id, type):
     # TV SERIES
     if type == "series":
-        tmdb_url = f"https://api.themoviedb.org/3/tv/{id}?api_key={TMDB_KEY}&append_to_response=credits,watch/providers"
+        tmdb_url = f"https://api.themoviedb.org/3/tv/{id}?api_key={TMDB_KEY}&append_to_response=credits,keywords,videos,watch/providers"
     # MOVIE
     else:
-        tmdb_url = f"https://api.themoviedb.org/3/movie/{id}?api_key={TMDB_KEY}&append_to_response=credits,watch/providers"
+        tmdb_url = f"https://api.themoviedb.org/3/movie/{id}?api_key={TMDB_KEY}&append_to_response=credits,keywords,videos,watch/providers"
 
     tmdb_response = requests.get(tmdb_url)
     if tmdb_response.status_code == 200:
@@ -57,7 +58,7 @@ def get_TMDB_from_id(TMDB_KEY, id, type):
         print(f"Error accessing TMDB API: {tmdb_response.status_code}")
         return None
 
-def get_OMDB_xml(OMDB_KEY, title, year):
+def get_OMDB_xml(title, year):
     omdb_xml_url = f"http://www.omdbapi.com/?apikey={OMDB_KEY}&t={title}&y={year}&r=xml&tomatoes=true"
     response = requests.get(omdb_xml_url)
 
@@ -78,7 +79,7 @@ def parse_OMDB_xml(xml_content):
         print(f"Error parsing OMDB XML: {e}")
         return None, None
 
-def get_person_TMDB(TMDB_KEY, tmdb_id):
+def get_person_TMDB(tmdb_id):
     tmdb_url = f"https://api.themoviedb.org/3/person/{tmdb_id}?api_key={TMDB_KEY}&language=en-US"
 
     tmdb_response = requests.get(tmdb_url)
@@ -88,7 +89,7 @@ def get_person_TMDB(TMDB_KEY, tmdb_id):
         print(f"Error accessing TMDB API: {tmdb_response.status_code}")
         return None
 
-def get_company_TMDB(TMDB_KEY, id):
+def get_company_TMDB(id):
     tmdb_find_url = f"https://api.themoviedb.org/3/company/{id}?api_key={TMDB_KEY}"
     tmdb_find_response = requests.get(tmdb_find_url)
 

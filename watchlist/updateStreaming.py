@@ -10,7 +10,7 @@ django.setup()
 
 from watchlist.models import WatchlistMovie, WatchlistProvider, Provider
 from api_calls import get_TMDB_from_id
-from utils import getProviders
+from utils import get_providers
 from dotenv import load_dotenv
 import time
 import concurrent.futures
@@ -18,11 +18,9 @@ import concurrent.futures
 def main():
     def updateStreaming(movie):
         print(f"Updating Streaming for {movie.title} {movie.year}")
-        load_dotenv()
-        TMDB_KEY = os.getenv("TMDB_KEY")
-        tmdb = get_TMDB_from_id(TMDB_KEY, movie.TMDB_ID, movie.type)
+        tmdb = get_TMDB_from_id(movie.TMDB_ID, movie.type)
 
-        providers = getProviders(tmdb)
+        providers = get_providers(tmdb)
         if providers:
             for p in providers:
                 prov = Provider(id=p[0],name=p[1])
@@ -35,6 +33,8 @@ def main():
             None
 
     t1 = time.time()
+    currentProviders = WatchlistProvider.objects.all()
+    currentProviders.delete()
     movies = WatchlistMovie.objects.all()
     with concurrent.futures.ThreadPoolExecutor() as executor:
         executor.map(updateStreaming, movies)

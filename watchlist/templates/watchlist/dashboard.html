@@ -22,36 +22,40 @@
                 <div class="col-md-6 d-flex align-items-stretch">
                     {% comment %} LAST SEEN {% endcomment %}
                     <div class="card shadow">
+                        {% comment %} <img src="{{ newest.bgLink }}" class="card-img" style="opacity: 0.15;"> {% endcomment %}
                         <div class="row g-0">
                             <div class="col-md-4 shadow-lg">
-                                <img src="{{ newest.posterLink }}" class="img-fluid rounded-start" alt="{{ newest.title }} Poster" style="height: 305px; width: 205px">
+                                <img src="{{ newest.posterLink }}" class="img-fluid shadow rounded-start h-100" alt="{{ newest.title }} Poster">
                             </div>
                             <div class="col-md-8 d-flex flex-column">
-                                <div class="card-header section-heading">
+                                {% comment %} <div class="card-header section-heading">
                                     <b><i class="bi bi-film"></i> LAST SEEN</b>
                                     {% if newest.date == date_today %}
                                         &nbsp;<span class="badge bg-secondary">New</span>                        
                                     {% endif %}
-                                </div>    
-                                <div class="card-body">
-                                    <span>
-                                        <p class="card-title">
-                                            <span class="h4 title">
-                                                <a class="movie-title" data-bs-toggle="offcanvas" href="#{{newest.TMDB_ID}}" role="button"><b>{{ newest.title }}</b></a>
-                                                <small class="card-subtitle roboto mb-2 text-body-secondary">{{ newest.year }}</small>    
-                                            </span>
-                                        </p>
-                                        {% include "./offcanvas_movie.html" with movie=newest %}
-                                        <p class="h6 card-subtitle mb-2 text-body-secondary stars">{{ newest.rating|convert_to_stars }}</p>
-                                    </span>
-                                    <p class="card-text"><small class="text-body-secondary">{{ newest.plot }}</small></p>
-                                    {% comment %} {% if newest.tagline %}
-                                        <footer class="blockquote-footer mt-auto">{{ newest.tagline }}</footer>
-                                    {% endif %} {% endcomment %}
+                                </div> {% endcomment %}
+                                <div class="card-body p-0" style="position: relative;">
+                                    <div class="gradient-overlay rounded-end position-absolute top-0 start-0 w-100 ">
+                                        <span class="p-3 position-absolute">
+                                            <span class="text-body-secondary roboto"><i class="bi bi-film"></i>&nbsp;Last Seen</span>
+                                            <p class="card-title">
+                                                <span class="h4 title">
+                                                    <a class="movie-title" data-movie-id="{{newest.TMDB_ID}}" href="#{{newest.TMDB_ID}}" role="button"><b>{{ newest.title }}</b></a>
+                                                    <small class="card-subtitle roboto mb-2 text-body-secondary">{{ newest.year }}</small>    
+                                                </span>
+                                            </p>
+                                            <p class="h6 card-subtitle mb-2 text-body-secondary stars">{{ newest.rating|convert_to_stars }}</p>
+                                            <p class="card-text"><small class="text-body-secondary">{{ newest.plot }}</small></p>
+                                            {% comment %} {% if newest.tagline %}
+                                                <footer class="blockquote-footer mt-auto">{{ newest.tagline }}</footer>
+                                            {% endif %} {% endcomment %}
+                                        </span>
+                                    </div>
+                                    <img src="{{ newest.bgLink }}" class="img-fluid rounded-end bg-image" alt="Background Image" style="object-fit: cover;">
                                 </div>
-                                <div class="card-footer">
+                                {% comment %} <div class="card-footer">
                                     <small class="text-body-secondary">Seen on: {{ newest.date }}</small>
-                                </div>                            
+                                </div>                             {% endcomment %}
                             </div>
                         </div>
                     </div>
@@ -127,10 +131,10 @@
                                                     </div>
                                                     <div class="col-md-8 d-flex flex-column">
                                                         <div class="card-body">
-                                                            <a class="movie-title" data-bs-toggle="offcanvas" href="#{{top_this_week.TMDB_ID}}" role="button">
+                                                            <a class="movie-title" data-movie-id="{{top_this_week.TMDB_ID}}" href="#{{top_this_week.TMDB_ID}}" role="button">
                                                                 <h6 class="card-title title"><b>{{ top_this_week.title }}</b></h6>
                                                             </a>
-                                                            {% include "./offcanvas_movie.html" with movie=top_this_week %}
+                                                            {% comment %} {% include "./offcanvas_movie.html" with movie=top_this_week %} {% endcomment %}
                                                             <ul class="list-inline">
                                                                 <li class="list-inline-item"><small class="card-subtitle text-body-secondary year">{{ top_this_week.year }}</small></li>
                                                                 <li class="list-inline-item"><small class="card-subtitle text-body-secondary stars">{{ top_this_week.rating|convert_to_stars }}</small></li>
@@ -174,10 +178,10 @@
                                                     </div>
                                                     <div class="col-md-8 d-flex flex-column">
                                                         <div class="card-body">
-                                                            <a class="movie-title" data-bs-toggle="offcanvas" href="#{{last_5.TMDB_ID}}" role="button">
+                                                            <a class="movie-title" data-movie-id="{{ last_5.TMDB_ID }}" href="#{{last_5.TMDB_ID}}" role="button">
                                                                 <h6 class="card-title title"><b>{{ last_5.title }}</b></h6>
-                                                            </a>
-                                                            {% include "./offcanvas_movie.html" with movie=last_5 %}
+                                                            </a>                                        
+                                                            {% comment %} {% include "./offcanvas_movie.html" with movie=last_5 %} {% endcomment %}
                                                             <ul class="list-inline">
                                                                 <li class="list-inline-item"><small class="card-subtitle text-body-secondary year">{{ last_5.year }}</small></li>
                                                                 <li class="list-inline-item"><small class="card-subtitle text-body-secondary stars">{{ last_5.rating|convert_to_stars }}</small></li>
@@ -202,10 +206,10 @@
                                                     </div>
                                                     <div class="col-md-8 d-flex flex-column">
                                                         <div class="card-body">
-                                                            <a class="movie-title" data-bs-toggle="offcanvas" href="#{{top_this_month.TMDB_ID}}" role="button">
+                                                            <a class="movie-title" data-movie-id="{{top_this_month.TMDB_ID}}" href="#{{top_this_month.TMDB_ID}}" role="button">
                                                                 <h6 class="card-title title"><b>{{ top_this_month.title }}</b></h6>
                                                             </a>
-                                                            {% include "./offcanvas_movie.html" with movie=top_this_month %}
+                                                            {% comment %} {% include "./offcanvas_movie.html" with movie=top_this_month %} {% endcomment %}
                                                             <ul class="list-inline">
                                                                 <li class="list-inline-item"><small class="card-subtitle text-body-secondary year">{{ top_this_month.year }}</small></li>
                                                                 <li class="list-inline-item"><small class="card-subtitle text-body-secondary stars">{{ top_this_month.rating|convert_to_stars }}</small></li>
@@ -249,10 +253,10 @@
                                                     </div>
                                                     <div class="col-md-8 d-flex flex-column">
                                                         <div class="card-body">
-                                                            <a class="movie-title" data-bs-toggle="offcanvas" href="#{{alltime_month.TMDB_ID}}" role="button">
+                                                            <a class="movie-title" data-movie-id="{{alltime_month.TMDB_ID}}" href="#{{alltime_month.TMDB_ID}}" role="button">
                                                                 <h6 class="card-title title"><b>{{ alltime_month.title }}</b></h6>
                                                             </a>
-                                                            {% include "./offcanvas_movie.html" with movie=alltime_month %}
+                                                            {% comment %} {% include "./offcanvas_movie.html" with movie=alltime_month %} {% endcomment %}
                                                             <ul class="list-inline">
                                                                 <li class="list-inline-item"><small class="card-subtitle text-body-secondary year">{{ alltime_month.year }}</small></li>
                                                                 <li class="list-inline-item"><small class="card-subtitle text-body-secondary stars">{{ alltime_month.rating|convert_to_stars }}</small></li>
@@ -277,10 +281,10 @@
                                                     </div>
                                                     <div class="col-md-8 d-flex flex-column">
                                                         <div class="card-body">
-                                                            <a class="movie-title" data-bs-toggle="offcanvas" href="#{{top_this_year.TMDB_ID}}" role="button">
+                                                            <a class="movie-title" data-movie-id="{{top_this_year.TMDB_ID}}" href="#{{top_this_year.TMDB_ID}}" role="button">
                                                                 <h6 class="card-title title"><b>{{ top_this_year.title }}</b></h6>
                                                             </a>
-                                                            {% include "./offcanvas_movie.html" with movie=top_this_year %}
+                                                            {% comment %} {% include "./offcanvas_movie.html" with movie=top_this_year %} {% endcomment %}
                                                             <ul class="list-inline">
                                                                 <li class="list-inline-item"><small class="card-subtitle text-body-secondary year">{{ top_this_year.year }}</small></li>
                                                                 <li class="list-inline-item"><small class="card-subtitle text-body-secondary stars">{{ top_this_year.rating|convert_to_stars }}</small></li>
@@ -324,10 +328,10 @@
                                                     </div>
                                                     <div class="col-md-8 d-flex flex-column">
                                                         <div class="card-body">
-                                                            <a class="movie-title" data-bs-toggle="offcanvas" href="#{{most_recent_release.TMDB_ID}}" role="button">
+                                                            <a class="movie-title" data-movie-id="{{most_recent_release.TMDB_ID}}" href="#{{most_recent_release.TMDB_ID}}" role="button">
                                                                 <h6 class="card-title title"><b>{{ most_recent_release.title }}</b></h6>
                                                             </a>
-                                                            {% include "./offcanvas_movie.html" with movie=most_recent_release %}
+                                                            {% comment %} {% include "./offcanvas_movie.html" with movie=most_recent_release %} {% endcomment %}
                                                             <ul class="list-inline">
                                                                 <li class="list-inline-item"><small class="card-subtitle text-body-secondary year">{{ most_recent_release.year }}</small></li>
                                                                 <li class="list-inline-item"><small class="card-subtitle text-body-secondary stars">{{ most_recent_release.rating|convert_to_stars }}</small></li>
@@ -630,5 +634,6 @@
         SPACE HERE<br>
         SPACE HERE<br>
     </div>
+    <div id="sidebarContainer"></div>
 </div>
 {% endblock %}

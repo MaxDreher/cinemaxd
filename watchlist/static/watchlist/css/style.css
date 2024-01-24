@@ -7,6 +7,10 @@
 @import url('https://fonts.googleapis.com/css?family=Raleway:300,400,700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Karla&family=Montserrat:wght@800&family=Roboto:wght@100;400;900&display=swap');
 
+.offcanvas {
+    --bs-offcanvas-width: 25%; 
+}
+
 .raleway {
     font-family: 'Raleway', sans-serif !important;
     font-weight: bold;
@@ -78,3 +82,19 @@
     text-align: center;
 }
 
+.gradient-overlay {
+    bottom: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(to bottom, rgb(33,37,41,0.85), rgb(33,37,41,1.0));
+    pointer-events: all; /* Allows clicks to pass through to the button below */
+    position: absolute;
+}
+
+.bg-image {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    object-position: 50% 50%;
+}

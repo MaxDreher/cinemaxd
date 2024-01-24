@@ -1,12 +1,16 @@
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 
-# MANY-TO-MANY MODELS
+# ===================================
+# M2M Models
+# ===================================
+
 class Actor(models.Model):
     TMDB_ID = models.IntegerField(primary_key=True)
     IMDB_ID = models.CharField(max_length=255,null=True)
     name = models.CharField(max_length=255,null=True)
     bio = models.TextField(null=True)
+    gender = models.IntegerField() # New
     birthday = models.DateField(null=True)
     imgLink = models.CharField(max_length=255,null=True)
 
@@ -20,6 +24,7 @@ class Director(models.Model):
     IMDB_ID = models.CharField(max_length=255,null=True)
     name = models.CharField(max_length=255,null=True)
     bio = models.TextField(null=True)
+    gender = models.IntegerField() # New
     birthday = models.DateField(null=True)
     imgLink = models.CharField(max_length=255,null=True)
 
@@ -56,51 +61,83 @@ class Provider(models.Model):
         app_label = 'watchlist'
         managed = True
 
+class Keyword(models.Model):
+    id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=255, unique=True)
+
+    class Meta:
+        db_table = 'KEYWORDS'
+        app_label = 'watchlist'
+        managed = True
+
+class Tag(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        db_table = 'TAGS'
+        app_label = 'watchlist'
+        managed = True
+
 class List(models.Model):
     name = models.CharField(max_length=255)
     movies = models.ManyToManyField('Movie', through='MovieList')
 
-# ------------------------------------------
-# CENTRAL MODELS
+# ===================================
+# Primary Models
+# ===================================
 
 class Movie(models.Model):
     TMDB_ID = models.IntegerField(primary_key=True)
     IMDB_ID = models.CharField(max_length=255)
-    type_choices = [
-        ('movie', 'Movie'),
-        ('series', 'Series'),
-    ]
+
+    type_choices = [('movie', 'Movie'),('series', 'Series'),]
     type = models.CharField(max_length=255, choices=type_choices)
+    status = models.CharField(max_length=255, null=True) # New
+
     title = models.CharField(max_length=255)
     year = models.IntegerField()
-    rating_choices = [
-        (i / 2, str(i / 2)) for i in range(1, 11)
-    ]
+    rating_choices = [(i / 2, str(i / 2)) for i in range(1, 11)]
     rating = models.FloatField(validators=[MinValueValidator(0.5), MaxValueValidator(5)], choices=rating_choices, null=True)
     review = models.TextField(null=True)
     date = models.DateField(null=True)
     datetime_added = models.DateTimeField(null=True)
+
     timesSeen = models.IntegerField()
+    seasonsSeen = models.IntegerField(null=True) # New
+    episodesSeen = models.IntegerField(null=True) # New
+
     posterLink = models.CharField(max_length=255)
+    bgLink = models.CharField(max_length=255, null=True) # New
+    trailerLink = models.CharField(max_length=255, null=True) # New
+
     plot = models.TextField(null=True)
     tagline = models.CharField(max_length=255,null=True)
     releaseDate = models.DateField()
     decade = models.CharField(max_length=255)
     MPA = models.CharField(max_length=255,null=True)
+
     runtime = models.IntegerField(null=True)
     seasons = models.IntegerField(null=True)
     episodes = models.IntegerField(null=True)
+    
     languages = models.CharField(max_length=255,null=True)
     countrys = models.CharField(max_length=255,null=True)
+
     IMDB = models.FloatField(null=True)
     TMDB = models.FloatField(null=True)
     MC = models.IntegerField(null=True)
     RTCritic = models.IntegerField(null=True)
     RTUser = models.IntegerField(null=True)
     LBXD = models.FloatField(null=True)
+
     service = models.TextField(null=True)
     theaters = models.BooleanField(null=True)
+
     genres = models.ManyToManyField(Genre, through="MovieGenre")
+    keywords = models.ManyToManyField(Keyword, through="MovieKeyword")
     cast = models.ManyToManyField(Actor, through="MovieActor")
     director = models.ManyToManyField(Director, through="MovieDirector")
     prodCompany = models.ManyToManyField(ProdCompany, through="MovieCompany")
@@ -125,33 +162,43 @@ class Movie(models.Model):
 class WatchlistMovie(models.Model):
     TMDB_ID = models.IntegerField(primary_key=True)
     IMDB_ID = models.CharField(max_length=255)
-    type_choices = [
-        ('movie', 'Movie'),
-        ('series', 'Series'),
-    ]
+
+    type_choices = [('movie', 'Movie'),('series', 'Series'),]
     type = models.CharField(max_length=255, choices=type_choices)
+    status = models.CharField(max_length=255, null=True) # New
+
     title = models.CharField(max_length=255)
     year = models.IntegerField()
     date = models.DateField(null=True)
     reason = models.TextField(null=True)
+
     posterLink = models.CharField(max_length=255)
+    bgLink = models.CharField(max_length=255, null=True) # New
+    trailerLink = models.CharField(max_length=255, null=True) # New
+
     plot = models.TextField(null=True)
     tagline = models.CharField(max_length=255,null=True)
     releaseDate = models.DateField()
     decade = models.CharField(max_length=255)
     MPA = models.CharField(max_length=255,null=True)
+
     runtime = models.IntegerField(null=True)
     seasons = models.IntegerField(null=True)
     episodes = models.IntegerField(null=True)
+
     languages = models.CharField(max_length=255,null=True)
     countrys = models.CharField(max_length=255,null=True)
+
     IMDB = models.FloatField(null=True)
     TMDB = models.FloatField(null=True)
     MC = models.IntegerField(null=True)
     RTCritic = models.IntegerField(null=True)
     RTUser = models.IntegerField(null=True)
     LBXD = models.FloatField(null=True)
+
+    tags = models.ManyToManyField(Tag, through="WatchlistTag")
     genres = models.ManyToManyField(Genre, through="WatchlistGenre")
+    keywords = models.ManyToManyField(Keyword, through="WatchlistKeyword")
     cast = models.ManyToManyField(Actor, through="WatchlistActor")
     director = models.ManyToManyField(Director, through="WatchlistDirector")
     prodCompany = models.ManyToManyField(ProdCompany, through="WatchlistCompany")
@@ -171,15 +218,23 @@ class WatchlistMovie(models.Model):
         app_label = 'watchlist'
         managed = True
 
-# ------------------------------------------
-# INTERMITTENT MODELS
-
-# MOVIE
+# ===================================
+# Intermediary Models
+# ===================================
+        
 class MovieGenre(models.Model):
     movie = models.ForeignKey('Movie', on_delete=models.CASCADE)
     genre = models.ForeignKey(Genre, on_delete=models.CASCADE)
     class Meta:
         db_table = 'MOVIE_GENRE'  # Set the table name to WATCHLIST
+        app_label = 'watchlist'
+        managed = True
+
+class MovieKeyword(models.Model):
+    movie = models.ForeignKey('Movie', on_delete=models.CASCADE)
+    keyword = models.ForeignKey(Keyword, on_delete=models.CASCADE)
+    class Meta:
+        db_table = 'MOVIE_KEYWORD'  # Set the table name to WATCHLIST
         app_label = 'watchlist'
         managed = True
 
@@ -216,13 +271,27 @@ class MovieList(models.Model):
     class Meta:
         ordering = ['order']
 
+class WatchlistTag(models.Model):
+    movie = models.ForeignKey('WatchlistMovie', on_delete=models.CASCADE)
+    tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
+    class Meta:
+        db_table = 'WATCHLIST_TAG'  # Set the table name to WATCHLIST
+        app_label = 'watchlist'
+        managed = True
 
-# WATCHLISTMOVIE
 class WatchlistGenre(models.Model):
     movie = models.ForeignKey('WatchlistMovie', on_delete=models.CASCADE)
     genre = models.ForeignKey(Genre, on_delete=models.CASCADE)
     class Meta:
         db_table = 'WATCHLIST_GENRE'  # Set the table name to WATCHLIST
+        app_label = 'watchlist'
+        managed = True
+
+class WatchlistKeyword(models.Model):
+    movie = models.ForeignKey('WatchlistMovie', on_delete=models.CASCADE)
+    keyword = models.ForeignKey(Keyword, on_delete=models.CASCADE)
+    class Meta:
+        db_table = 'WATCHLIST_KEYWORD'  # Set the table name to WATCHLIST
         app_label = 'watchlist'
         managed = True
 

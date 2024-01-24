@@ -16,24 +16,58 @@ from slugify import slugify
 from datetime import datetime
 from watchlist.models import Movie, Actor, MovieActor, Director, Genre, ProdCompany, Provider, WatchlistMovie, WatchlistActor
 from watchlist.api_calls import *  
+from watchlist.utils import get_trailer
 import concurrent.futures
 from django.db import transaction
 from functools import partial
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponseRedirect
 from api_calls import get_TMDB_from_id
-from utils import make_api_calls_and_update_database, make_api_calls_and_update_watchlist, make_api_calls_and_update_database_from_id, getCast, process_actor
+# from utils import make_api_calls_and_update_database, make_api_calls_and_update_watchlist, make_api_calls_and_update_database_from_id, getCast, process_actor
 
 # make_api_calls_and_update_database("Disney Channel’s Theme A History Mystery", 2022, 5, "Went out of my way to find the proper documentation for this YouTube documentary done by Kevin Perjurer of Defunctland. One of the most artistic and well-done documentaries I've ever seen, and a beautiful conclusion in every way. Such a masterful way of cherishing and promoting art that deserves to be remembered.", None)
 
 from watchlist.models import List, MovieList, Movie
-t1 = time.time()
-load_dotenv()
-TMDB_KEY = os.getenv("TMDB_KEY")
 
-for item in [226979, 26914]:
-    dele = Movie.objects.get(pk=item)
+for item in [226979]:
+    dele = WatchlistMovie.objects.get(pk=item)
     dele.delete()
+    
+def correct_embed():
+    for mov in Movie.objects.all():
+        if "/watch/" in mov.trailerLink:
+            new_url = mov.trailerLink.replace("/watch/", "/embed/")
+            print(new_url)
+            mov.trailerLink = new_url
+            mov.save()
+        else:
+            print("The URL format is not as expected.")
+
+def updateWatchlist():
+    t1 = time.time()
+    for mov in WatchlistMovie.objects.all():
+        tmdb = get_TMDB_from_id(mov.TMDB_ID, mov.type)
+        omdb = get_OMDB_from_id(mov.IMDB_ID)
+        mov.posterLink = omdb['Poster']
+        print(f"{mov.title} {mov.year}")
+        mov.status = tmdb['status']
+        mov.bgLink = f"https://image.tmdb.org/t/p/original{tmdb['backdrop_path']}"
+        mov.trailerLink = f"https://youtube.com/embed/{get_trailer(tmdb)}"
+        mov.save()
+    print(f"Completed Watchlog update in {time.time()-t1} seconds")
+
+def updateWatchlog():
+    t1 = time.time()
+    for mov in Movie.objects.all():
+        tmdb = get_TMDB_from_id(mov.TMDB_ID, mov.type)
+        # omdb = get_OMDB(mov.IMDB_ID)
+        # mov.posterLink = omdb['Poster']
+        print(f"{mov.title} {mov.year}")
+        mov.status = tmdb['status']
+        mov.bgLink = f"https://image.tmdb.org/t/p/original{tmdb['backdrop_path']}"
+        mov.trailerLink = f"https://youtube.com/embed/{get_trailer(tmdb)}"
+        mov.save()
+    print(f"Completed Watchlog update in {time.time()-t1} seconds")
 
 def delete_movie_actors_with_null_role():
     movie_actors_to_delete = MovieActor.objects.filter(role__isnull=True)

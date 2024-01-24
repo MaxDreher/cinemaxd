@@ -191,6 +191,28 @@
             "key": 1705477907670,
             "children": [
               {
+                "key": 1705998261360,
+                "children": [],
+                "todo": {
+                  "content": "Add gender differentiator on Actors/Directors",
+                  "id": 1705998261360,
+                  "level": "default",
+                  "done": false,
+                  "start": 1705998261360
+                }
+              },
+              {
+                "key": 1705998244384,
+                "children": [],
+                "todo": {
+                  "content": "Add an element with a suggestion based on someone's bday (actor/director)",
+                  "id": 1705998244384,
+                  "level": "default",
+                  "done": false,
+                  "start": 1705998244385
+                }
+              },
+              {
                 "key": 1705486009953,
                 "children": [],
                 "todo": {
@@ -685,7 +707,8 @@
       1705991525805,
       1705991531930,
       1705991549448,
-      1705991919354
+      1705991919354,
+      1705477178694
     ],
     "schema": "https://github.com/Saber2pr/vsc-ext-todolist/blob/master/src/api/type.ts#L3",
     "add_mode": "top",
@@ -706,6 +729,6 @@
     "showEndTime": false,
     "simpleMode": false,
     "lang": "en",
-    "version": "1705992712034"
+    "version": "1705998281340"
   }
 }

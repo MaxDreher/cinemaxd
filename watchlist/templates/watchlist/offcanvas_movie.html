@@ -2,6 +2,10 @@
 {% load static %}
 
 <div class="offcanvas offcanvas-start" data-bs-scroll="true" tabindex="-1" id="{{ movie.TMDB_ID }}">
+    {% comment %} <div class="offcanvas-header position-relative">
+        <img src="{{ movie.bgLink }}" alt="Image" class="img-fluid offcanvas-image">
+        <div class="gradient-overlay"></div>
+    </div> {% endcomment %}
     <div class="offcanvas-body">
         <div class="row">
             <div class="float-end">
@@ -111,6 +115,12 @@
                     <b class="small-number-card">CRITICAL AVG.</b>
                 </div>
             </div>
+        </div>
+        <hr>
+        <div class="row g-0">
+            {% comment %} <iframe src="{{ movie.trailerLink }}" allow="fullscreen;">
+            </iframe> {% endcomment %}
+            <iframe id="youtubePlayer" class="video" width="384" height="216" src="{{ movie.trailerLink }}" allowfullscreen="allowfullscreen"></iframe>
         </div>
         <hr>
         {% comment %} SYNOPSIS {% endcomment %}
