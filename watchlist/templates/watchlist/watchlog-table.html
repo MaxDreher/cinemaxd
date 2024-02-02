@@ -24,7 +24,6 @@
             <th class="centered-col"><img src="{% static 'watchlist/images/rtuser_logo.png' %}" height="20px" width="20px"></img></th>
             <th class="centered-col"><img src="{% static 'watchlist/images/lbxd_logo.png' %}" height="20px" width="20px"></img></th>
             <th>Avg.</th>
-            <th>Diff.</th>
             <th>Cast</th>
             <th>Director</th>
             <th>Genres</th>
@@ -63,8 +62,7 @@
                 <td>{{ instance.RTCritic|default:""}}</td>
                 <td>{{ instance.RTUser|default:""}}</td>
                 <td>{{ instance.LBXD|default:""}}</td>
-                <td>{{ instance.calculate_average_rating}}</td>
-                <td>{{ instance.calculate_difference|default:""}}</td>
+                <td>{{ instance.avg_critical_rating }}</td>
                 <td>{% for actor in instance.cast.all %}{{actor.name|striptags}}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
                 <td>{% for director in instance.director.all %}{{director.name|striptags}}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
                 <td>{% for genre in instance.genres.all %}{{genre.name|striptags}}{% if not forloop.last %}, {% endif %}{% endfor %}</td>

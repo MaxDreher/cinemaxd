@@ -54,11 +54,6 @@
     text-transform: uppercase;
 }
 
-.portrait {
-    border: 1px solid #202224;
-    border-radius: 24px;
-}
-
 .big-number-card {
     font-family: 'Montserrat';
     text-align: center;
@@ -148,14 +143,20 @@
     font-size: 10pt;
     text-decoration: bold;
 }
+/* .movie-year {
+    font-family: 'Roboto' !important
+} */
 
-#promo {
-    background-image: 
-      /* top image*/
-      linear-gradient(to bottom, rgba(0, 0, 0, 1) 20%, rgba(100, 51, 51, 0.6) 86%, rgba(51, 51, 51, 0.8) 100%),
-      /*bottom image*/
-      url(http://lorempixel.com/image_output/abstract-q-c-500-500-3.jpg);
-    height: 500px;
-    color: white;
-  }
-  
+.week-button {
+    top: 0;
+    width: 5%;
+    height: 100%;
+}
+
+.data-tabs {
+    font-family: 'Raleway' !important;
+}
+
+#randomButton:hover {
+    filter: brightness(70%);
+}

@@ -23,4 +23,7 @@ def parse_year(value):
         return int(value)
     except ValueError:
         return value
-
+    
+@register.filter
+def split_string(value, delimiter):
+    return value.split(delimiter)

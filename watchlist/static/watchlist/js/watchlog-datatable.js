@@ -21,7 +21,7 @@ $(document).ready(function() {
                 sortable: false
             },
             {
-                targets: [17,18,19,20,21,22],
+                targets: [16,17,18,19,20,21],
                 visible: false,
                 searchable: true
             },
@@ -42,7 +42,7 @@ $(document).ready(function() {
                         order: [[1, "desc"]]
                     }
                 },
-                targets: [17,18,19,20,21],
+                targets: [16,17,18,19,20],
                 render: function (data, type, row) {
                     if (type === 'sp') {
                         return data.split(', ')
@@ -73,18 +73,18 @@ $(document).ready(function() {
                         {
                             label: 'Seen in Theaters',
                             value: function(rowData, rowIdx) {
-                                return rowData[22] == "True";
+                                return rowData[21] == "True";
                             }
                         },
                         {
                             label: 'Not Seen in Theaters',
                             value: function(rowData, rowIdx) {
-                                return rowData[22] != "True";
+                                return rowData[21] != "True";
                             }
                         },
                     ]
                 },
-                targets: [22]
+                targets: [21]
             }
 
         ],

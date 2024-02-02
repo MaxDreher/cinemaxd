@@ -1,4 +1,3 @@
-console.log("script loaded");
 $(function () {
     $("#sortable").sortable({
         update: function (event, ui) {
@@ -27,3 +26,26 @@ $(function () {
         },
     });
 });
+
+$(document).ready(function() {
+    // Use event delegation for dynamically added elements
+    $(document).on('click', '.movie-title', function(e) {
+        // e.preventDefault();
+  
+        var movieId = $(this).data('movie-id');
+        
+        $.ajax({
+            url: '/sidebar_ajax/' + movieId + '/',
+            method: 'GET',
+            success: function(response) {
+                // Append the response to the sidebar container
+                $('#sidebarContainer').html(response);
+                var myOffcanvas = new bootstrap.Offcanvas(document.getElementById(movieId));
+                myOffcanvas.toggle();
+            },
+            error: function(error) {
+                console.error('Error fetching sidebar content:', error);
+            }
+        });
+    });
+  });

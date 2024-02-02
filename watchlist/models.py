@@ -132,6 +132,7 @@ class Movie(models.Model):
     RTCritic = models.IntegerField(null=True)
     RTUser = models.IntegerField(null=True)
     LBXD = models.FloatField(null=True)
+    avg_critical_rating  = models.FloatField(null=True)
 
     service = models.TextField(null=True)
     theaters = models.BooleanField(null=True)
@@ -142,16 +143,8 @@ class Movie(models.Model):
     director = models.ManyToManyField(Director, through="MovieDirector")
     prodCompany = models.ManyToManyField(ProdCompany, through="MovieCompany")
 
-    def calculate_average_rating(self):
-        rating_fields = ['IMDB', 'TMDB', 'MC', 'RTCritic', 'RTUser', 'LBXD']
-        rating_score_maps = [10, 10, 1, 1, 1, 20]
-
-        ratings = [getattr(self, field) * rating_score for field, rating_score in zip(rating_fields, rating_score_maps) if getattr(self, field) is not None]
-
-        return round((sum(ratings) / 20) / len(ratings), 2) if ratings else None
-
-    def calculate_difference(self):
-        return round((self.calculate_average_rating() - getattr(self, 'rating')),2) if (getattr(self, 'rating')) else None
+    elo = models.FloatField(null=True)
+    eloMatches = models.IntegerField()
         
     class Meta:
         db_table = 'WATCHLOG'  # Set the table name to WATCHLIST
@@ -195,6 +188,7 @@ class WatchlistMovie(models.Model):
     RTCritic = models.IntegerField(null=True)
     RTUser = models.IntegerField(null=True)
     LBXD = models.FloatField(null=True)
+    avg_critical_rating  = models.FloatField(null=True)
 
     tags = models.ManyToManyField(Tag, through="WatchlistTag")
     genres = models.ManyToManyField(Genre, through="WatchlistGenre")
@@ -203,14 +197,6 @@ class WatchlistMovie(models.Model):
     director = models.ManyToManyField(Director, through="WatchlistDirector")
     prodCompany = models.ManyToManyField(ProdCompany, through="WatchlistCompany")
     provider = models.ManyToManyField(Provider, through="WatchlistProvider")
-
-    def calculate_average_rating(self):
-        rating_fields = ['IMDB', 'TMDB', 'MC', 'RTCritic', 'RTUser', 'LBXD']
-        rating_score_maps = [10, 10, 1, 1, 1, 20]
-
-        ratings = [getattr(self, field) * rating_score for field, rating_score in zip(rating_fields, rating_score_maps) if getattr(self, field) is not None]
-
-        return round((sum(ratings) / 20) / len(ratings), 2) if ratings else None
 
     class Meta:
         db_table = 'WATCHLIST'  # Set the table name to WATCHLIST

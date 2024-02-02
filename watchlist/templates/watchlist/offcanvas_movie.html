@@ -1,76 +1,201 @@
 {% load custom_filters %}
 {% load static %}
+<script src="{% static 'watchlist/js/offcanvas.js' %}"></script>
 
 <div class="offcanvas offcanvas-start" data-bs-scroll="true" tabindex="-1" id="{{ movie.TMDB_ID }}">
     {% comment %} <div class="offcanvas-header position-relative">
         <img src="{{ movie.bgLink }}" alt="Image" class="img-fluid offcanvas-image">
         <div class="gradient-overlay"></div>
     </div> {% endcomment %}
-    <div class="offcanvas-body">
-        <div class="row">
-            <div class="float-end">
-                <button type="button" class="btn-close mb-3 float-end" data-bs-dismiss="offcanvas"></button>
-            </div>
-        </div>
-        <div class="card border-0">
-            <div class="row g-3">
-                <div class="col-md-6 d-flex">
-                    <img src="{{ movie.posterLink }}" class="img-fluid rounded shadow" alt="{{ movie.title }} Poster">
-                </div>
-                <div class="col-md-6 d-flex flex-column">
-                    <div class="row">
-                        <span>
-                            <span class="h4 title">
-                                <b>{{ movie.title }}</b>
-                                <small class="card-subtitle roboto text-body-secondary">{{ movie.year }}</small>    
-                            </span><br>
-                            <span>
-                                {% if movie.rating != None %}
-                                    <p class="h6 badge text-bg-secondary card-subtitle mt-1">{{ movie.rating|convert_to_stars }}</p>
-                                {% endif %}
-                                <p class="h6 badge text-bg-secondary card-subtitle mt-1">{{ movie.runtime }} mins</p>
-                            </span>
-                        </span>
-                    </div>
-                    <div class="row p-2">
-                        <table class="table table-striped">
-                            <tbody>
-                                <tr>
-                                    <td>
-                                        <small class="text-body-secondary">
-                                            Released: {{ movie.releaseDate }}
-                                        </small>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <small class="text-body-secondary">
-                                            {% if movie.timesSeen != None %}
-                                                Seen on: {{ movie.date }}
-                                            {% else %}
-                                                Added: {{ movie.date }}
-                                            {% endif %}
-                                        </small>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="row g-1">
-                        {% if movie.provider.all %}
-                            {% for service in movie.provider.all %}
-                                <div class="col-xl-3">
-                                    <img class="poster" src="/static/watchlist/images/{{ service.name|striptags }}.png" height="100%" width="100%">
+    <div class="offcanvas-body p-0">
+        <div class="card border-0 mx-0">
+            <div class="sidebar-gradient-overlay position-absolute top-0 start-0 w-100 ">
+                <div class="card-body p-0">
+                    <div class="row g-0">
+                        <div class="col-md-5">
+                            <div class="pt-3 pb-0 ps-3 pe-0">
+                                <img src="{{ movie.posterLink }}" class="img-fluid rounded-3 shadow-lg" alt="{{ movie.title }} Poster" height="180px">
+                            </div>
+                        </div>
+                        <div class="col-md-7 d-flex flex-column">
+                            <div class="card-body p-0">
+                                <div class="z-2 position-absolute top-0 end-0">
+                                    <button type="button" class="btn-close p-3" data-bs-dismiss="offcanvas"></button>
                                 </div>
-                            {% endfor %}
-                        {% endif %}
+                                <span class="p-3 position-absolute">
+                                    <p class="card-title pe-3 mb-0">
+                                        <span class="h4 title">
+                                            <a class="movie-title" data-movie-id="{{movie.TMDB_ID}}" href="#{{movie.TMDB_ID}}" role="button"><b>{{ movie.title }}</b></a>
+                                            <span class="card-subtitle text-body-secondary roboto">({{ movie.year }})</span>
+                                        </span>
+                                    </p>
+                                    {% if movie.tagline %}
+                                        <small class="text-body-tertiary d-block mb-1"><i>{{ movie.tagline }}</i></small>
+                                    {% endif %}
+                                    {% if movie.timesSeen %}
+                                        <p class="h6 badge rounded-pill text-bg-green"><i class="bi bi-check-lg"></i></p>
+                                    {% else %}
+                                        {% if movie.provider.first %}
+                                            {% for provider in movie.provider.all %}
+                                                <img class="align-top rounded-4 shadow-lg" src="/static/watchlist/images/{{ provider.name|striptags }}.png" height="24px">
+                                            {% endfor %}
+                                        {% else %}
+                                            <p class="h6 badge rounded-pill text-bg-danger"><i class="bi bi-x-lg"></i></p>
+                                        {% endif %}
+                                    {% endif %}
+                                    <p class="h6 badge rounded-pill text-bg-secondary">{{ movie.rating|convert_to_stars }}</p>
+                                    {% if movie.runtime %}
+                                        <p class="h6 badge rounded-pill text-bg-secondary">{{ movie.runtime }} mins</p>
+                                    {% else %}
+                                        <p class="h6 badge rounded-pill text-bg-secondary">{{ movie.episodes }} episodes</p>
+                                    {% endif %}
+                                    <hr class="my-1">
+                                    <div class="row">
+                                        <div class="col-sm-6 pe-0">
+                                            <small class="text-body-tertiary roboto">    
+                                                <i class="bi bi-broadcast-pin"></i> 
+                                                {{ movie.releaseDate }}
+                                            </small>
+                                            {% if movie.date %}
+                                                <br class="my-1">
+                                                <small class="text-body-tertiary roboto">    
+                                                    <i class="bi bi-film"></i>  
+                                                    {{ movie.date }}
+                                                </small>
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-sm-6 ps-0 text-end">
+                                            <a href="https://www.themoviedb.org/movie/{{ movie.TMDB_ID }}" class="small text-body-tertiary roboto" target="blank">
+                                                <i class="bi bi-link-45deg"></i>TMDB
+                                            </a>
+                                            <br class="my-1">
+                                            <a href="https://www.imdb.com/title/{{ movie.IMDB_ID }}" class="small text-body-tertiary roboto" target="blank">
+                                                <i class="bi bi-link-45deg"></i>IMDB
+                                            </a>
+                                        </div>
+                                    </div>
+                                </span>
+                            </div>
+                        </div>
                     </div>
+                    {% comment %} poster form {% endcomment %}
+                    <div id="customPosterForm" class="my-1 mx-3 text-body-tertiary">
+                        <a class="collapsed p-0" type="button" data-bs-toggle="collapse" data-bs-target="#posterCollapse" aria-expanded="false" aria-controls="posterCollapse" role="button" id="collapseButton">
+                            <small class="text-bg-tertiary">
+                                <span id="collapseIcon" class="bi bi-plus-circle"></span> <!-- Initial icon: Plus sign -->
+                                Custom Poster Upload
+                            </small>
+                        </a>
+                        <div class="collapse mt-1" id="posterCollapse" style="">
+                            <form id="customPosterUploadForm">
+                                <input type="hidden" name="movieId" value="{{ movie.TMDB_ID }}">
+                                <div class="input-group">
+                                    <input type="text" class="form-control px-1 py-1 p-0" id="posterLink" placeholder="https://image.tmdb.org/t/p/original/..." aria-label="https://image.tmdb.org/t/p/original/..." aria-describedby="button-addon2">
+                                    <button class="btn btn-outline-secondary px-1 py-1 p-0" type="submit" id="button-addon2">Submit</button>
+                                </div>
+                                <div class="text-body-tertiary form-text" id="basic-addon4">Find posters <a href="https://www.themoviedb.org/movie/{{ movie.TMDB_ID }}/images/posters" target="blank">here</a></div>
+                            </form>
+                        </div>
+                    </div>
+                    <hr class="mx-3 my-1">
+                    {% comment %} ratings {% endcomment %}
+                    <div class="row g-0 my-2 px-4">
+                        <small class="text-body-tertiary roboto">    
+                            <i class="bi bi-star-fill"></i>
+                            Ratings
+                        </small>
+                        <div class="col-md-8 mt-1">
+                            {% if movie.IMDB != None %}
+                                <span class="mb-1 me-1 badge rounded-pill roboto text-bg-dg">
+                                    <img class="rounded-5" src="{% static 'watchlist/images/imdb_logo.png' %}" alt="IMDB" height="20px" width="20px"></img>
+                                    <small>&nbsp;{{ movie.IMDB}}</small>
+                                </span>
+                            {% endif %}
+                            {% if movie.TMDB != None %}
+                                <span class="me-1 badge rounded-pill roboto text-bg-dg">
+                                    <img class="rounded-5" src="{% static 'watchlist/images/tmdb_logo.png' %}" height="20px" width="20px"></img>
+                                    <small>&nbsp;{{ movie.TMDB}}</small>
+                                </span>
+                            {% endif %}
+                            {% if movie.MC != None %}
+                                <span class="me-1 badge rounded-pill roboto text-bg-dg">
+                                    <img src="{% static 'watchlist/images/mc_logo.png' %}" height="20px" width="20px"></img>
+                                    <small>&nbsp;{{ movie.MC}}</small>
+                                </span>
+                            {% endif %}
+                            {% if movie.RTCritic != None %}
+                                <span class="me-1 badge rounded-pill roboto text-bg-dg">
+                                    <img src="{% static 'watchlist/images/rtcritic_logo.png' %}" height="20px" width="20px"></img>
+                                    <small>&nbsp;{{ movie.RTCritic}}%</small>
+                                </span>
+                            {% endif %}
+                            {% if movie.RTUser != None %}
+                                <span class="me-1 badge rounded-pill roboto text-bg-dg">
+                                    <img src="{% static 'watchlist/images/rtuser_logo.png' %}" height="20px" width="20px"></img>
+                                    <small>&nbsp;{{ movie.RTUser}}%</small>
+                                </span>
+                            {% endif %}
+                            {% if movie.LBXD != None %}
+                                <span class="me-1 badge rounded-pill roboto text-bg-dg">
+                                    <img src="{% static 'watchlist/images/lbxd_logo.png' %}" height="20px" width="20px"></img>
+                                    <small>&nbsp;{{ movie.LBXD}}</small>
+                                </span>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4 h-100">
+                            <div class="text-center d-flex flex-column justify-content-center">
+                                <span class="align-middle">
+                                    <b class="h4 big-number-card">
+                                        <i class="bi bi-star-fill"></i>
+                                        {{ movie.avg_critical_rating }}
+                                    </b>
+                                    <small class="h5 fw-semibold text-body-tertiary">avg.</small>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="mx-3 my-1">
+                    {% comment %} trailer {% endcomment %}
+                    <div class="row g-0 my-2 px-4">
+                        <small class="text-body-tertiary roboto">    
+                            <i class="bi bi-youtube"></i>
+                            Trailer
+                        </small>
+                        <div class="ratio ratio-16x9 mt-1">
+                            <iframe id="youtubePlayer" class="video rounded-4" width="384" height="100%" src="{{ movie.trailerLink }}" allowfullscreen="allowfullscreen"></iframe>
+                        </div>
+                    </div>
+                    <hr class="mx-3 my-1">
+                    {% comment %} synopsis {% endcomment %}
+                    <div class="row g-0 my-2 px-4">
+                        <small class="text-body-tertiary roboto">    
+                            <i class="bi bi-body-text"></i>
+                            Synopsis
+                        </small>
+                        <small class="text-body-secondary mt-1">
+                            {{ movie.plot }}
+                        </small>
+                    </div>
+                    <hr class="mx-3 my-1">
+                    {% comment %} review {% endcomment %}
+                    {% if movie.review != "" and movie.review != None %}
+                        <div class="row g-0 my-2 px-4">
+                            <small class="text-body-tertiary roboto">    
+                                <i class="bi bi-pencil-square"></i>
+                                Review
+                            </small>
+                            <small class="text-body-secondary mt-1">
+                                {{ movie.review }}
+                            </small>
+                        </div>
+                        <hr class="mx-3 my-1">
+                    {% endif %}
                 </div>
             </div>
+            <img src="{{ movie.bgLink }}" class="img-fluid sidebar-bg-image mb-3" alt="Background Image">
         </div>
-        <hr>
         {% comment %} RATINGS {% endcomment %}
-        <div class="row g-0">
+        {% comment %} <div class="row g-0">
             <div class="col-md-7">
                 {% if movie.IMDB != None %}
                     <span class="mb-1 me-1 badge rounded-pill roboto imdb">
@@ -116,42 +241,8 @@
                 </div>
             </div>
         </div>
-        <hr>
-        <div class="row g-0">
-            {% comment %} <iframe src="{{ movie.trailerLink }}" allow="fullscreen;">
-            </iframe> {% endcomment %}
-            <iframe id="youtubePlayer" class="video" width="384" height="216" src="{{ movie.trailerLink }}" allowfullscreen="allowfullscreen"></iframe>
-        </div>
-        <hr>
-        {% comment %} SYNOPSIS {% endcomment %}
-        <div class="row mb-0">
-            <span class="h5 section-heading">
-                <b class="section-title">SYNOPSIS</b>
-            </span>
-            <div>
-                {{ movie.plot }}
-            </div>
-            {% comment %} <span class="mx-0 mt-0 mb-0">
-                {% if movie.tagline %}
-                    <small class="blockquote-footer mt-auto">{{ movie.tagline }}</small>
-                {% endif %}
-            </span>     {% endcomment %}
-        </div>
-        {% comment %} REVIEW {% endcomment %}
-        {% if movie.review != "" and movie.review != None %}
-            <hr>
-            <div class="row">
-                <span class="h5 section-heading">
-                    <b>REVIEW</b>
-                </span>
-                <div>
-                    {{ movie.review }}
-                </div>
-            </div>
-        {% endif %}
-        <hr>
         {% comment %} DIRECTOR {% endcomment %}
-        <div class="row mb-3">
+        {% comment %} <div class="row mb-3 p-3">
             <span class="h5 section-heading">
                 <b>DIRECTOR</b>
             </span>
@@ -194,9 +285,9 @@
                 {% endfor %}
             </div>
         </div>
-        <hr>
+        <hr> {% endcomment %}
         {% comment %} CAST {% endcomment %}
-        <div class="row mb-3">
+        {% comment %} <div class="row mb-3 p-3">
             <span class="h5 section-heading">
                 <b>CAST</b>
             </span>
@@ -282,6 +373,6 @@
                     {% endfor %}
                 {% endif %}
             </div>
-        </div>
+        </div> {% endcomment %}
     </div>
 </div>                                      

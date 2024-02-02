@@ -54,7 +54,7 @@ $(document).ready(function() {
           data: $(this).serialize(),
           success: function(response) {
             console.log(response)
-              $('#randomSelections').html(response);
+              $('#randomElements').html(response);
           },
           error: function(error) {
               console.error('Error:', error);

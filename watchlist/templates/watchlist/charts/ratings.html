@@ -1,0 +1,152 @@
+<style>
+    #ratingsChart {
+        height:100%;
+        width:100%;
+    }
+</style>
+<!-- Chart code -->
+<script>
+    am5.ready(function() {
+    
+    // Create root element
+    // https://www.amcharts.com/docs/v5/getting-started/#Root_element
+    var root = am5.Root.new("ratingsChart");
+    root._logo.dispose(); // TESTING USE ONLY, REMOVE BEFORE PUBLICATION
+
+    // Set themes
+    // https://www.amcharts.com/docs/v5/concepts/themes/
+    root.setThemes([
+      am5themes_Animated.new(root)
+    ]);
+    
+    // Create chart
+    // https://www.amcharts.com/docs/v5/charts/xy-chart/
+    var chart = root.container.children.push(am5xy.XYChart.new(root, {
+      panX: false,
+      panY: false,
+      paddingLeft:0,
+      paddingRight:0,
+      paddingTop:0,
+      paddingBottom:0
+    }));
+    
+    // Add cursor
+    // https://www.amcharts.com/docs/v5/charts/xy-chart/cursor/
+    var cursor = chart.set("cursor", am5xy.XYCursor.new(root, {}));
+    cursor.lineY.set("visible", false);
+    cursor.lineX.set("visible", false);
+    
+    
+    // Create axes
+    // https://www.amcharts.com/docs/v5/charts/xy-chart/axes/
+    var xRenderer = am5xy.AxisRendererX.new(root, { 
+      inversed: true
+    });
+    xRenderer.grid.template.set("visible", false);
+    xRenderer.labels.template.setAll({
+        inside: true
+    });
+    xRenderer.labels.template.set('visible', false);
+        
+    var xAxis = chart.xAxes.push(am5xy.CategoryAxis.new(root, {
+      categoryField: "rating",
+      renderer: xRenderer,
+      tooltip: am5.Tooltip.new(root, {})
+    }));
+    
+    var yRenderer = am5xy.AxisRendererY.new(root, {
+        minGridDistance: 5,
+        strokeOpacity: 0.0
+    })
+    yRenderer.grid.template.set("visible", false);
+    yRenderer.labels.template.setAll({
+        inside: true
+    });
+    yRenderer.labels.template.set('visible', false);
+
+    var yAxis = chart.yAxes.push(am5xy.ValueAxis.new(root, {
+      minDeviation: 2,
+      renderer: yRenderer
+    }));
+    
+    // Create series
+    // https://www.amcharts.com/docs/v5/charts/xy-chart/series/
+    var series = chart.series.push(am5xy.ColumnSeries.new(root, {
+      name: "Series 1",
+      xAxis: xAxis,
+      yAxis: yAxis,
+      valueYField: "value",
+      categoryXField: "rating",
+    }));
+    
+    chart.get("colors").set("colors", [
+        am5.color('#15d17c'),
+        am5.color('#00c78d'),
+        am5.color('#00bd99'),
+        am5.color('#00b1a1'),
+        am5.color('#00a6a4'),
+        am5.color('#019aa2'),
+        am5.color('#358d9b'),
+        am5.color('#4c8190'),
+        am5.color('#597581'),
+        am5.color('#616a70'),
+    ]);
+
+    series.columns.template.setAll({ 
+        width: am5.percent(90),
+        cornerRadiusTL: 14, 
+        cornerRadiusTR: 14, 
+        cornerRadiusBL: 14, 
+        cornerRadiusBR: 14, 
+        strokeOpacity: 0 
+    });
+
+    series.columns.template.states.create("hover", {
+        shadowOpacity: 1,
+        shadowBlur: 10,
+    });
+
+    var tooltip = am5.Tooltip.new(root, {
+        getFillFromSprite: false,
+        autoTextColor: false,
+        paddingLeft:5,
+        paddingRight:5,
+        paddingTop:5,
+        paddingBottom:5,  
+        labelText: "[bold]★ {rating}[/]\n{value} movies\n\n[bold]Latest:[/] \n{latest}"
+    });
+
+    tooltip.label.setAll({
+        fontFamily: 'Roboto',
+        fontSize: '10pt',
+        fill: am5.color(0xffffff)
+    });
+              
+    tooltip.get("background").setAll({
+        stroke: am5.color(0x000000),
+        strokeOpacity: 0.0,
+        fill: am5.color('#212529'),
+        fillOpacity: 0.8
+    });
+    series.set("tooltip", tooltip);          
+
+    
+    series.columns.template.adapters.add("fill", function (fill, target) {
+        return chart.get("colors").getIndex(series.columns.indexOf(target));
+    });    
+    
+    // Set data
+    var data = {{ ratings_data|safe }}
+    
+    xAxis.data.setAll(data);
+    series.data.setAll(data);
+    
+    
+    // Make stuff animate on load
+    // https://www.amcharts.com/docs/v5/concepts/animations/
+    series.appear(1000);
+    chart.appear(1000, 100);
+    
+    }); // end am5.ready()
+</script>
+    

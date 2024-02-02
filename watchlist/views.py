@@ -8,14 +8,14 @@ from django.views.decorators.csrf import csrf_exempt
 from .forms import MovieForm, WatchlistForm, RankingForm
 from django.conf import settings
 from .models import *
-import datetime
+from datetime import *
 import json 
 import random
 import os
 from dotenv import load_dotenv
-from .api_calls import get_OMDB
+from .api_calls import get_OMDB, get_TMDB
 from .utils import make_api_calls_and_update_database, make_api_calls_and_update_watchlist  # Create this function
-
+from .viewUtils import *
 class Round(Func):
     function = 'ROUND'
     template = '%(function)s(%(expressions)s, 2)'
@@ -40,9 +40,11 @@ def get_movie_info(request):
     year = request.GET.get('id_year')
 
     omdb = get_OMDB(title, year)
+    tmdb = get_TMDB(omdb)
+    
 
     # Process the API response (replace this with your actual response processing)
-    poster_url = omdb["Poster"]
+    poster_url = f"https://image.tmdb.org/t/p/original{tmdb['poster_path']}"
 
     return JsonResponse({'poster_url': poster_url})
 
@@ -56,6 +58,40 @@ def sidebar_ajax(request, movie_id):
         'url_start': 'https://www.themoviedb.org/t/p/w90_and_h90_face',
     }
     return render(request, 'watchlist/offcanvas_movie.html', context)
+
+def elo_matchup(request):
+    winner = Movie.objects.get(pk=request.GET.get('id_winner'))
+    loser = Movie.objects.get(pk=request.GET.get('id_loser'))
+
+    p1 = 1.0 / (1 + 10 ** ((winner.elo - loser.elo) / 400))
+    p2 = 1.0 - p1
+
+    winner.elo += round(64 * (1 - p2), 2)
+    loser.elo += round(64 * (0 - p1), 2)
+    winner.eloMatches += 1
+    loser.eloMatches += 1
+    winner.save()
+    loser.save()
+
+    movies = Movie.objects.filter(rating__isnull=False)
+    matches = movies.aggregate((Sum('eloMatches'))).get('eloMatches__sum') // 2
+    context = {
+        'movies': random.sample(list(movies), 2),
+        'matches': matches
+    }
+    return render(request, 'watchlist/eloMatchup.html', context)
+
+@csrf_exempt  # Use this decorator for simplicity; you might want to use a proper csrf token setup in production
+def save_poster_link(request):
+    if request.method == 'POST':
+        movie_id = request.POST.get('movieId')
+        poster_link = request.POST.get('posterLink')
+        movie = Movie.objects.get(pk=movie_id)
+        movie.posterLink = poster_link
+        movie.save()
+        return JsonResponse({'message': 'Link saved successfully'})
+
+    return JsonResponse({'message': 'Invalid request method'}, status=400)
 
 class WatchlogView(View):
     template_name = 'watchlist/watchlog.html'
@@ -186,8 +222,8 @@ class RankingsView(View):
         avg = movies_in_order.aggregate((Avg('rating')))
         runtime = movies_in_order.aggregate((Sum('runtime')))
         total = (len(movies_in_order))
-        day1 = datetime.date(2023, 8, 15)
-        dayNow = datetime.date.today()
+        day1 = date(2023, 8, 15)
+        dayNow = date.today()
 
         form = RankingForm()
         context = {
@@ -242,76 +278,13 @@ class DashboardView(View):
     def get(self, request):
         # CONSTANTS
         movies = Movie.objects.all()
-        today = datetime.date.today()
-        this_year = today.year
-        this_month = today.strftime("%B")
+        today = date.today()
+        print(today)
+        year = today.year
+        month = today.strftime("%B")
 
         # RECENT MOVIE DATA
         newest = movies.order_by('-datetime_added').first()
-        # WEEK
-        weekMovies = movies.filter(date__range=[today-datetime.timedelta(days=7), today])
-        weeklyRatingCounts = weekMovies.values('rating').annotate(count=Count('TMDB_ID')).order_by('-rating')
-        weeklyRatingsList = [obj['rating'] for obj in weeklyRatingCounts]
-        weeklyCountList = [obj['count'] for obj in weeklyRatingCounts]
-        weekSorted = weekMovies.order_by('-rating', '-date')
-        week_data = [weekSorted.first(), len(weekSorted), weekSorted.aggregate(avg=Round(Avg('rating')))]
-        # MONTH
-        monthMovies = movies.filter(date__month=today.month, date__year=today.year)
-        monthlyRatingCounts = monthMovies.values('rating').annotate(count=Count('TMDB_ID')).order_by('-rating')
-        monthlyRatingsList = [obj['rating'] for obj in monthlyRatingCounts]
-        monthlyCountList = [obj['count'] for obj in monthlyRatingCounts]
-        monthSorted = monthMovies.order_by('-rating', 'date')
-        month_data = [monthSorted.first(), len(monthSorted), monthSorted.aggregate(avg=Round(Avg('rating')))]
-        top_ever_month = movies.filter(releaseDate__month=today.month).order_by('-rating').first()
-        # YEAR
-        yearMovies = movies.filter(date__year=today.year)
-        yearlyRatingCounts = yearMovies.values('rating').annotate(count=Count('TMDB_ID')).order_by('-rating')
-        yearlyRatingsList = [obj['rating'] for obj in yearlyRatingCounts]
-        yearlyCountList = [obj['count'] for obj in yearlyRatingCounts]
-        yearSorted = yearMovies.order_by('-rating', 'date')
-        year_data = [yearSorted.first(), len(yearSorted), yearSorted.aggregate(avg=Round(Avg('rating')))]
-        most_recent_5 = movies.order_by('-rating', '-date').first()
-        most_recent_release = movies.order_by('-releaseDate').first()
-
-        # MOVIES SEEN BY YEAR DATA
-        years = list(range(this_year - 99, this_year + 1))
-        movie_counts = [movies.filter(year=year).count() for year in years]
-
-        # HEATMAP DATA
-        dateStart = today - datetime.timedelta(weeks=6, days=today.weekday())
-        dateEnd = today + datetime.timedelta(days=(6 - today.weekday()))
-        last_15_weeks = movies.filter(date__range=[dateStart, dateEnd]).values('date').annotate(count=Count('TMDB_ID'))
-
-        weekday_lists = [[] for _ in range(7)]
-
-        for entry in last_15_weeks:
-            date = entry['date']
-            weekday = date.weekday()  # 0 for Monday, 1 for Tuesday, ..., 6 for Sunday
-            count = entry['count']
-
-            # Create a dictionary with the required format
-            day_dict = {'x': len(weekday_lists[weekday]) + 1, 'y': count, 'date': date.strftime('%m/%d/%Y')}
-            weekday_lists[weekday].append(day_dict)
-
-        start_date = dateStart
-        end_date = dateEnd
-        current_date = start_date
-        while current_date <= end_date:
-            weekday = current_date.weekday()
-            if not any(day['date'] == current_date.strftime('%m/%d/%Y') for day in weekday_lists[weekday]):
-                # Add a dictionary with count 0 for missing dates
-                day_dict = {'x': '', 'y': 0, 'date': current_date.strftime('%m/%d/%Y')}
-                weekday_lists[weekday].append(day_dict)
-            current_date += datetime.timedelta(days=1)
-
-        # Sort each list by 'date'
-        for weekday_list in weekday_lists:
-            weekday_list.sort(key=lambda x: datetime.datetime.strptime(x['date'], '%m/%d/%Y'))
-
-        # Assign x-values based on the sorted order
-        for weekday_list in weekday_lists:
-            for index, entry in enumerate(weekday_list):
-                entry['x'] = index + 1
 
         # RANDOM LIST (WIP)
         idlist = [i.TMDB_ID for i in WatchlistMovie.objects.filter(provider__isnull=False)]
@@ -321,12 +294,8 @@ class DashboardView(View):
         actorObjects = Actor.objects.annotate(
             movie_count=Count('movieactor'),
             nonnull_count=Count('movieactor', filter=Q(movieactor__movie__rating__isnull=False), distinct=True),
-            avg_rating=Round(Avg('movieactor__movie__rating'))
+            avg_rating=Round(Avg('movieactor__movie__rating')),
         ).order_by('-movie_count')
-
-        actors = actorObjects[:15]
-        top_15_actors = actorObjects.filter(nonnull_count__gte=4).order_by('-avg_rating')[:15]
-        bot_15_actors = actorObjects.filter(nonnull_count__gte=4).order_by('avg_rating')[:15]
 
         directorObjects = Director.objects.annotate(
             movie_count=Count('moviedirector'),
@@ -338,9 +307,8 @@ class DashboardView(View):
         top_15_directors = directorObjects.filter(nonnull_count__gte=3).order_by('-avg_rating')[:15]
         bot_15_directors = directorObjects.filter(nonnull_count__gte=3).order_by('avg_rating')[:15]
 
-        today = datetime.date.today()
-        start_of_week = today - datetime.timedelta(days=today.weekday())
-        end_of_week = start_of_week + datetime.timedelta(days=6)
+        start_of_week = today - timedelta(days=today.weekday())
+        end_of_week = start_of_week + timedelta(days=6)
 
         # Query to get count and average rating for each day of the week
         weekly_stats = Movie.objects.exclude(date__isnull=True).annotate(
@@ -353,10 +321,10 @@ class DashboardView(View):
         avg_ratings_list = [item['avg_rating'] for item in weekly_stats]
 
         year_ranges = [
-            (this_year - 99, this_year - 75),
-            (this_year - 74, this_year - 50),
-            (this_year - 49, this_year - 25),
-            (this_year - 24, this_year),
+            (year - 99, year - 75),
+            (year - 74, year - 50),
+            (year - 49, year - 25),
+            (year - 24, year),
         ]
 
         all_list = [i.TMDB_ID for i in Movie.objects.all()]
@@ -364,49 +332,22 @@ class DashboardView(View):
         random_movie = Movie.objects.get(pk=randomNum[0])
 
         context = {
-            'years1': json.dumps(years[0:25]),
-            'movie_counts1': json.dumps(movie_counts[0:25]),
-            'years2': json.dumps(years[25:50]),
-            'movie_counts2': json.dumps(movie_counts[25:50]),
-            'years3': json.dumps(years[50:75]),
-            'movie_counts3': json.dumps(movie_counts[50:75]),
-            'years4': json.dumps(years[75:100]),
-            'movie_counts4': json.dumps(movie_counts[75:100]),
             'newest': newest,
-            'month_today': this_month,
-            'year_today': this_year,
-            'date_today': datetime.date.today(),
-            'top_this_week': week_data[0],
-            'week_total': week_data[1],
-            'week_avg': week_data[2],
-            'weeklyRatingsList': weeklyRatingsList,
-            'weeklyCountList': weeklyCountList,
-            'top_this_month': month_data[0],
-            'month_total': month_data[1],
-            'month_avg': month_data[2],
-            'alltime_month': top_ever_month,
-            'monthlyRatingsList': monthlyRatingsList,
-            'monthlyCountList': monthlyCountList,
-            'top_this_year': year_data[0],
-            'year_total': year_data[1],
-            'year_avg': year_data[2],
-            'yearlyRatingsList': yearlyRatingsList,
-            'yearlyCountList': yearlyCountList,
-            'most_recent_release': most_recent_release,
-            'last_5': most_recent_5,
-            'monday': weekday_lists[0],
-            'tuesday': weekday_lists[1],
-            'wednesday': weekday_lists[2],
-            'thursday': weekday_lists[3],
-            'friday': weekday_lists[4],
-            'saturday': weekday_lists[5],
-            'sunday': weekday_lists[6],
+            'week': get_week_info(movies, today), # from viewUtils
+            'month': get_month_info(movies, today), # from viewUtils
+            'year': get_year_info(movies, today), # from viewUtils
+            'heatmap': get_heatmap_data(movies, today), # from viewUtils
+            'year_count_data': get_year_count_data(movies, today), # from viewUtils,
+            'country_data': get_country_data(), # from viewUtils,
+            'keyword_data': get_keyword_data(), # from viewUtils
+            'ratings_data': get_rating_distribution(movies), # from viewUtils
+            'weekday_distribution': get_weekday_distribution(movies), # from viewUtils
+            'on_this_day': on_this_day(today), # from viewUtils
+            'streak': get_streak(today),
             'random': rand_movies,
             'random_movie': random_movie,
-            'actors': actors,
-            'actor_avg': top_15_actors,
-            'actor_bad_avg': bot_15_actors,
-            'directors': directors,
+            'actors': get_top_actors(movies, 10, 4),
+            'directors': get_top_directors(movies, 10, 3),
             'director_avg': top_15_directors,
             'director_bad_avg': bot_15_directors,
             'url_start': 'https://www.themoviedb.org/t/p/w90_and_h90_face',
@@ -416,7 +357,13 @@ class DashboardView(View):
         }
         return render(request, 'watchlist/dashboard.html', context)
 
-# EMPTY TEMPLATES   
 class EloView(View):
     def get(self, request):
-        return render(request, 'watchlist/elo.html')
+        movies = Movie.objects.filter(rating__isnull=False)
+        matches = movies.aggregate((Sum('eloMatches'))).get('eloMatches__sum') // 2
+        print(matches)
+        context = {
+            'movies': random.sample(list(movies), 2),
+            'matches': matches
+        }
+        return render(request, 'watchlist/elo.html', context)

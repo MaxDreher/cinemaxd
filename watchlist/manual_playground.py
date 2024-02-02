@@ -8,15 +8,17 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'MovieSite.settings')
 django.setup()
 
 import time
+import random
 import logging
 import requests
 import xml.etree.ElementTree as ET
 from dotenv import load_dotenv
 from slugify import slugify
 from datetime import datetime
-from watchlist.models import Movie, Actor, MovieActor, Director, Genre, ProdCompany, Provider, WatchlistMovie, WatchlistActor
+from watchlist.models import *
 from watchlist.api_calls import *  
-from watchlist.utils import get_trailer
+from watchlist.utils import get_trailer, get_keywords
+from django.db import transaction, IntegrityError
 import concurrent.futures
 from django.db import transaction
 from functools import partial
@@ -29,10 +31,49 @@ from api_calls import get_TMDB_from_id
 
 from watchlist.models import List, MovieList, Movie
 
-for item in [226979]:
-    dele = WatchlistMovie.objects.get(pk=item)
-    dele.delete()
+# for item in [226979]:
+#     dele = WatchlistMovie.objects.get(pk=item)
+#     dele.delete()
+
+def customPoster(id, link):
+    movie = Movie.objects.get(pk=id)
+    movie.posterLink = link
+    movie.save()
+
+# (200, 900) as defaults for scale of (1000, 1100, 1200, 1300, 1400, 1500, ...)
+def defaultElo(scalingFactor, default):
+    for movie in Movie.objects.filter(rating__isnull=False):
+        movie.elo = (movie.rating * scalingFactor) + default
+        # movie.elo = round(movie.elo, 2)
+        print(f"{movie.title} ({movie.year}): {movie.elo}")
+        movie.save()
+
+def random_elo_match(movies, k, num):
+    while num > 0:
+        random_movies = random.sample(list(movies), 2)
+        
+        print(f"{random_movies[0].title} {random_movies[0].elo} vs. {random_movies[1].title} {random_movies[1].elo}")
+        
+        p1 = 1.0 / (1 + 10 ** ((random_movies[1].elo - random_movies[0].elo) / 400))
+        p2 = 1.0 - p1
+        
+        response = input("1 or 2: ")
+        
+        if response == '1':
+            update_elo(random_movies[0], random_movies[1], k, p1, p2)
+        elif response == '2':
+            update_elo(random_movies[1], random_movies[0], k, p2, p1)
+        num = num - 1
+
+def update_elo(winner, loser, k, pw, pl):
+    winner.elo += round(k * (1 - pw), 2)
+    loser.elo += round(k * (0 - pl), 2)
     
+    print(f"{winner.title} {winner.elo} vs. {loser.title} {loser.elo}")
+    
+    winner.save()
+    loser.save()
+
 def correct_embed():
     for mov in Movie.objects.all():
         if "/watch/" in mov.trailerLink:
@@ -59,13 +100,21 @@ def updateWatchlist():
 def updateWatchlog():
     t1 = time.time()
     for mov in Movie.objects.all():
+        print(f"{mov.title} at {time.time()-t1} seconds.")
         tmdb = get_TMDB_from_id(mov.TMDB_ID, mov.type)
         # omdb = get_OMDB(mov.IMDB_ID)
         # mov.posterLink = omdb['Poster']
-        print(f"{mov.title} {mov.year}")
-        mov.status = tmdb['status']
-        mov.bgLink = f"https://image.tmdb.org/t/p/original{tmdb['backdrop_path']}"
-        mov.trailerLink = f"https://youtube.com/embed/{get_trailer(tmdb)}"
+        keywords = get_keywords(tmdb)
+        if keywords:
+            for k in keywords:
+                print(k[1])
+                key = Keyword(id=k[0], name=k[1])
+                try:
+                    key.save(using='library_db')
+                except IntegrityError:
+                    print('failed')
+                    pass
+                mov.keywords.add(key)
         mov.save()
     print(f"Completed Watchlog update in {time.time()-t1} seconds")
 

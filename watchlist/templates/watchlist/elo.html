@@ -1,4 +1,15 @@
 {% extends 'watchlist/base.html' %}
+{% load static %}
+{% load custom_filters %}
+{% block js %}
+    <script src="{% static 'watchlist/js/elo.js' %}"></script>
+{% endblock %}
 
 {% block content %}
+    <div class="container mt-3">
+        <div id="eloContainer" class="row g-3">
+            {% include "./eloMatchup.html" %}
+        </div>
+    </div>
+    <div id="sidebarContainer"></div>
 {% endblock %}

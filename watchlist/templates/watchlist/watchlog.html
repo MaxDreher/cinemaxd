@@ -24,145 +24,151 @@
 {% block content %}
 <div id="container" class="container-fluid" style="display:none">
     <div class="row g-3 mt-1">
-        <div id="sidebar" class="sidebar col-xl-3">
-            <div class="card">
-                <div class="card-header">
-                    <div id="sidebar-header" class="row">
-                    </div>
-                </div>  
-                <div class="card-body py-0">
-                    <div class="dtsp-verticalContainer">
-                        <div id="searchPanes" class="dtsp-verticalPanes">
+        <div class="col-md-3">
+            <div id="sidebar" class="sidebar">
+                <div class="card">
+                    <div class="card-header">
+                        <div id="sidebar-header" class="row">
                         </div>
                     </div>  
-                </div>  
+                    <div class="card-body py-0">
+                        <div class="dtsp-verticalContainer">
+                            <div id="searchPanes" class="dtsp-verticalPanes">
+                            </div>
+                        </div>  
+                    </div>  
+                </div>
             </div>
         </div>
         <div class="col-md-9">
-            <div class="card mb-3">
-                <div class="card-body">
-                    <button class="btn btn-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#formCollapse" aria-expanded="false" aria-controls="formCollapse" role="button" id="collapseButton">
-                        <span id="collapseIcon" class="bi bi-plus-circle"></span> <!-- Initial icon: Plus sign -->
-                        Add to Watchlog
-                    </button>                    
-                    <div class="collapse" id="formCollapse">
-                        <form id="watchlogInput" method="post" action="{% url 'watchlog' %}">
-                            {% csrf_token %}
-                            <div class="row mt-1 g-3">
-                                <div class="col-md-1">
-                                    <div id="moviePosterContainer" class="d-flex align-items-center justify-content-center h-100 border rounded-2">
-                                        <i class="bi bi-film" style="font-size: 2em; color: #6c757d;"></i>
-                                    </div>
-                                </div>
-                                <div class="col-md-11">
-                                    <div class="row">
-                                        {% comment %} TITLE INPUT {% endcomment %}
-                                        <div class="col-md-4 form-group">
-                                            <label for="id_title" class="form-label">Title</label>
-                                            <div class="input-group">
-                                                <span class="input-group-text">
-                                                    <i class="bi bi-film"></i>
-                                                </span>
-                                                <input type="text" name="title" id="id_title" class="form-control" placeholder="Title">
+            <div class="row g-3 mb-3">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <button class="btn btn-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#formCollapse" aria-expanded="false" aria-controls="formCollapse" role="button" id="collapseButton">
+                                <span id="collapseIcon" class="bi bi-plus-circle"></span> <!-- Initial icon: Plus sign -->
+                                Add to Watchlog
+                            </button>                    
+                            <div class="collapse" id="formCollapse">
+                                <form id="watchlogInput" method="post" action="{% url 'watchlog' %}">
+                                    {% csrf_token %}
+                                    <div class="row mt-1 g-3">
+                                        <div class="col-md-1">
+                                            <div id="moviePosterContainer" class="d-flex align-items-center justify-content-center h-100 border rounded-2">
+                                                <i class="bi bi-film" style="font-size: 2em; color: #6c757d;"></i>
                                             </div>
                                         </div>
-                                        <div class="col-md-4 form-group">
-                                            <label for="id_year" class="form-label">Year</label>
-                                            <div class="input-group">
-                                                <span class="input-group-text">
-                                                    <i class="bi bi-calendar2"></i>
-                                                </span>
-                                                <input type="text" name="year" id="id_year" class="form-control" placeholder="YYYY">
+                                        <div class="col-md-11">
+                                            <div class="row">
+                                                {% comment %} TITLE INPUT {% endcomment %}
+                                                <div class="col-md-4 form-group">
+                                                    <label for="id_title" class="form-label">Title</label>
+                                                    <div class="input-group">
+                                                        <span class="input-group-text">
+                                                            <i class="bi bi-film"></i>
+                                                        </span>
+                                                        <input type="text" name="title" id="id_title" class="form-control" placeholder="Title">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 form-group">
+                                                    <label for="id_year" class="form-label">Year</label>
+                                                    <div class="input-group">
+                                                        <span class="input-group-text">
+                                                            <i class="bi bi-calendar2"></i>
+                                                        </span>
+                                                        <input type="text" name="year" id="id_year" class="form-control" placeholder="YYYY">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 form-group">
+                                                    <label for="id_rating" class="form-label">Rating</label>
+                                                    <div class="input-group">
+                                                        <span class="input-group-text">
+                                                            <i class="bi bi-star-fill"></i>
+                                                        </span>
+                                                        <input type="number" name="rating" id="id_rating" class="form-control" placeholder="{ &#9733; | 0.0 - 5.0 }" min="0.5" max="5.0" step="0.5">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row mt-3">
+                                                <div class="col-md-4 form-group">
+                                                    <label for="id_date_watched" class="form-label">Date Watched</label>
+                                                    <div class="input-group">
+                                                        <span class="input-group-text">
+                                                            <i class="bi bi-calendar2-date"></i>
+                                                        </span>
+                                                        <input type="date" name="date_watched" id="id_date_watched" class="form-control" placeholder="YYYY-MM-DD">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 form-group">
+                                                    <label for="id_service" class="form-label">Service</label>
+                                                    <div class="input-group">
+                                                        <span class="input-group-text">
+                                                            <i class="bi bi-youtube"></i>
+                                                        </span>
+                                                        <select name="service" id="id_service" class="form-control">
+                                                            <option label="Select"></option>
+                                                            <option value="Netflix">Netflix</option>
+                                                            <option value="Hulu">Hulu</option>
+                                                            <option value="Max">Max</option>
+                                                            <option value="Disney Plus">Disney Plus</option>
+                                                            <option value="Apple TV Plus">Apple TV Plus</option>
+                                                            <option value="Amazon Prime Video">Amazon Prime Video</option>
+                                                            <option value="Peacock Premium">Peacock Premium</option>
+                                                            <option value="Paramount Plus">Paramount Plus</option>
+                                                            <option value="Paramount+ Amazon Channel">Paramount+ Amazon Channel</option>
+                                                            <option value="Tubi TV">Tubi TV</option>
+                                                            <option value="Freevee">Freevee</option>
+                                                            <option value="TNT">TNT</option>
+                                                            <option value="TBS">TBS</option>
+                                                            <option value="Youtube">Youtube</option>
+                                                            <option value="Youtube Movies">Youtube Movies</option>
+                                                            <option value="Tik Tok">Tik Tok</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 form-group">
+                                                    <label for="id_theaters" class="form-label">Seen in Theaters?</label>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" value="on" id="id_theaters" name="theaters">
+                                                        <label class="form-check-label" for="id_theaters">
+                                                            True
+                                                        </label>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-4 form-group">
-                                            <label for="id_rating" class="form-label">Rating</label>
+                                    </div>  
+                                    <div class="row mt-3">
+                                        <div class="col-md-12 form-group">
+                                            <label for="id_review" class="form-label">Review</label>
                                             <div class="input-group">
                                                 <span class="input-group-text">
-                                                    <i class="bi bi-star-fill"></i>
+                                                    <i class="bi bi-pencil-square"></i>
                                                 </span>
-                                                <input type="number" name="rating" id="id_rating" class="form-control" placeholder="{ &#9733; | 0.0 - 5.0 }" min="0.5" max="5.0" step="0.5">
+                                                <textarea name="review" id="id_review" class="form-control" rows="3"></textarea>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="row mt-3">
-                                        <div class="col-md-4 form-group">
-                                            <label for="id_date_watched" class="form-label">Date Watched</label>
-                                            <div class="input-group">
-                                                <span class="input-group-text">
-                                                    <i class="bi bi-calendar2-date"></i>
-                                                </span>
-                                                <input type="date" name="date_watched" id="id_date_watched" class="form-control" placeholder="YYYY-MM-DD">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4 form-group">
-                                            <label for="id_service" class="form-label">Service</label>
-                                            <div class="input-group">
-                                                <span class="input-group-text">
-                                                    <i class="bi bi-youtube"></i>
-                                                </span>
-                                                <select name="service" id="id_service" class="form-control">
-                                                    <option label="Select"></option>
-                                                    <option value="Netflix">Netflix</option>
-                                                    <option value="Hulu">Hulu</option>
-                                                    <option value="Max">Max</option>
-                                                    <option value="Disney Plus">Disney Plus</option>
-                                                    <option value="Apple TV Plus">Apple TV Plus</option>
-                                                    <option value="Amazon Prime Video">Amazon Prime Video</option>
-                                                    <option value="Peacock Premium">Peacock Premium</option>
-                                                    <option value="Paramount Plus">Paramount Plus</option>
-                                                    <option value="Paramount+ Amazon Channel">Paramount+ Amazon Channel</option>
-                                                    <option value="Tubi TV">Tubi TV</option>
-                                                    <option value="Freevee">Freevee</option>
-                                                    <option value="TNT">TNT</option>
-                                                    <option value="TBS">TBS</option>
-                                                    <option value="Youtube">Youtube</option>
-                                                    <option value="Youtube Movies">Youtube Movies</option>
-                                                    <option value="Tik Tok">Tik Tok</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4 form-group">
-                                            <label for="id_theaters" class="form-label">Seen in Theaters?</label>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" value="on" id="id_theaters" name="theaters">
-                                                <label class="form-check-label" for="id_theaters">
-                                                    True
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>  
-                            <div class="row mt-3">
-                                <div class="col-md-12 form-group">
-                                    <label for="id_review" class="form-label">Review</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text">
-                                            <i class="bi bi-pencil-square"></i>
-                                        </span>
-                                        <textarea name="review" id="id_review" class="form-control" rows="3"></textarea>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row mt-3">
-                                <div class="col-md-2">
-                                    <button class="btn btn-secondary" type="submit" id="submitButton">
-                                        <span>
-                                            <div id="submitText">
-                                                Submit
-                                            </div>
-                                            <div class="d-none" id="loadingSpinner">
+                                        <div class="col-md-2">
+                                            <button class="btn btn-secondary" type="submit" id="submitButton">
                                                 <span>
-                                                    <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
-                                                    <span role="status">Loading...</span>
+                                                    <div id="submitText">
+                                                        Submit
+                                                    </div>
+                                                    <div class="d-none" id="loadingSpinner">
+                                                        <span>
+                                                            <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                                                            <span role="status">Loading...</span>
+                                                        </span>
+                                                    </div>
                                                 </span>
-                                            </div>
-                                        </span>
-                                    </button>
-                                </div>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>     
                             </div>
-                        </form>     
+                        </div>
                     </div>
                 </div>
             </div>

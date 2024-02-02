@@ -38,3 +38,8 @@ class WatchlistForm(forms.Form):
 class RankingForm(forms.Form):
     title = forms.CharField(label='Title', widget=forms.TextInput(attrs={'class': 'form-control input rounded-1 dark-input'}))
     year = forms.IntegerField(label='Year', widget=forms.TextInput(attrs={'class': 'form-control input rounded-1 dark-input'}))
+
+class PosterForm(forms.Form):
+    TMDB_ID = forms.CharField(label='TMDB ID', widget=forms.TextInput(attrs={'class': 'form-control input rounded-1 dark-input'}))
+    posterLink = forms.CharField(label='Poster', widget=forms.TextInput(attrs={'class': 'form-control input rounded-1 dark-input'}))
+

@@ -1,0 +1,70 @@
+<style>
+    #tagcloud {
+      width: 100%;
+      {% comment %} aspect-ratio : 1.04 / 1; {% endcomment %}
+      aspect-ratio : 0.925 / 1;
+    }
+</style>
+<script>
+        am5.ready(function() {
+        
+        // Create root element
+        // https://www.amcharts.com/docs/v5/getting-started/#Root_element
+        var root = am5.Root.new("tagcloud");
+        root._logo.dispose(); // TESTING USE ONLY, REMOVE BEFORE PUBLICATION
+        
+        // Set themes
+        // https://www.amcharts.com/docs/v5/concepts/themes/
+        root.setThemes([
+          am5themes_Animated.new(root)
+        ]);
+        
+        
+        // Add wrapper container
+        var container = root.container.children.push(am5.Container.new(root, {
+          width: am5.percent(100),
+          height: am5.percent(100),
+          paddingLeft: 0,
+          paddingRight: 0,
+          paddingTop: 0,
+          paddingBottom: 0,
+          layout: root.verticalLayout
+        }));        
+        
+        // Add series
+        // https://www.amcharts.com/docs/v5/charts/word-cloud/
+        var series = container.children.push(am5wc.WordCloud.new(root, {
+          categoryField: "tag",
+          valueField: "weight",
+          calculateAggregates: true // this is needed for heat rules to work
+        }));
+        
+        
+        // Set up heat rules
+        // https://www.amcharts.com/docs/v5/charts/word-cloud/#Via_heat_rules
+        series.set("heatRules", [{
+          target: series.labels.template,
+          dataField: "value",
+          min: am5.color('#c5f4de'),
+          max: am5.color('#15d37c'),
+          key: "fill"
+        }]);
+        
+        
+        // Configure labels
+        series.labels.template.setAll({
+          paddingTop: 5,
+          paddingBottom: 5,
+          paddingLeft: 5,
+          paddingRight: 5,
+          fontFamily: "Raleway",
+          cursorOverStyle: "pointer"
+        });        
+        
+        // Data from:
+        // https://insights.stackoverflow.com/survey/2021#section-most-popular-technologies-programming-scripting-and-markup-languages
+        series.data.setAll({{ keyword_data|safe }});
+        
+    }); // end am5.ready()
+</script>
+        

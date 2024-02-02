@@ -503,6 +503,18 @@ def make_api_calls_and_update_database(title, year, rating, review, theaters, da
         streaming_service = service if service and service != "" else None
         release_date = get_release_date(tmdb, type)
 
+        IMDB = float(omdb["imdbRating"]) if omdb["imdbRating"] != "N/A" else None
+        TMDB = float(tmdb["vote_average"]) if tmdb["vote_average"] != "N/A" else None
+        MC = int(omdb["Metascore"]) if omdb["Metascore"] != 'N/A' else None
+        RTCritic = int(rt_critic) if rt_critic and rt_critic != "N/A" else None
+        RTUser = int(rt_user) if rt_user and rt_user != "N/A" else None
+        LBXD = get_letterboxd(title, year, type)
+
+        rating_fields = [IMDB, TMDB, MC, RTCritic, RTUser, LBXD]
+        rating_score_maps = [10, 10, 1, 1, 1, 20]
+        ratings = [field * rating_score for (field, rating_score) in zip(rating_fields, rating_score_maps) if field is not None]
+        avg_critical_rating = round((sum(ratings) / 20) / len(ratings), 2) if ratings else None
+
         with transaction.atomic():
             movie = Movie(
                 TMDB_ID=tmdb["id"],
@@ -518,7 +530,7 @@ def make_api_calls_and_update_database(title, year, rating, review, theaters, da
                 timesSeen=1,
                 seasonsSeen=None,
                 episodesSeen=None,
-                posterLink=omdb['Poster'],
+                posterLink=f"https://image.tmdb.org/t/p/original{tmdb['poster_path']}",
                 bgLink=f"https://image.tmdb.org/t/p/original{tmdb['backdrop_path']}",
                 trailerLink=f"https://youtube.com/embed/{get_trailer(tmdb)}",
                 plot=omdb["Plot"],
@@ -531,14 +543,17 @@ def make_api_calls_and_update_database(title, year, rating, review, theaters, da
                 episodes=get_episodes(tmdb, type),
                 languages=omdb["Language"],
                 countrys=omdb["Country"],
-                IMDB=float(omdb["imdbRating"]) if omdb["imdbRating"] != "N/A" else None,
-                TMDB=float(tmdb["vote_average"]) if tmdb["vote_average"] != "N/A" else None,
-                MC=int(omdb["Metascore"]) if omdb["Metascore"] != 'N/A' else None,
-                RTCritic=int(rt_critic) if rt_critic and rt_critic != "N/A" else None,
-                RTUser=int(rt_user) if rt_user and rt_user != "N/A" else None,
-                LBXD=get_letterboxd(title, year, type),
+                IMDB=IMDB,
+                TMDB=TMDB,
+                MC=MC,
+                RTCritic=RTCritic,
+                RTUser=RTUser,
+                LBXD=LBXD,
+                avg_critical_rating=avg_critical_rating,
                 service=streaming_service,
-                theaters=theaters
+                theaters=theaters,
+                elo = (rating * 200) + 900,
+                eloMatches = 0
             )
             movie.save(using='library_db')
 
@@ -609,6 +624,18 @@ def make_api_calls_and_update_watchlist(title, year, reason, date_watched=None):
         rt_critic, rt_user = get_rotten_tomatoes(title, year) if year < 2022 else (None, None)
         viewing_date = date_watched if date_watched is not None else None
         release_date = get_release_date(tmdb, type)
+        
+        IMDB = float(omdb["imdbRating"]) if omdb["imdbRating"] != "N/A" else None
+        TMDB = float(tmdb["vote_average"]) if tmdb["vote_average"] != "N/A" else None
+        MC = int(omdb["Metascore"]) if omdb["Metascore"] != 'N/A' else None
+        RTCritic = int(rt_critic) if rt_critic and rt_critic != "N/A" else None
+        RTUser = int(rt_user) if rt_user and rt_user != "N/A" else None
+        LBXD = get_letterboxd(title, year, type)
+
+        rating_fields = [IMDB, TMDB, MC, RTCritic, RTUser, LBXD]
+        rating_score_maps = [10, 10, 1, 1, 1, 20]
+        ratings = [field * rating_score for (field, rating_score) in zip(rating_fields, rating_score_maps) if field is not None]
+        avg_critical_rating = round((sum(ratings) / 20) / len(ratings), 2) if ratings else None
 
         with transaction.atomic():
             movie = WatchlistMovie(
@@ -620,7 +647,7 @@ def make_api_calls_and_update_watchlist(title, year, reason, date_watched=None):
                 year=year,
                 date=viewing_date,
                 reason=reason,
-                posterLink=omdb['Poster'],
+                posterLink=f"https://image.tmdb.org/t/p/original{tmdb['poster_path']}",
                 bgLink=f"https://image.tmdb.org/t/p/original{tmdb['backdrop_path']}",
                 trailerLink=f"https://youtube.com/embed/{get_trailer(tmdb)}",
                 plot=omdb["Plot"],
@@ -633,12 +660,13 @@ def make_api_calls_and_update_watchlist(title, year, reason, date_watched=None):
                 episodes=get_episodes(tmdb, type),
                 languages=omdb["Language"],  # Langs csv
                 countrys=omdb["Country"],  # Countries csv
-                IMDB=float(omdb["imdbRating"]) if omdb["imdbRating"] != "N/A" else None,
-                TMDB=float(tmdb["vote_average"]) if tmdb["vote_average"] != "N/A" else None,
-                MC=int(omdb["Metascore"]) if omdb["Metascore"] != 'N/A' else None,
-                RTCritic=int(rt_critic) if rt_critic and rt_critic != "N/A" else None,
-                RTUser=int(rt_user) if rt_user and rt_user != "N/A" else None,
-                LBXD=get_letterboxd(title, year, type)  # Letterboxd Score
+                IMDB=IMDB,
+                TMDB=TMDB,
+                MC=MC,
+                RTCritic=RTCritic,
+                RTUser=RTUser,
+                LBXD=LBXD,
+                avg_critical_rating=avg_critical_rating,
             )
             movie.save(using='library_db')
 

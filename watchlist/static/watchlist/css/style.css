@@ -7,6 +7,33 @@
 @import url('https://fonts.googleapis.com/css?family=Raleway:300,400,700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Karla&family=Montserrat:wght@800&family=Roboto:wght@100;400;900&display=swap');
 
+.text-bg-green {
+    color: #fff!important;
+    background-color: RGBA(21,211,124,var(--bs-bg-opacity,1))!important;
+}
+
+.text-bg-green-dark {
+    color: #fff!important;
+    background-color: #0f9558 !important;
+}
+
+.text-bg-dg {
+    color: #fff!important;
+    background-color: #464B50 !important;
+}
+
+.text-body-red {
+    color: #fe4a4a !important;
+}
+
+.text-body-green {
+    color: #15d37c !important;
+}
+
+.text-body-gold {
+    color: #c29b26 !important;
+}
+
 .offcanvas {
     --bs-offcanvas-width: 25%; 
 }
@@ -49,12 +76,12 @@
     font-size: 1.0rem;
 }
 
-.movie-title {
+.movie-title, .actor-name, .director-name, #customPosterForm a {
     color: inherit; /* blue colors for links too */
     text-decoration: inherit; /* no underline */
 }
 
-.movie-title:hover {
+.movie-title:hover, .actor-name:hover, .director-name:hover, #customPosterForm a:hover {
     color: inherit; /* blue colors for links too */
     text-decoration: underline; /* no underline */
 }
@@ -97,4 +124,66 @@
     width: 100%;
     object-fit: cover;
     object-position: 50% 50%;
+}
+
+.gradient-overlay-half {
+    bottom: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(to bottom, rgb(33,37,41,0.85), rgb(33,37,41,1.0));
+    pointer-events: all; /* Allows clicks to pass through to the button below */
+    position: absolute;
+}
+
+.bg-image-half {
+    height: 120px;
+    width: 100%;
+    object-fit: cover;
+    object-position: 50% 50%;
+}
+
+.bg-image-actor {
+    height: 70px;
+    width: 100%;
+    object-fit: cover;
+    object-position: 50% 50%;
+}
+
+.glow { 
+    text-shadow: 0px 0px 10pt #15d37c; 
+}
+
+.sidebar-gradient-overlay {
+    bottom: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(to bottom, rgb(33,37,41,0.75), rgb(33,37,41,1.0));
+    pointer-events: all; /* Allows clicks to pass through to the button below */
+    position: absolute;
+}
+
+.sidebar-bg-image {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    object-position: 50% 50%;
+}
+
+.form-control, #moviePosterContainer {
+    border: 1px solid #6c757d !important;
+    font-family: 'Roboto', sans-serif !important;
+    font-size: 10pt;
+    background-color: transparent;
+}
+
+.form-control:focus {
+    border: 1px #aaaaaa solid !important;
+    box-shadow: none;
+}
+  
+.border-green {
+    --bs-border-opacity: 1;
+    border-color: #15d37c !important;
 }

@@ -15,7 +15,7 @@
 {% block content %}
 <div class="container mt-3">
     <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-4">
             <div id="addMovieControl">
                 <a class="btn btn-secondary " data-bs-toggle="collapse" data-bs-target="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
                     Show/Hide Add to Rankings
@@ -105,11 +105,55 @@
                 </div>        
             </div>
         </div>
-        <div class="col-md-9">
+        <div class="col-md-8">
             <div class="row flex-nowrap">
                 <ul class="list-group list-group-numbered" id="sortable">
-                    {% for instance in data %}
-                        <li class="list-group-item d-flex justify-content-center ui-state-default mb-2" data-movie-id="{{ instance.TMDB_ID }}">
+                    {% for movie in data %}
+                        <li class="list-group-item rounded-4 border-dark p-0" data-movie-id="{{ movie.TMDB_ID }}">
+                            <div class="card rounded-4 border-0 mb-3 shadow">
+                                <div class="card-body p-0" style="position: relative;">
+                                    <div class="gradient-overlay-partial rounded-4 position-absolute top-0 start-0 w-100 ">
+                                        <div class="row g-0">
+                                            <div class="col-md-1">
+                                                <img src="{{ movie.posterLink }}" class="img-fluid shadow rounded-start-4 h-100" alt="{{ movie.title }} Poster">
+                                            </div>
+                                            <div class="col-md-10">
+                                                <span class="pt-2 px-3 position-absolute">
+                                                    <span class="h6 text-body-green roboto fw-b">    
+                                                        <i class="bi bi-hash"></i><span class="counterItem"></span>
+                                                    </span>
+                                                    {% if movie.date %}
+                                                        <small class="text-body-tertiary roboto fw-b">    
+                                                            &nbsp;&nbsp;<i class="bi bi-film"></i>  
+                                                            {{ movie.date }}
+                                                        </small>
+                                                    {% endif %}
+                                                    <p class="card-title mb-0">
+                                                        <span class="h4 title">
+                                                            <a class="movie-title" data-movie-id="{{movie.TMDB_ID}}" href="#{{movie.TMDB_ID}}" role="button"><b>{{ movie.title }}</b></a>
+                                                            <span class="card-subtitle text-body-secondary roboto">({{ movie.year }})</span>
+                                                        </span>
+                                                    </p>
+                                                    <p class="h6 badge rounded-pill text-bg-secondary">{{ movie.rating|convert_to_stars }}</p>
+                                                    {% if movie.runtime %}
+                                                        <p class="h6 badge rounded-pill text-bg-secondary">{{ movie.runtime }} mins</p>
+                                                    {% else %}
+                                                        <p class="h6 badge rounded-pill text-bg-secondary">{{ movie.episodes }} episodes</p>
+                                                    {% endif %}
+                                                </span>
+                                            </div>
+                                            <div class="col-md-1 d-flex align-items-center">
+                                                <i class="h2 text-body-secondary bi bi-list"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <img src="{{ movie.bgLink }}" class="img-fluid rounded-4 bg-image-partial" alt="Background Image">
+                                </div>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+                        {% comment %} <li class="list-group-item d-flex justify-content-center ui-state-default mb-2" data-movie-id="{{ instance.TMDB_ID }}">
                             <div class="col-md-1 text-center">
                                 <img class="poster shadow-lg" src="{{ instance.posterLink }}" height="80px">
                             </div>
@@ -141,11 +185,25 @@
                                     </div>
                                 </div> 
                             </div>
+                        </li> {% endcomment %}
+            </div>
+            {% comment %} <div class="row cols-6">
+                <ul class="list-group list-group-numbered" id="sortable">
+                    {% for movie in data %}
+                        <li class="list-group-item rounded-4 border-dark p-0" data-movie-id="{{ movie.TMDB_ID }}">
+                            <div class="col-md-2 mb-3">
+                                <img src="{{ movie.posterLink }}" class="img-fluid shadow rounded-4 h-100" alt="{{ movie.title }} Poster">
+                                    <span class="position-absolute translate-middle badge rounded-pill text-bg-secondary">
+                                        <span class="counterItem">
+                                    </span>
+                                </img>
+                            </div>
                         </li>
                     {% endfor %}
                 </ul>
-            </div>
+            </div> {% endcomment %}
         </div>
     </div>
 </div>
+<div id="sidebarContainer"></div>
 {% endblock %}
