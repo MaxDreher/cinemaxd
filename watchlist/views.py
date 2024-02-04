@@ -212,32 +212,21 @@ class RankingsView(View):
     template_name = 'watchlist/rankings.html'
 
     def get(self, request):
-        movie_lists = MovieList.objects.all()
-        movie_ids = [movie_list.movie.TMDB_ID for movie_list in movie_lists]
-        ordering = Case(*[When(TMDB_ID=movie_id, then=pos) for pos, movie_id in enumerate(movie_ids)], output_field=IntegerField())
-        movies_in_order = Movie.objects.filter(TMDB_ID__in=movie_ids).order_by(ordering)
-        common_date = movies_in_order.exclude(date__isnull=True).values('date').annotate(num_movies=Count('TMDB_ID')).order_by('-num_movies')[0]['date']
-        common_date_movies = movies_in_order.filter(date=common_date)
-        newest = movies_in_order.latest('datetime_added')
-        avg = movies_in_order.aggregate((Avg('rating')))
-        runtime = movies_in_order.aggregate((Sum('runtime')))
-        total = (len(movies_in_order))
-        day1 = date(2023, 8, 15)
-        dayNow = date.today()
+        movies = get_list_in_order(1)  
+        startDate = date(2023, 8, 15)
+        today = date.today()
+
+        newest = movies.order_by('-datetime_added').first()
 
         form = RankingForm()
         context = {
-            'data': movies_in_order,
+            'data': movies,
             'form': form,
-            'total': total,
-            'days': (dayNow - day1).days,
-            'newest': newest,
-            'start': day1,
-            'end': dayNow,
-            'avg': round(avg['rating__avg'], 2),
-            'runtime': runtime,
-            'busiestDay': common_date,
-            'busiestMovies': common_date_movies
+            'stats': get_stats(movies, startDate, today),
+            'longest_days': get_longest_days(movies, 5),
+            'latest': newest,
+            'start': startDate,
+            'end': today,
         }
         
         return render(request, self.template_name, context)
@@ -276,63 +265,12 @@ def update_order(request):
 
 class DashboardView(View):
     def get(self, request):
-        # CONSTANTS
         movies = Movie.objects.all()
         today = date.today()
-        print(today)
-        year = today.year
-        month = today.strftime("%B")
-
-        # RECENT MOVIE DATA
-        newest = movies.order_by('-datetime_added').first()
-
-        # RANDOM LIST (WIP)
-        idlist = [i.TMDB_ID for i in WatchlistMovie.objects.filter(provider__isnull=False)]
-        rand_ids = random.sample(idlist, 5)
-        rand_movies = [WatchlistMovie.objects.get(pk=i) for i in rand_ids]
-
-        actorObjects = Actor.objects.annotate(
-            movie_count=Count('movieactor'),
-            nonnull_count=Count('movieactor', filter=Q(movieactor__movie__rating__isnull=False), distinct=True),
-            avg_rating=Round(Avg('movieactor__movie__rating')),
-        ).order_by('-movie_count')
-
-        directorObjects = Director.objects.annotate(
-            movie_count=Count('moviedirector'),
-            nonnull_count=Count('moviedirector', filter=Q(moviedirector__movie__rating__isnull=False)),
-            avg_rating=Round(Avg('moviedirector__movie__rating'))
-        ).order_by('-movie_count')
-
-        directors = directorObjects[:15]
-        top_15_directors = directorObjects.filter(nonnull_count__gte=3).order_by('-avg_rating')[:15]
-        bot_15_directors = directorObjects.filter(nonnull_count__gte=3).order_by('avg_rating')[:15]
-
-        start_of_week = today - timedelta(days=today.weekday())
-        end_of_week = start_of_week + timedelta(days=6)
-
-        # Query to get count and average rating for each day of the week
-        weekly_stats = Movie.objects.exclude(date__isnull=True).annotate(
-            weekday=ExtractWeekDay('date')
-        ).values('weekday').annotate(
-            count=Count('TMDB_ID'),
-            avg_rating=Round(Avg('rating'))
-        ).order_by('weekday')
-        counts_list = [item['count'] for item in weekly_stats]
-        avg_ratings_list = [item['avg_rating'] for item in weekly_stats]
-
-        year_ranges = [
-            (year - 99, year - 75),
-            (year - 74, year - 50),
-            (year - 49, year - 25),
-            (year - 24, year),
-        ]
-
-        all_list = [i.TMDB_ID for i in Movie.objects.all()]
-        randomNum = random.sample(all_list, 1)
-        random_movie = Movie.objects.get(pk=randomNum[0])
 
         context = {
-            'newest': newest,
+            'newest': movies.order_by('-datetime_added').first(),
+            'today': today,
             'week': get_week_info(movies, today), # from viewUtils
             'month': get_month_info(movies, today), # from viewUtils
             'year': get_year_info(movies, today), # from viewUtils
@@ -343,17 +281,11 @@ class DashboardView(View):
             'ratings_data': get_rating_distribution(movies), # from viewUtils
             'weekday_distribution': get_weekday_distribution(movies), # from viewUtils
             'on_this_day': on_this_day(today), # from viewUtils
-            'streak': get_streak(today),
-            'random': rand_movies,
-            'random_movie': random_movie,
-            'actors': get_top_actors(movies, 10, 4),
-            'directors': get_top_directors(movies, 10, 3),
-            'director_avg': top_15_directors,
-            'director_bad_avg': bot_15_directors,
+            'streak': get_streak(today), # from viewUtils
+            'random': get_random_on_streaming(), # from viewUtils
+            'actors': get_top_actors(movies, 10, 4), # from viewUtils
+            'directors': get_top_directors(movies, 10, 3), # from viewUtils
             'url_start': 'https://www.themoviedb.org/t/p/w90_and_h90_face',
-            'weekday_counts': counts_list,
-            'weekday_avg': avg_ratings_list,
-            'year_ranges': year_ranges
         }
         return render(request, 'watchlist/dashboard.html', context)
 
@@ -361,7 +293,7 @@ class EloView(View):
     def get(self, request):
         movies = Movie.objects.filter(rating__isnull=False)
         matches = movies.aggregate((Sum('eloMatches'))).get('eloMatches__sum') // 2
-        print(matches)
+
         context = {
             'movies': random.sample(list(movies), 2),
             'matches': matches

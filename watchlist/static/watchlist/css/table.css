@@ -128,11 +128,6 @@ div.dataTables_wrapper div.dataTables_length option {
 #successAlert {
   font-family: 'Roboto', sans-serif !important;
 }
-/* div.dtsp-panesContainer button.btn-subtle:hover {
-    background-color: #6c757d;
-    color: #ffffff;
-    border-radius: var(--bs-btn-border-radius);
-} */
 
 /* BREAKPOINT */
 .poster {

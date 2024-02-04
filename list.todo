@@ -14,19 +14,10 @@
                   "content": "Keywords ?",
                   "id": 1705991697969,
                   "level": "default",
-                  "done": false,
-                  "start": 1705991697969
-                }
-              },
-              {
-                "key": 1705991570159,
-                "children": [],
-                "todo": {
-                  "content": "Writer(s) ?",
-                  "id": 1705991570159,
-                  "level": "default",
-                  "done": false,
-                  "start": 1705991570159
+                  "done": true,
+                  "start": 1705991697969,
+                  "focus": false,
+                  "end": 1707030452331
                 }
               },
               {
@@ -39,8 +30,10 @@
                       "content": "Photos -> backdrops[0] -> \"file_path\" https://image.tmdb.org/t/p/original{file_path}",
                       "id": 1705992565327,
                       "level": "default",
-                      "done": false,
-                      "start": 1705992565327
+                      "done": true,
+                      "start": 1705992565327,
+                      "focus": false,
+                      "end": 1707030450386
                     }
                   },
                   {
@@ -53,8 +46,10 @@
                           "content": "youtube/com/watch/{key}",
                           "id": 1705991978207,
                           "level": "default",
-                          "done": false,
-                          "start": 1705991978207
+                          "done": true,
+                          "start": 1705991978207,
+                          "focus": false,
+                          "end": 1707030449102
                         }
                       }
                     ],
@@ -62,8 +57,10 @@
                       "content": "Videos -> \"type\": Trailer, \"name\": Official Trailer, \"site\": YouTube -> Grab Key",
                       "id": 1705991919354,
                       "level": "default",
-                      "done": false,
-                      "start": 1705991919354
+                      "done": true,
+                      "start": 1705991919354,
+                      "focus": false,
+                      "end": 1707030449679
                     }
                   }
                 ],
@@ -71,8 +68,10 @@
                   "content": "Photos / Videos",
                   "id": 1705991549448,
                   "level": "default",
-                  "done": false,
-                  "start": 1705991549448
+                  "done": true,
+                  "start": 1705991549448,
+                  "focus": false,
+                  "end": 1707030451140
                 }
               }
             ],
@@ -80,8 +79,10 @@
               "content": "Movie / Watchlist Movie",
               "id": 1705991531930,
               "level": "default",
-              "done": false,
-              "start": 1705991531930
+              "done": true,
+              "start": 1705991531930,
+              "focus": false,
+              "end": 1707030455350
             }
           }
         ],
@@ -97,17 +98,6 @@
         "key": 1705477178694,
         "children": [
           {
-            "key": 1705492997004,
-            "children": [],
-            "todo": {
-              "content": "Redo all of the .svg graphics using the icon font (Still on Rankings & Sidebar)",
-              "id": 1705492997004,
-              "level": "default",
-              "done": false,
-              "start": 1705492997004
-            }
-          },
-          {
             "key": 1705478198602,
             "children": [],
             "todo": {
@@ -119,77 +109,19 @@
             }
           },
           {
-            "key": 1705477201138,
-            "children": [
-              {
-                "key": 1705477447988,
-                "children": [],
-                "todo": {
-                  "content": "Watchlist Length",
-                  "id": 1705477447988,
-                  "level": "default",
-                  "done": false,
-                  "start": 1705477447988
-                }
-              },
-              {
-                "key": 1705477437232,
-                "children": [],
-                "todo": {
-                  "content": "Episodes / Seasons ?",
-                  "id": 1705477437232,
-                  "level": "default",
-                  "done": false,
-                  "start": 1705477437232
-                }
-              },
-              {
-                "key": 1705477418163,
-                "children": [],
-                "todo": {
-                  "content": "Hours / Mins ?",
-                  "id": 1705477418163,
-                  "level": "default",
-                  "done": false,
-                  "start": 1705477418163
-                }
-              },
-              {
-                "key": 1705477409768,
-                "children": [],
-                "todo": {
-                  "content": "Total Series",
-                  "id": 1705477409768,
-                  "level": "default",
-                  "done": false,
-                  "start": 1705477409768
-                }
-              },
-              {
-                "key": 1705477213097,
-                "children": [],
-                "todo": {
-                  "content": "Total Movies",
-                  "id": 1705477213097,
-                  "level": "default",
-                  "done": false,
-                  "start": 1705477213097
-                }
-              }
-            ],
-            "todo": {
-              "content": "Navbar",
-              "id": 1705477201138,
-              "level": "default",
-              "done": false,
-              "start": 1705477201138,
-              "focus": false,
-              "end": 1705477360107
-            }
-          },
-          {
             "key": 1705477907670,
             "children": [
+              {
+                "key": 1707030519136,
+                "children": [],
+                "todo": {
+                  "content": "Add All-Time Tab Stats",
+                  "id": 1707030519136,
+                  "level": "default",
+                  "done": false,
+                  "start": 1707030519136
+                }
+              },
               {
                 "key": 1705998261360,
                 "children": [],
@@ -202,17 +134,6 @@
                 }
               },
               {
-                "key": 1705998244384,
-                "children": [],
-                "todo": {
-                  "content": "Add an element with a suggestion based on someone's bday (actor/director)",
-                  "id": 1705998244384,
-                  "level": "default",
-                  "done": false,
-                  "start": 1705998244385
-                }
-              },
-              {
                 "key": 1705486009953,
                 "children": [],
                 "todo": {
@@ -221,28 +142,6 @@
                   "level": "default",
                   "done": false,
                   "start": 1705486009953
-                }
-              },
-              {
-                "key": 1705478998595,
-                "children": [],
-                "todo": {
-                  "content": "Some kind of chart comparing my ratings to critical ratings in general. Similar to spreadsheet chart",
-                  "id": 1705478998595,
-                  "level": "default",
-                  "done": false,
-                  "start": 1705478998595
-                }
-              },
-              {
-                "key": 1705478984700,
-                "children": [],
-                "todo": {
-                  "content": "Rating distribution chart",
-                  "id": 1705478984700,
-                  "level": "default",
-                  "done": false,
-                  "start": 1705478984700
                 }
               },
               {
@@ -280,6 +179,56 @@
                 }
               },
               {
+                "key": 1705478135703,
+                "children": [],
+                "todo": {
+                  "content": "Small button in bottom corner to add items to the watchlist / log",
+                  "id": 1705478135703,
+                  "level": "default",
+                  "done": false,
+                  "start": 1705478135703
+                }
+              },
+              {
+                "key": 1705998244384,
+                "children": [],
+                "todo": {
+                  "content": "Add an element with a suggestion based on someone's bday (actor/director)",
+                  "id": 1705998244384,
+                  "level": "default",
+                  "done": true,
+                  "start": 1705998244385,
+                  "focus": false,
+                  "end": 1707030477790
+                }
+              },
+              {
+                "key": 1705478998595,
+                "children": [],
+                "todo": {
+                  "content": "Some kind of chart comparing my ratings to critical ratings in general. Similar to spreadsheet chart",
+                  "id": 1705478998595,
+                  "level": "default",
+                  "done": true,
+                  "start": 1705478998595,
+                  "focus": false,
+                  "end": 1707030489859
+                }
+              },
+              {
+                "key": 1705478984700,
+                "children": [],
+                "todo": {
+                  "content": "Rating distribution chart",
+                  "id": 1705478984700,
+                  "level": "default",
+                  "done": true,
+                  "start": 1705478984700,
+                  "focus": false,
+                  "end": 1707030490487
+                }
+              },
+              {
                 "key": 1705478187718,
                 "children": [],
                 "todo": {
@@ -290,17 +239,6 @@
                   "start": 1705478187718,
                   "focus": false,
                   "end": 1705720201741
-                }
-              },
-              {
-                "key": 1705478135703,
-                "children": [],
-                "todo": {
-                  "content": "Small button in bottom corner to add items to the watchlist / log",
-                  "id": 1705478135703,
-                  "level": "default",
-                  "done": false,
-                  "start": 1705478135703
                 }
               }
             ],
@@ -324,32 +262,6 @@
                   "level": "default",
                   "done": false,
                   "start": 1705720685397
-                }
-              },
-              {
-                "key": 1705561749890,
-                "children": [],
-                "todo": {
-                  "content": "Fix the order and ordering of the sidePanes",
-                  "id": 1705561749890,
-                  "level": "default",
-                  "done": true,
-                  "start": 1705561749890,
-                  "focus": false,
-                  "end": 1705720098841
-                }
-              },
-              {
-                "key": 1705477861120,
-                "children": [],
-                "todo": {
-                  "content": "Add sidebar integration, as on homepage using offcanvas_movies.html",
-                  "id": 1705477861120,
-                  "level": "default",
-                  "done": true,
-                  "start": 1705477861120,
-                  "focus": false,
-                  "end": 1705720102052
                 }
               },
               {
@@ -473,6 +385,32 @@
                 }
               },
               {
+                "key": 1705561749890,
+                "children": [],
+                "todo": {
+                  "content": "Fix the order and ordering of the sidePanes",
+                  "id": 1705561749890,
+                  "level": "default",
+                  "done": true,
+                  "start": 1705561749890,
+                  "focus": false,
+                  "end": 1705720098841
+                }
+              },
+              {
+                "key": 1705477861120,
+                "children": [],
+                "todo": {
+                  "content": "Add sidebar integration, as on homepage using offcanvas_movies.html",
+                  "id": 1705477861120,
+                  "level": "default",
+                  "done": true,
+                  "start": 1705477861120,
+                  "focus": false,
+                  "end": 1705720102052
+                }
+              },
+              {
                 "key": 1705477500931,
                 "children": [],
                 "todo": {
@@ -542,8 +480,10 @@
                   "content": "Get rid of expand button + replace with offcanvas integration",
                   "id": 1705720643897,
                   "level": "default",
-                  "done": false,
-                  "start": 1705720643897
+                  "done": true,
+                  "start": 1705720643897,
+                  "focus": false,
+                  "end": 1707030569578
                 }
               },
               {
@@ -553,8 +493,10 @@
                   "content": "Update styling + format",
                   "id": 1705720635448,
                   "level": "default",
-                  "done": false,
-                  "start": 1705720635448
+                  "done": true,
+                  "start": 1705720635448,
+                  "focus": false,
+                  "end": 1707030566809
                 }
               }
             ],
@@ -569,17 +511,6 @@
           {
             "key": 1705478353441,
             "children": [
-              {
-                "key": 1705720801188,
-                "children": [],
-                "todo": {
-                  "content": "Add Elo page",
-                  "id": 1705720801188,
-                  "level": "secondary",
-                  "done": false,
-                  "start": 1705720801188
-                }
-              },
               {
                 "key": 1705720771746,
                 "children": [],
@@ -659,14 +590,16 @@
                 }
               },
               {
-                "key": 1705478456358,
+                "key": 1705720801188,
                 "children": [],
                 "todo": {
-                  "content": "Add secondary navbar with All-Time favorites, featured films.",
-                  "id": 1705478456358,
+                  "content": "Add Elo page",
+                  "id": 1705720801188,
                   "level": "secondary",
-                  "done": false,
-                  "start": 1705478456358
+                  "done": true,
+                  "start": 1705720801188,
+                  "focus": false,
+                  "end": 1707030583162
                 }
               },
               {
@@ -676,8 +609,10 @@
                   "content": "Add trailers to the Watchlist model",
                   "id": 1705478395845,
                   "level": "secondary",
-                  "done": false,
-                  "start": 1705478395845
+                  "done": true,
+                  "start": 1705478395845,
+                  "focus": false,
+                  "end": 1707030605578
                 }
               }
             ],
@@ -687,6 +622,98 @@
               "level": "secondary",
               "done": false,
               "start": 1705478353441
+            }
+          },
+          {
+            "key": 1705492997004,
+            "children": [],
+            "todo": {
+              "content": "Redo all of the .svg graphics using the icon font (Still on Rankings & Sidebar)",
+              "id": 1705492997004,
+              "level": "default",
+              "done": true,
+              "start": 1705492997004,
+              "focus": false,
+              "end": 1707030462521
+            }
+          },
+          {
+            "key": 1705477201138,
+            "children": [
+              {
+                "key": 1705477447988,
+                "children": [],
+                "todo": {
+                  "content": "Watchlist Length",
+                  "id": 1705477447988,
+                  "level": "default",
+                  "done": true,
+                  "start": 1705477447988,
+                  "focus": false,
+                  "end": 1707030467713
+                }
+              },
+              {
+                "key": 1705477437232,
+                "children": [],
+                "todo": {
+                  "content": "Episodes / Seasons ?",
+                  "id": 1705477437232,
+                  "level": "default",
+                  "done": true,
+                  "start": 1705477437232,
+                  "focus": false,
+                  "end": 1707030468159
+                }
+              },
+              {
+                "key": 1705477418163,
+                "children": [],
+                "todo": {
+                  "content": "Hours / Mins ?",
+                  "id": 1705477418163,
+                  "level": "default",
+                  "done": true,
+                  "start": 1705477418163,
+                  "focus": false,
+                  "end": 1707030468446
+                }
+              },
+              {
+                "key": 1705477409768,
+                "children": [],
+                "todo": {
+                  "content": "Total Series",
+                  "id": 1705477409768,
+                  "level": "default",
+                  "done": true,
+                  "start": 1705477409768,
+                  "focus": false,
+                  "end": 1707030468756
+                }
+              },
+              {
+                "key": 1705477213097,
+                "children": [],
+                "todo": {
+                  "content": "Total Movies",
+                  "id": 1705477213097,
+                  "level": "default",
+                  "done": true,
+                  "start": 1705477213097,
+                  "focus": false,
+                  "end": 1707030469118
+                }
+              }
+            ],
+            "todo": {
+              "content": "Navbar",
+              "id": 1705477201138,
+              "level": "default",
+              "done": true,
+              "start": 1705477201138,
+              "focus": false,
+              "end": 1707030470214
             }
           }
         ],
@@ -701,11 +728,9 @@
     ],
     "expandKeys": [
       1705477213097,
-      1705477737890,
       1705478733655,
       1705478590553,
       1705991525805,
-      1705991531930,
       1705991549448,
       1705991919354,
       1705477178694
@@ -714,12 +739,7 @@
     "add_mode": "top",
     "virtual": false,
     "timelines": [
-      1705991525805,
-      1705991531930,
-      1705991697969,
-      1705991919354,
-      1705991570159,
-      1705992565327
+      1705991525805
     ],
     "showLine": false,
     "restDays": [],
@@ -729,6 +749,6 @@
     "showEndTime": false,
     "simpleMode": false,
     "lang": "en",
-    "version": "1705998281340"
+    "version": "1707030616174"
   }
 }

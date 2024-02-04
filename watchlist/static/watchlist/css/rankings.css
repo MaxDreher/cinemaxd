@@ -1,35 +1,15 @@
-.form-control {
-    border: 1px solid #6c757d;
-    font-family: 'Roboto', sans-serif !important;
-    font-size: 10pt;
-    border-radius: 3px;
-    padding: 5px;
-    background-color: transparent;
-    color: inherit;
-    margin-left: 3px;
-}
-
 .input-group-text {
+    padding: .05rem .65rem;
+    font-size: 1.2rem;
+    color: #000;
     border: 1px solid #6c757d;
     background-color: #6c757d;
 }
 
-.form-label {
+.form-label, .form-check {
     font-family: 'Roboto', sans-serif !important;
     font-size: 10pt
 }
-
-#addMovieControl {
-    border: 1px solid #202224;
-    font-family: 'Roboto', sans-serif !important;
-    font-size: 10pt;
-    border-radius: 7px;
-    padding: 18px;
-    background-color: #202224;
-    color: inherit;
-    margin-bottom: 10px;
-}
-
 .poster {
     border: 1px solid #202224;
     border-radius: 7px;
@@ -78,4 +58,9 @@
 .counterItem::before {
     content: counters(section, ".") "";
     counter-increment: section;
+}
+
+.big-number-card {
+    font-family: 'Montserrat';
+    text-align: center;
 }

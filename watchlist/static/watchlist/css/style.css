@@ -187,3 +187,20 @@
     --bs-border-opacity: 1;
     border-color: #15d37c !important;
 }
+
+.bg-image-sidebar-people {
+    height: 50px;
+    width: 100%;
+    object-fit: cover;
+    object-position: 50% 50%;
+}
+
+.gradient-overlay-sidebar-people {
+    bottom: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(to bottom, rgb(33,37,41,0.92), rgb(33,37,41,1.0));
+    pointer-events: all; /* Allows clicks to pass through to the button below */
+    position: absolute;
+}

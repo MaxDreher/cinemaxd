@@ -76,8 +76,6 @@ def get_week_info(movies, today):
     # Get additional information (first movie, count of movies, average rating)
     highest_rated = movies_sorted.first()
     lowest_rated = movies_sorted.last()
-    for item in movies_week.order_by('-avg_critical_rating'):
-        print(f"{item.title}: {item.avg_critical_rating}")
     highest_critical = movies_week.order_by('-avg_critical_rating').first()
     movie_count = len(movies_sorted)
     average_rating = movies_sorted.aggregate(avg=Round(Avg('rating')))
@@ -355,6 +353,36 @@ def get_streak(today):
     return {
         'current': current_streak,
         'longest': longest_streak,
+    }
+
+def get_random_on_streaming():
+    idlist = [i.TMDB_ID for i in WatchlistMovie.objects.filter(provider__isnull=False)]
+    rand_ids = random.sample(idlist, 5)
+    return [WatchlistMovie.objects.get(pk=i) for i in rand_ids]
+
+def get_list_in_order(id):
+    movie_list = MovieList.objects.filter(list_id=id)
+    movie_ids = [item.movie_id for item in movie_list]
+    ordering = Case(*[When(TMDB_ID=movie_id, then=pos) for pos, movie_id in enumerate(movie_ids)], output_field=IntegerField())
+    return Movie.objects.filter(TMDB_ID__in=movie_ids).order_by(ordering)
+
+def get_longest_days(movies, num):
+    common_date = movies.exclude(date__isnull=True).values('date').annotate(count=Count('TMDB_ID')).annotate(time=Sum('runtime')).order_by('-count', '-time')[:num]
+    return [{'date': item['date'], 'count': item['count'], 'time': (f"{item['time']//60}hr{int(item['time']%60)}min"), 'movies': movies.filter(date=item['date'])} for item in common_date]
+    # common_date_movies = movies_in_order.filter(date=common_date)
+
+def get_stats(movies, start, end):
+    total_days = (end - start).days
+    movie_count = len(movies)
+    total_runtime = movies.aggregate(sum=Sum('runtime')).get('sum') if (movies.aggregate(sum=Sum('runtime')).get('sum')) else 0
+    return {
+        'movie_count': movie_count,
+        'average_rating': movies.aggregate(avg=Round(Avg('rating'))),
+        'average_critical': movies.aggregate(avg=Round(Avg('avg_critical_rating'))),
+        'days_runtime': f"~{round(total_runtime/60/24,2)} days",
+        'total_runtime': f"{total_runtime//60}hr{total_runtime%60}min",
+        'total_days': total_days,
+        'gap': movie_count - total_days
     }
 
 top_10 = ["La La Land",
