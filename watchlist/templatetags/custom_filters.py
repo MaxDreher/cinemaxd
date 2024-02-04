@@ -16,6 +16,14 @@ def convert_to_stars(value):
     except:
         return ""
     
+@register.filter
+def convert_to_hrs(value):
+    try:
+        hrs = value // 60
+        mins = int(value % 60)
+        return f"{hrs}hr {mins}min"
+    except:
+        return value
 
 @register.filter(name='parse_year')
 def parse_year(value):

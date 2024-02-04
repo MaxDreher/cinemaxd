@@ -33,74 +33,80 @@
             <div class="row g-3 mb-3">
                 <div class="col-md-12">
                     {% comment %} LAST SEEN {% endcomment %}
-                    <div class="card shadow">
-                        <div class="row g-0">
-                            <div class="col-md-4 shadow-lg">
-                                <img src="{{ newest.posterLink }}" class="img-fluid shadow rounded-start h-100" alt="{{ newest.title }} Poster">
-                            </div>
-                            <div class="col-md-8 d-flex flex-column">
-                                <div class="card-body p-0" style="position: relative;">
-                                    <div class="gradient-overlay rounded-end position-absolute top-0 start-0 w-100 ">
-                                        <span class="p-3 position-absolute">
-                                            {% if newest.date %}
-                                                {% if newest.date == date_today %}
-                                                    <span class="badge rounded-pill text-bg-green" style="vertical-align: text-bottom;">New!</span>                        
+                        <div class="card border-0 rounded-4 shadow">
+                            <div class="row g-0">
+                                <div class="col-md-4">
+                                    <img src="{{ newest.posterLink }}" class="img-fluid border border-1 border-end-0 rounded-start-4 h-100" alt="{{ newest.title }} Poster">
+                                </div>
+                                <div class="col-md-8 d-flex flex-column">
+                                    <div class="card-body p-0" style="position: relative;">
+                                        <div class="gradient-overlay border border-1 border-start-0 rounded-end-4 position-absolute top-0 start-0 w-100 ">
+                                            <span class="p-3 position-absolute">
+                                                {% if newest.date %}
+                                                    {% if newest.date == today %}
+                                                        <span class="badge rounded-pill text-bg-green" style="vertical-align: text-bottom;">New!</span>                        
+                                                    {% endif %}
+                                                    <small class="text-body-tertiary roboto">
+                                                        <i class="bi bi-film"></i>
+                                                        {{ newest.date }}
+                                                    </small>
                                                 {% endif %}
-                                                <small class="text-body-tertiary roboto">    
-                                                    <i class="bi bi-film"></i>  
-                                                    {{ newest.date }}
-                                                </small>
-                                            {% endif %}
-                                            <p class="card-title mb-0">
-                                                <span class="h4 title">
-                                                    <a class="movie-title" data-movie-id="{{newest.TMDB_ID}}" href="#{{newest.TMDB_ID}}" role="button"><b>{{ newest.title }}</b></a>
-                                                    <span class="card-subtitle text-body-secondary roboto">({{ newest.year }})</span>
-                                                </span>
-                                            </p>
-                                            {% if newest.tagline %}
-                                                <small class="text-body-tertiary d-block mb-1"><i>{{ newest.tagline }}</i></small>
-                                            {% endif %}
-                                            <p class="h6 badge rounded-pill text-bg-secondary">{{ newest.rating|convert_to_stars }}</p>
-                                            {% if newest.runtime %}
-                                                <p class="h6 badge rounded-pill text-bg-secondary">{{ newest.runtime }} mins</p>
-                                            {% else %}
-                                                <p class="h6 badge rounded-pill text-bg-secondary">{{ newest.episodes }} episodes</p>
-                                            {% endif %}
-                                            <hr class="my-1">
-                                            <p class="card-text mb-0"><small class="text-body-secondary">{{ newest.plot }}</small></p>
-                                        </span>
+                                                <p class="card-title mb-0">
+                                                    <span class="h4 title">
+                                                        <a class="movie-title" data-movie-id="{{newest.TMDB_ID}}" href="#{{newest.TMDB_ID}}" role="button"><b>{{ newest.title }}</b></a>
+                                                        <span class="card-subtitle text-body-tertiary roboto">({{ newest.year }})</span>
+                                                    </span>
+                                                </p>
+                                                {% if newest.tagline %}
+                                                    <small class="text-body-tertiary d-block mb-1">"{{ newest.tagline }}"</small>
+                                                {% endif %}
+                                                <p class="badge mb-1 border border-3 rounded-pill text-bg-green"><i class="bi bi-check-lg"></i></p>
+                                                <p class="badge mb-1 border border-3 rounded-pill text-bg-secondary roboto">{{ newest.rating|convert_to_stars|safe }}</p>
+                                                {% if newest.runtime %}
+                                                    <p class="badge mb-1 border border-3 rounded-pill text-bg-secondary fw-medium roboto">{{ newest.runtime|convert_to_hrs|safe }}</p>
+                                                {% else %}
+                                                    <p class="badge mb-1 border border-3 rounded-pill text-bg-secondary fw-medium roboto">{{ newest.episodes }} <span class="fw-normal">episodes</span></p>
+                                                {% endif %}
+                                                <p class="badge mb-1 border border-3 rounded-pill text-bg-secondary roboto">★
+                                                    <span class="fw-medium">{{ newest.avg_critical_rating }} avg</span>
+                                                </p>
+                                                {% comment %} <p class="badge border border-3 rounded-pill text-bg-danger fw-medium roboto">❤︎</p> {% endcomment %}
+                                                <hr class="my-2">
+                                                <p class="card-text mb-0"><small class="text-body-secondary">{{ newest.plot }}</small></p>
+                                            </span>
+                                        </div>
+                                        <img src="{{ newest.bgLink }}" class="img-fluid border border-1 rounded-end-4 bg-image" alt="Background Image" style="object-fit: cover;">
                                     </div>
-                                    <img src="{{ newest.bgLink }}" class="img-fluid rounded-end bg-image" alt="Background Image" style="object-fit: cover;">
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    {% comment %} {% endcomment %}
                 </div>
                 <div id="weekMonthYearTabs" class="col-md-12">
                     {% comment %} TABS {% endcomment %}
-                    <div class="card shadow">
+                    <div class="card rounded-4 border border-1 shadow">
                         <div class="card-header">
                             <ul class="nav nav-tabs nav-fill card-header-tabs nav-fill roboto fw-semibold p-0" id="myTab" role="tablist">
                                 <li class="nav-item" role="presentation">
-                                    <button class="small nav-link data-tabs active" id="week-tab" data-bs-toggle="tab" data-bs-target="#week-tab-pane" type="button" role="tab">
+                                    <button class="small nav-link data-tabs rounded-top-4 active" id="week-tab" data-bs-toggle="tab" data-bs-target="#week-tab-pane" type="button" role="tab">
                                         <i class="bi bi-calendar3-week"></i>
                                         WEEK
                                     </button>
                                 </li>
                                 <li class="nav-item" role="presentation">
-                                    <button class="small nav-link data-tabs" id="month-tab" data-bs-toggle="tab" data-bs-target="#month-tab-pane" type="button" role="tab">
+                                    <button class="small nav-link data-tabs rounded-top-4" id="month-tab" data-bs-toggle="tab" data-bs-target="#month-tab-pane" type="button" role="tab">
                                         <i class="bi bi-calendar3"></i>
                                         MONTH
                                     </button>
                                 </li>
                                 <li class="nav-item" role="presentation">
-                                    <button class="small nav-link data-tabs" id="year-tab" data-bs-toggle="tab" data-bs-target="#year-tab-pane" type="button" role="tab">
+                                    <button class="small nav-link data-tabs rounded-top-4" id="year-tab" data-bs-toggle="tab" data-bs-target="#year-tab-pane" type="button" role="tab">
                                         <i class="bi bi-calendar3-fill"></i>
                                         YEAR
                                     </button>
                                 </li>
                                 <li class="nav-item" role="presentation">
-                                    <button class="small nav-link data-tabs" id="disabled-tab" data-bs-toggle="tab" data-bs-target="#disabled-tab-pane" type="button" role="tab" disabled>
+                                    <button class="small nav-link data-tabs rounded-top-4" id="disabled-tab" data-bs-toggle="tab" data-bs-target="#disabled-tab-pane" type="button" role="tab" disabled>
                                         <i class="bi bi-infinity"></i>
                                         LIFETIME
                                     </button>
@@ -117,7 +123,7 @@
                                                 <i class="bi bi-collection-play-fill"></i>
                                                 All Movies Seen This Week
                                             </small>
-                                            <div class="card border-dark shadow">
+                                            <div class="card rounded-4 border-dark shadow">
                                                 <div id="weeklyMoviesCarousel" class="carousel slide">
                                                     <div class="carousel-indicators">
                                                         {% for movie in week.movies %}
@@ -128,7 +134,7 @@
                                                         {% for movie in week.movies %}
                                                             <div class="carousel-item{% if forloop.first %} active{% endif %}">
                                                                 <div class="card-body p-0" style="position: relative;">
-                                                                    <div class="gradient-overlay-half rounded position-absolute top-0 start-0 w-100 ">
+                                                                    <div class="gradient-overlay-half border border-1 rounded-4 position-absolute top-0 start-0 w-100 ">
                                                                         <span class="py-3 px-4 position-absolute">
                                                                             {% if movie.date %}
                                                                                 <small class="text-body-tertiary roboto">    
@@ -139,19 +145,19 @@
                                                                             <p class="card-title mb-0">
                                                                                 <span class="h5 title">
                                                                                     <a class="movie-title" data-movie-id="{{movie.TMDB_ID}}" href="#{{movie.TMDB_ID}}" role="button"><b>{{ movie.title }}</b></a>
-                                                                                    <span class="card-subtitle text-body-secondary roboto">({{ movie.year }})</span>
+                                                                                    <span class="card-subtitle text-body-tertiary roboto">({{ movie.year }})</span>
                                                                                 </span>
                                                                             </p>
-                                                                            <p class="h6 badge rounded-pill text-bg-secondary">{{ movie.rating|convert_to_stars }}</p>
-                                                                            {% if movie.runtime %}
-                                                                                <p class="h6 badge rounded-pill text-bg-secondary">{{ movie.runtime }} mins</p>
+                                                                            <p class="badge mb-1 border border-3 rounded-pill text-bg-secondary roboto">{{ movie.rating|convert_to_stars|safe }}</p>
+                                                                            {% if newest.runtime %}
+                                                                                <p class="badge mb-1 border border-3 rounded-pill text-bg-secondary fw-medium roboto">{{ movie.runtime|convert_to_hrs|safe }}</p>
                                                                             {% else %}
-                                                                                <p class="h6 badge rounded-pill text-bg-secondary">{{ movie.episodes }} episodes</p>
+                                                                                <p class="badge mb-1 border border-3 rounded-pill text-bg-secondary fw-medium roboto">{{ movie.episodes }} <span class="fw-normal">episodes</span></p>
                                                                             {% endif %}
                                                                         </span>
                                                                     </div>
-                                                                    <img src="{{ movie.bgLink }}" class="img-fluid rounded bg-image-half" alt="Background Image">
-                                                                </div>                                    
+                                                                    <img src="{{ movie.bgLink }}" class="img-fluid border border-2 rounded-4 bg-image-half" alt="Background Image">
+                                                                </div>
                                                             </div>
                                                         {% endfor %}
                                                     </div>
@@ -163,14 +169,14 @@
                                             </div>
                                         </div>
                                         <div id="topThisWeek" class="z-1 col-md-7 d-flex flex-fill">
-                                            <div class="card border-dark shadow">
+                                            <div class="card rounded-4 border-dark shadow">
                                                 <div class="row g-0">
                                                     <div class="col-md-4 shadow-lg">
-                                                        <img src="{{ week.highest_rated.posterLink }}" class="img-fluid shadow rounded-start h-100" alt="{{ week.highest_rated.title }} Poster">
+                                                        <img src="{{ week.highest_rated.posterLink }}" class="img-fluid border border-1 border-end-0 shadow rounded-start-4 h-100" alt="{{ week.highest_rated.title }} Poster">
                                                     </div>
                                                     <div class="col-md-8 d-flex flex-column">
                                                         <div class="card-body p-0" style="position: relative;">
-                                                            <div class="gradient-overlay rounded-end position-absolute top-0 start-0 w-100 ">
+                                                            <div class="gradient-overlay border border-1 border-start-0 rounded-end-4 position-absolute top-0 start-0 w-100 ">
                                                                 <span class="p-2 position-absolute">
                                                                     {% if week.highest_rated.date %}
                                                                         {% if week.highest_rated.date == week.highest_rated %}
@@ -187,18 +193,15 @@
                                                                             <span class="card-subtitle text-body-secondary roboto">({{ week.highest_rated.year }})</span>
                                                                         </span>
                                                                     </p>
-                                                                    {% if week.highest_rated.tagline %}
-                                                                        <small class="text-body-tertiary d-block mb-1">{{ week.highest_rated.tagline }}</small>
-                                                                    {% endif %}
-                                                                    <small class="h6 badge rounded-pill text-bg-secondary">{{ week.highest_rated.rating|convert_to_stars }}</small>
+                                                                    <p class="badge rounded-pill text-bg-secondary roboto">{{ week.highest_rated.rating|convert_to_stars|safe }}</p>
                                                                     {% if week.highest_rated.runtime %}
-                                                                        <p class="h6 badge rounded-pill text-bg-secondary">{{ week.highest_rated.runtime }} mins</p>
+                                                                        <p class="badge rounded-pill text-bg-secondary fw-medium roboto">{{ week.highest_rated.runtime|convert_to_hrs|safe }}</p>
                                                                     {% else %}
-                                                                        <p class="h6 badge rounded-pill text-bg-secondary">{{ week.highest_rated.episodes }} episodes</p>
+                                                                        <p class="badge rounded-pill text-bg-secondary fw-medium roboto">{{ week.highest_rated.episodes }} <span class="fw-normal">episodes</span></p>
                                                                     {% endif %}
                                                                 </span>
                                                             </div>
-                                                            <img src="{{ week.highest_rated.bgLink }}" class="img-fluid rounded-end bg-image" alt="Background Image" style="object-fit: cover;">
+                                                            <img src="{{ week.highest_rated.bgLink }}" class="img-fluid border border-1 border-start-0 rounded-end-4 bg-image" alt="Background Image" style="object-fit: cover;">
                                                         </div>
                                                     </div>
                                                 </div>
