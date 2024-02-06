@@ -19,6 +19,7 @@ class Actor(models.Model):
         app_label = 'watchlist'
         managed = True
 
+
 class Director(models.Model):
     TMDB_ID = models.IntegerField(primary_key=True)
     IMDB_ID = models.CharField(max_length=255,null=True)
@@ -33,6 +34,7 @@ class Director(models.Model):
         app_label = 'watchlist'
         managed = True
 
+
 class ProdCompany(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=255,null=True)
@@ -43,6 +45,7 @@ class ProdCompany(models.Model):
         app_label = 'watchlist'
         managed = True
 
+
 class Genre(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=255, unique=True)
@@ -51,6 +54,7 @@ class Genre(models.Model):
         db_table = 'GENRES'
         app_label = 'watchlist'
         managed = True
+
 
 class Provider(models.Model):
     id = models.IntegerField(primary_key=True)
@@ -61,6 +65,7 @@ class Provider(models.Model):
         app_label = 'watchlist'
         managed = True
 
+
 class Keyword(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=255, unique=True)
@@ -69,6 +74,7 @@ class Keyword(models.Model):
         db_table = 'KEYWORDS'
         app_label = 'watchlist'
         managed = True
+
 
 class Tag(models.Model):
     name = models.CharField(max_length=255, unique=True)
@@ -80,6 +86,21 @@ class Tag(models.Model):
         db_table = 'TAGS'
         app_label = 'watchlist'
         managed = True
+
+
+class Award(models.Model):
+    name = models.CharField(max_length=255)
+    year = models.IntegerField()
+    
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        db_table = 'AWARDS'
+        app_label = 'watchlist'
+        managed = True
+        unique_together = ('name', 'year')
+
 
 class List(models.Model):
     name = models.CharField(max_length=255)
@@ -103,6 +124,7 @@ class Movie(models.Model):
     rating = models.FloatField(validators=[MinValueValidator(0.5), MaxValueValidator(5)], choices=rating_choices, null=True)
     review = models.TextField(null=True)
     date = models.DateField(null=True)
+    favorite = models.BooleanField(null=True)
     datetime_added = models.DateTimeField(null=True)
 
     timesSeen = models.IntegerField()
@@ -142,6 +164,9 @@ class Movie(models.Model):
     cast = models.ManyToManyField(Actor, through="MovieActor")
     director = models.ManyToManyField(Director, through="MovieDirector")
     prodCompany = models.ManyToManyField(ProdCompany, through="MovieCompany")
+    tags = models.ManyToManyField(Tag, through="MovieTag")
+    awards = models.ManyToManyField(Award, through="MovieAward")
+
 
     elo = models.FloatField(null=True)
     eloMatches = models.IntegerField()
@@ -151,6 +176,7 @@ class Movie(models.Model):
         unique_together = [['title', 'releaseDate']]  # Enforce uniqueness of title and releaseDate combination
         app_label = 'watchlist'
         managed = True
+
 
 class WatchlistMovie(models.Model):
     TMDB_ID = models.IntegerField(primary_key=True)
@@ -163,6 +189,7 @@ class WatchlistMovie(models.Model):
     title = models.CharField(max_length=255)
     year = models.IntegerField()
     date = models.DateField(null=True)
+    favorite = models.BooleanField(null=True)
     reason = models.TextField(null=True)
 
     posterLink = models.CharField(max_length=255)
@@ -197,6 +224,7 @@ class WatchlistMovie(models.Model):
     director = models.ManyToManyField(Director, through="WatchlistDirector")
     prodCompany = models.ManyToManyField(ProdCompany, through="WatchlistCompany")
     provider = models.ManyToManyField(Provider, through="WatchlistProvider")
+    awards = models.ManyToManyField(Award, through="WatchlistAward")
 
     class Meta:
         db_table = 'WATCHLIST'  # Set the table name to WATCHLIST
@@ -205,7 +233,7 @@ class WatchlistMovie(models.Model):
         managed = True
 
 # ===================================
-# Intermediary Models
+# Intermediary Models (Movie)
 # ===================================
         
 class MovieGenre(models.Model):
@@ -216,6 +244,7 @@ class MovieGenre(models.Model):
         app_label = 'watchlist'
         managed = True
 
+
 class MovieKeyword(models.Model):
     movie = models.ForeignKey('Movie', on_delete=models.CASCADE)
     keyword = models.ForeignKey(Keyword, on_delete=models.CASCADE)
@@ -223,6 +252,7 @@ class MovieKeyword(models.Model):
         db_table = 'MOVIE_KEYWORD'  # Set the table name to WATCHLIST
         app_label = 'watchlist'
         managed = True
+
 
 class MovieCompany(models.Model):
     movie = models.ForeignKey('Movie', on_delete=models.CASCADE)
@@ -232,6 +262,7 @@ class MovieCompany(models.Model):
         app_label = 'watchlist'
         managed = True
 
+
 class MovieDirector(models.Model):
     movie = models.ForeignKey('Movie', on_delete=models.CASCADE)
     director = models.ForeignKey(Director, on_delete=models.CASCADE)
@@ -239,6 +270,7 @@ class MovieDirector(models.Model):
         db_table = 'MOVIE_DIRECTOR'  # Set the table name to WATCHLIST
         app_label = 'watchlist'
         managed = True
+
 
 class MovieActor(models.Model):
     movie = models.ForeignKey('Movie', on_delete=models.CASCADE)
@@ -249,6 +281,7 @@ class MovieActor(models.Model):
         app_label = 'watchlist'
         managed = True
 
+
 class MovieList(models.Model):
     list = models.ForeignKey(List, on_delete=models.CASCADE)
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
@@ -256,6 +289,29 @@ class MovieList(models.Model):
 
     class Meta:
         ordering = ['order']
+
+
+class MovieTag(models.Model):
+    movie = models.ForeignKey('Movie', on_delete=models.CASCADE)
+    tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
+    class Meta:
+        db_table = 'MOVIE_TAG' 
+        app_label = 'watchlist'
+        managed = True
+
+
+class MovieAward(models.Model):
+    movie = models.ForeignKey('Movie', on_delete=models.CASCADE)
+    award = models.ForeignKey(Award, on_delete=models.CASCADE)
+    winner = models.BooleanField()
+    class Meta:
+        db_table = 'MOVIE_AWARD'  # Set the table name to WATCHLIST
+        app_label = 'watchlist'
+        managed = True
+
+# ===================================
+# Intermediary Models (Watchlist)
+# ===================================     
 
 class WatchlistTag(models.Model):
     movie = models.ForeignKey('WatchlistMovie', on_delete=models.CASCADE)
@@ -265,6 +321,7 @@ class WatchlistTag(models.Model):
         app_label = 'watchlist'
         managed = True
 
+
 class WatchlistGenre(models.Model):
     movie = models.ForeignKey('WatchlistMovie', on_delete=models.CASCADE)
     genre = models.ForeignKey(Genre, on_delete=models.CASCADE)
@@ -272,6 +329,7 @@ class WatchlistGenre(models.Model):
         db_table = 'WATCHLIST_GENRE'  # Set the table name to WATCHLIST
         app_label = 'watchlist'
         managed = True
+
 
 class WatchlistKeyword(models.Model):
     movie = models.ForeignKey('WatchlistMovie', on_delete=models.CASCADE)
@@ -281,6 +339,7 @@ class WatchlistKeyword(models.Model):
         app_label = 'watchlist'
         managed = True
 
+
 class WatchlistCompany(models.Model):
     movie = models.ForeignKey('WatchlistMovie', on_delete=models.CASCADE)
     company = models.ForeignKey(ProdCompany, on_delete=models.CASCADE)
@@ -289,6 +348,7 @@ class WatchlistCompany(models.Model):
         app_label = 'watchlist'
         managed = True
 
+
 class WatchlistDirector(models.Model):
     movie = models.ForeignKey('WatchlistMovie', on_delete=models.CASCADE)
     director = models.ForeignKey(Director, on_delete=models.CASCADE)
@@ -296,6 +356,7 @@ class WatchlistDirector(models.Model):
         db_table = 'WATCHLIST_DIRECTOR'  # Set the table name to WATCHLIST
         app_label = 'watchlist'
         managed = True
+
 
 class WatchlistActor(models.Model):
     movie = models.ForeignKey('WatchlistMovie', on_delete=models.CASCADE)
@@ -306,10 +367,21 @@ class WatchlistActor(models.Model):
         app_label = 'watchlist'
         managed = True
 
+
 class WatchlistProvider(models.Model):
     movie = models.ForeignKey('WatchlistMovie', on_delete=models.CASCADE)
     actor = models.ForeignKey(Provider, on_delete=models.CASCADE)
     class Meta:
         db_table = 'WATCHLIST_PROVIDER' 
+        app_label = 'watchlist'
+        managed = True
+
+
+class WatchlistAward(models.Model):
+    movie = models.ForeignKey('WatchlistMovie', on_delete=models.CASCADE)
+    award = models.ForeignKey(Award, on_delete=models.CASCADE)
+    winner = models.BooleanField()
+    class Meta:
+        db_table = 'WATCHLIST_AWARD'  # Set the table name to WATCHLIST
         app_label = 'watchlist'
         managed = True

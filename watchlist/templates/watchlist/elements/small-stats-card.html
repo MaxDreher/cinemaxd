@@ -1,0 +1,21 @@
+{% load static %}
+{% load custom_filters %}
+{# Small Statistics Card: As Used in Tabs #}
+
+<div class="card border border-0 text-bg-dark flex-fill">
+    <div class="card-body text-center py-2 px-3">
+        {% include "./small-header.html" with text=data.span icon=data.badge %}
+        <div class="row mt-2">
+            <div class="col-md-12">
+                <span><b class="h2 big-number-card">{{ data.movie_count }}</b></span>
+                <small class="h3 fw-semibold text-body-tertiary">movies</small>
+            </div>
+        </div>
+        <hr class="my-2">
+        <small>
+            {% include "./badge-secondary.html" with text=data.total_runtime|convert_to_hrs %}
+            {% include "./badge-secondary.html" with text=data.average_rating.avg|convert_to_rating %}
+            {% include "./badge-secondary.html" with text=data.average_critical.avg|convert_to_rating color="dark" %}
+        </small>
+    </div>
+</div>

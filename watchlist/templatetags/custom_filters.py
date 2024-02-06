@@ -17,6 +17,13 @@ def convert_to_stars(value):
         return ""
     
 @register.filter
+def convert_to_rating(value):
+    try:
+        return '★ ' + str(round(value,2)) +' avg'
+    except ValueError:
+        return ""
+
+@register.filter
 def convert_to_hrs(value):
     try:
         hrs = value // 60
@@ -24,6 +31,23 @@ def convert_to_hrs(value):
         return f"{hrs}hr {mins}min"
     except:
         return value
+
+@register.filter
+def convert_to_eps(value):
+    try:
+        return f"{value} episodes"
+    except:
+        return value
+
+@register.filter(name="parse_oscar")
+def parse_oscar(obj):
+    ret = "<small class='roboto'>"
+    try:
+        for item in obj:
+            ret += f"{"<b>" if (item.winner) else ""}{item.award.year} {item.award.name} {"Winner" if (item.winner) else "Nominee"}{"</b>" if (item.winner) else ""}<br>"
+        return (ret + "</small>")
+    except:
+        return ""
 
 @register.filter(name='parse_year')
 def parse_year(value):
@@ -35,3 +59,4 @@ def parse_year(value):
 @register.filter
 def split_string(value, delimiter):
     return value.split(delimiter)
+

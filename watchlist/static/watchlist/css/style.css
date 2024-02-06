@@ -22,16 +22,19 @@
     background-color: #464B50 !important;
 }
 
-.text-body-red {
-    color: #fe4a4a !important;
+.text-bg-gold {
+    color: #fff!important;
+    background-color: #c29b26 !important;
+}
+
+
+.text-bg-red {
+    color: #fff!important;
+    background-color: #fe4a4a !important;
 }
 
 .text-body-green {
     color: #15d37c !important;
-}
-
-.text-body-gold {
-    color: #c29b26 !important;
 }
 
 .offcanvas {
@@ -137,7 +140,7 @@
 }
 
 .bg-image-half {
-    height: 120px;
+    height: 125px;
     width: 100%;
     object-fit: cover;
     object-position: 50% 50%;

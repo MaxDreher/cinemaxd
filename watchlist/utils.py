@@ -7,7 +7,7 @@ import xml.etree.ElementTree as ET
 from dotenv import load_dotenv
 from slugify import slugify
 from datetime import datetime
-from watchlist.models import Movie, Actor, MovieActor, Director, Genre, ProdCompany, Provider, WatchlistMovie, WatchlistActor, Keyword
+from watchlist.models import *
 from watchlist.api_calls import *  
 import concurrent.futures
 from django.db import transaction, IntegrityError
@@ -284,6 +284,12 @@ def get_providers(tmdb_data):
 
     # Return the list of streaming providers or None if no valid providers are found
     return streaming if streaming else None
+
+def get_awards(title, year):
+    with open('./watchlist/the_oscar_award.json') as f, open('./watchlist/the_oscar_map.json') as g:
+        data = json.load(f)
+        map = json.load(g)
+        return [{'year': item.get('year_film'), 'award': map[(item.get('category'))], 'win': item.get('winner')} for item in data if (item.get('film') == title and item.get('year_film') == year)]
 
 # -----------------------------------------------
 # STATIC VALUE GETTERS
@@ -612,6 +618,16 @@ def make_api_calls_and_update_database(title, year, rating, review, theaters, da
                 pass
             movie.keywords.add(key)
 
+    awards = get_awards(title, year)
+    if awards:
+        for a in awards:
+            awd = Award(name=a['award'], year=a['year'])
+            try:
+                awd.save(using='library_db')
+            except:
+                awd = Award.objects.get(name=a['award'], year=a['year'])
+            MovieAward.objects.create(movie=movie, award=awd, winner=a['win'])
+
     print(f"{title} added in {time.time() - start_time} seconds.")
 
 def make_api_calls_and_update_watchlist(title, year, reason, date_watched=None):
@@ -684,7 +700,6 @@ def make_api_calls_and_update_watchlist(title, year, reason, date_watched=None):
             actors = list(executor.map(process_actor, cast))
 
         for actor, role in zip(actors, roles):
-            print(actor.name, role)
             WatchlistActor.objects.create(movie=movie, actor=actor, role=role)
 
     direc = get_directors(tmdb, type, num=10)
@@ -733,6 +748,16 @@ def make_api_calls_and_update_watchlist(title, year, reason, date_watched=None):
                 pass
             movie.provider.add(prov)
 
+    awards = get_awards(title, year)
+    if awards:
+        for a in awards:
+            awd = Award(name=a['award'], year=a['year'])
+            try:
+                awd.save(using='library_db')
+            except:
+                awd = Award.objects.get(name=a['award'], year=a['year'])
+            WatchlistAward.objects.create(movie=movie, award=awd, winner=a['win'])
+            
     print(f"{title} added in {time.time() - start_time} seconds.")
 
 def make_api_calls_and_update_database_from_id(id, rating, review, theaters, date_Watched=None, service=None):

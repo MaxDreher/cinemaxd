@@ -5,6 +5,86 @@
         "key": 1705991525805,
         "children": [
           {
+            "key": 1707136085558,
+            "children": [
+              {
+                "key": 1707136108180,
+                "children": [],
+                "todo": {
+                  "content": "Integrate with Update_Streaming script",
+                  "id": 1707136108180,
+                  "level": "default",
+                  "done": false,
+                  "start": 1707136108180
+                }
+              }
+            ],
+            "todo": {
+              "content": "Add \"Priority\" or \"Watching\" to Watchlist (i.e. movies that I'd like to watch as soon as they become available.",
+              "id": 1707136085558,
+              "level": "default",
+              "done": false,
+              "start": 1707136085558
+            }
+          },
+          {
+            "key": 1707136075503,
+            "children": [],
+            "todo": {
+              "content": "Add \"Favorite\" field to Watchlog",
+              "id": 1707136075503,
+              "level": "default",
+              "done": false,
+              "start": 1707136075503
+            }
+          },
+          {
+            "key": 1707131730242,
+            "children": [
+              {
+                "key": 1707136176971,
+                "children": [
+                  {
+                    "key": 1707136190978,
+                    "children": [],
+                    "todo": {
+                      "content": "Ideally the input could be selectable tags, or a multiple-select dropdown. Things like Oscar Nominations/Wins will be applied as tags inherently.",
+                      "id": 1707136190978,
+                      "level": "default",
+                      "done": false,
+                      "start": 1707136190978
+                    }
+                  }
+                ],
+                "todo": {
+                  "content": "Completely Eliminate the \"REASON\" field, and work it into tags.",
+                  "id": 1707136176971,
+                  "level": "default",
+                  "done": false,
+                  "start": 1707136176971
+                }
+              },
+              {
+                "key": 1707135992243,
+                "children": [],
+                "todo": {
+                  "content": "Use Kaggle dataset and create own JSON, don't need API given that the data is static.",
+                  "id": 1707135992243,
+                  "level": "default",
+                  "done": false,
+                  "start": 1707135992243
+                }
+              }
+            ],
+            "todo": {
+              "content": "Implement Tag system. Award winners/nominees, franchise pictures. Should be able to filter out things like (\"2019 Best Picture Nominees\") and rank them.",
+              "id": 1707131730242,
+              "level": "default",
+              "done": false,
+              "start": 1707131730242
+            }
+          },
+          {
             "key": 1705991531930,
             "children": [
               {
@@ -111,6 +191,17 @@
           {
             "key": 1705477907670,
             "children": [
+              {
+                "key": 1707131670244,
+                "children": [],
+                "todo": {
+                  "content": "Some kind of \"challenge\" progress list ex( 6/10 2024 Best Picture Nominees, 33/36 MCU Films, etc. ) Essentially challenges/badges. Tie-in to Tag system",
+                  "id": 1707131670244,
+                  "level": "default",
+                  "done": false,
+                  "start": 1707131670244
+                }
+              },
               {
                 "key": 1707030519136,
                 "children": [],
@@ -267,6 +358,30 @@
               {
                 "key": 1705477511837,
                 "children": [
+                  {
+                    "key": 1707136030181,
+                    "children": [
+                      {
+                        "key": 1707136049802,
+                        "children": [],
+                        "todo": {
+                          "content": "https://codepen.io/mindstorm/pen/aZZvKq",
+                          "id": 1707136049802,
+                          "level": "default",
+                          "done": false,
+                          "start": 1707136049802,
+                          "link": "https://codepen.io/mindstorm/pen/aZZvKq"
+                        }
+                      }
+                    ],
+                    "todo": {
+                      "content": "Add \"Favorite\" Button with heart animation, ex Letterboxd version.",
+                      "id": 1707136030181,
+                      "level": "default",
+                      "done": false,
+                      "start": 1707136030181
+                    }
+                  },
                   {
                     "key": 1705477737890,
                     "children": [
@@ -453,10 +568,10 @@
               "content": "Watchlist",
               "id": 1705477490660,
               "level": "default",
-              "done": false,
+              "done": true,
               "start": 1705477490660,
               "focus": false,
-              "end": 1705720119173
+              "end": 1707136019122
             }
           },
           {
@@ -730,10 +845,17 @@
       1705477213097,
       1705478733655,
       1705478590553,
-      1705991525805,
       1705991549448,
       1705991919354,
-      1705477178694
+      1707131730242,
+      1705477907670,
+      1705477490660,
+      1705477511837,
+      1707136030181,
+      1707136085558,
+      1705991525805,
+      1705477178694,
+      1707136176971
     ],
     "schema": "https://github.com/Saber2pr/vsc-ext-todolist/blob/master/src/api/type.ts#L3",
     "add_mode": "top",
@@ -749,6 +871,6 @@
     "showEndTime": false,
     "simpleMode": false,
     "lang": "en",
-    "version": "1707030616174"
+    "version": "1707136248739"
   }
 }

@@ -1,124 +1,80 @@
 <!DOCTYPE html>
 {% load static %}
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>
-        {% block title %}
-            CineMax'D
-        {% endblock %}
-    </title>
-    {% comment %} BOOTSTRAP 5.3.0 {% endcomment %}
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    {% comment %} BOOTSTRAP ICONS 1.11.0 {% endcomment %}
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="{% static 'watchlist/css/offcanvas.css' %}">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{% block title %}CineMax'D{% endblock %}</title>
 
-    {% block css %}{% endblock %}
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'watchlist/css/style.css' %}">
-    <link rel="shortcut icon" type="image/x-icon" href="{% static 'watchlist/favicon.ico' %}">    
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{% static 'watchlist/js/standard.js' %}"></script>
-</head>
-<body data-bs-theme="dark" class="bg-dark-subtle">
-    {% comment %} navbar {% endcomment %}
-    <nav id="navbar" class="navbar sticky-top navbar-expand-lg px-3 bg-black shadow-lg">
-        <div class="d-flex flex-wrap me-auto">
-            <a href="/" class="d-flex navbar-brand align-items-center mb-3 mb-lg-0 me-lg-auto text-decoration-none">
-                <img src="{% static 'watchlist/images/site-logo-g.png' %}" height="50px" alt="Bootstrap">
-            </a>
-        </div>
-        <div id="statbar" class="hstack gap-3 py-2">
-            <div class="p-2 text-center">
-                <small class="h6 heading-stats">{{ total_time.runtime__sum }}</small>
-                <small> minutes</small>
-            </div>
-            <div class="vr"></div>
-            <div class="p-2 text-center">
-                <small class="h6 heading-stats">{{ movie_total }}</small>
-                <small> movies</small>
-            </div>
-            <div class="vr"></div>
-            <div class="p-2 text-center">
-                <small class="h6 heading-stats">{{ total_episodes.episodes__sum }}</small>
-                <small> episodes</small>
-            </div>
-            <div class="vr"></div>
-            <div class="p-2">
-                <small class="h6 heading-stats">{{ total_seasons.seasons__sum }}</small>
-                <small> seasons</small>
-            </div>
-            <div class="vr"></div>
-            <div class="p-2">
-                <small class="h6 heading-stats">{{ series_total }}</small>
-                <small> series</small>
-            </div>
-            <div class="vr"></div>
-            <div class="p-2">
-                <small class="h6 heading-stats">{{ watchlist_total }}</small>
-                <small> to watch</small>
-            </div>
-        </div>
-        <nav class="nav nav-pills nav-item nav-fill ms-auto">
-            {% with current_url=request.path %}
-                <a href="{% url 'dashboard' %}" class="nav-link{% if current_url == '/watchlist/dashboard/' %} active{% endif %} raleway">
-                    <div class="row">
-                        <div class="col d-flex align-items-center pe-1">
-                            <i class="bi nav-icon bi-grid-3x3-gap-fill"></i>
-                        </div>
-                        <div class="col d-flex align-items-center ps-0">
-                            <span class="nav-text text-center">DASHBOARD<span>
-                        </div>
-                    </div>
+        {# External Stylesheets #}
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+        <link rel="stylesheet" href="{% static 'watchlist/css/offcanvas.css' %}">
+        <link rel="stylesheet" href="{% static 'watchlist/css/style.css' %}">
+
+        {# Additional CSS Block #}
+        {% block css %}{% endblock %}
+
+        {# Favicon #}
+        <link rel="shortcut icon" type="image/x-icon" href="{% static 'watchlist/favicon.ico' %}">
+
+        {# JS Libraries #}
+        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="{% static 'watchlist/js/standard.js' %}"></script>
+    </head>
+    <body data-bs-theme="dark" class="bg-dark-subtle">
+        {# Navbar #}
+        <nav id="navbar" class="navbar sticky-top navbar-expand-lg px-3 bg-black shadow-lg">
+
+            {# Brand Logo #}
+            <div class="d-flex flex-wrap me-auto">
+                <a href="/" class="d-flex navbar-brand align-items-center mb-3 mb-lg-0 me-lg-auto text-decoration-none">
+                    <img src="{% static 'watchlist/images/site-logo-h.png' %}" height="50px" alt="Bootstrap">
                 </a>
-                <a href="{% url 'watchlog' %}" class="nav-link{% if current_url == '/watchlist/watchlog/' %} active{% endif %} raleway">
-                    <div class="row">
-                        <div class="col d-flex align-items-center pe-1">
-                            <i class="bi nav-icon bi-collection-play-fill"></i>
-                        </div>
-                        <div class="col d-flex align-items-center ps-0">
-                            <span class="nav-text text-center">WATCHLOG<span>
-                        </div>
+            </div>
+
+            {# Stats Bar #}
+            <div id="statbar" class="hstack gap-3 py-2">
+                {% for stat_key, stat_label, stat_value in stat_data %}
+                    <div class="p-2 text-center">
+                        <small class="h6 heading-stats">{{ stat_value|default:0 }}</small>
+                        <small>{{ stat_label }}</small>
                     </div>
-                </a>
-                <a href="{% url 'watchlist' %}" class="nav-link{% if current_url == '/watchlist/watchlist/' %} active{% endif %} raleway">
-                    <div class="row">
-                        <div class="col d-flex align-items-center pe-1">
-                            <i class="bi nav-icon bi-eye-fill"></i>
-                        </div>
-                        <div class="col d-flex align-items-center ps-0">
-                            <span class="nav-text text-center">WATCHLIST<span>
-                        </div>
-                    </div>
-                </a>
-                <a href="{% url 'rankings' %}" class="nav-link{% if current_url == '/watchlist/rankings/' %} active{% endif %} raleway">
-                    <div class="row">
-                        <div class="col d-flex align-items-center pe-1">
-                            <i class="bi nav-icon bi-list-columns-reverse"></i>
-                        </div>
-                        <div class="col d-flex align-items-center ps-0">
-                            <span class="nav-text text-center">RANKINGS<span>
-                        </div>
-                    </div>
-                </a>
-                <a href="{% url 'elo' %}" class="nav-link{% if current_url == '/watchlist/elo/' %} active{% endif %} raleway">
-                    <div class="row">
-                        <div class="col d-flex align-items-center pe-1">
-                            <i class="bi nav-icon bi-calculator"></i>
-                        </div>
-                        <div class="col d-flex align-items-center ps-0">
-                            <span class="nav-text text-center">ELO<span>
-                        </div>
-                    </div>
-                </a>
-            {% endwith %}
+                    {% if not forloop.last %}
+                        <div class="vr"></div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+            {# Nav Links #}
+            <ul class="nav nav-pills nav-item nav-fill ms-auto">
+                {% with current_url=request.path %}
+                    {% for link, icon, text in navigation_links %}
+                        <li class="nav-item px-2">
+                            <a href="{% url link %}" class="nav-link{% if current_url == '/watchlist/'|add:link|add:'/' %} active{% endif %} raleway">
+                                <div class="row">
+                                    <div class="col d-flex align-items-center pe-1">
+                                        <i class="bi nav-icon {{ icon }}"></i>
+                                    </div>
+                                    <div class="col d-flex align-items-center ps-0">
+                                        <span class="nav-text text-center">{{ text }}<span>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                    {% endfor %}
+                {% endwith %}
+            </ul>
         </nav>
-    </nav>
-    {% block sidebar %}{% endblock %}
-    {% block content %}{% endblock %}
-    {% block js %}{% endblock %}
-</body>
+
+        {# Content Block #}
+        {% block content %}{% endblock %}
+
+        {# Offcanvas Sidebar Container #}
+        <div id="sidebarContainer"></div>
+
+        {# Additional JS Block #}
+        {% block js %}{% endblock %}
+    </body>
 </html>

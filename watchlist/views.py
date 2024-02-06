@@ -86,7 +86,10 @@ def save_poster_link(request):
     if request.method == 'POST':
         movie_id = request.POST.get('movieId')
         poster_link = request.POST.get('posterLink')
-        movie = Movie.objects.get(pk=movie_id)
+        try:
+            movie = Movie.objects.get(pk=movie_id)
+        except:
+            movie = WatchlistMovie.objects.get(pk=movie_id)
         movie.posterLink = poster_link
         movie.save()
         return JsonResponse({'message': 'Link saved successfully'})

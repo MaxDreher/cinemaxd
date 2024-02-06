@@ -25,15 +25,46 @@ from functools import partial
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponseRedirect
 from api_calls import get_TMDB_from_id
-# from utils import make_api_calls_and_update_database, make_api_calls_and_update_watchlist, make_api_calls_and_update_database_from_id, getCast, process_actor
+from utils import get_awards
+
 
 # make_api_calls_and_update_database("Disney Channel’s Theme A History Mystery", 2022, 5, "Went out of my way to find the proper documentation for this YouTube documentary done by Kevin Perjurer of Defunctland. One of the most artistic and well-done documentaries I've ever seen, and a beautiful conclusion in every way. Such a masterful way of cherishing and promoting art that deserves to be remembered.", None)
 
 from watchlist.models import List, MovieList, Movie
 
-# for item in [226979]:
-#     dele = WatchlistMovie.objects.get(pk=item)
-#     dele.delete()
+for item in [776503]:
+    mov = Movie.objects.get(pk=item)
+    mov.service = "Apple TV Plus"
+    mov.datetime_added = None
+    mov.save()
+# for item in WatchlistAward.objects.all():
+#     item.delete()
+
+def movieOscars():
+    for movie in Movie.objects.all():
+        print(f"{movie.title} {movie.year}")
+        awards = get_awards(movie.title, movie.year)
+        if awards:
+            for a in awards:
+                awd = Award(name=a['award'], year=a['year'])
+                try:
+                    awd.save(using='library_db')
+                except:
+                    awd = Award.objects.get(name=a['award'], year=a['year'])
+                MovieAward.objects.create(movie=movie, award=awd, winner=a['win'])
+
+def watchlistOscars():
+    for movie in WatchlistMovie.objects.all():
+        print(f"{movie.title} {movie.year}")
+        awards = get_awards(movie.title, movie.year)
+        if awards:
+            for a in awards:
+                awd = Award(name=a['award'], year=a['year'])
+                try:
+                    awd.save(using='library_db')
+                except:
+                    awd = Award.objects.get(name=a['award'], year=a['year'])
+                WatchlistAward.objects.create(movie=movie, award=awd, winner=a['win'])
 
 def customPoster(id, link):
     movie = Movie.objects.get(pk=id)

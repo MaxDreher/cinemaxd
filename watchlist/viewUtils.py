@@ -10,20 +10,11 @@ import random
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'MovieSite.settings')
 django.setup()
 
-# from django.http import JsonResponse
-from django.db.models import Prefetch, Case, When, IntegerField, Avg, Count, Min, Sum, Q, Func
+from django.db.models import Case, When, IntegerField, Avg, Count, Min, Sum, Q, Func
 from django.db.models.functions import ExtractWeekDay
-# from django.shortcuts import render, redirect
-# from django.template.loader import render_to_string
 from watchlist.models import *
 from datetime import *
 import math
-# import json 
-# import random
-# import os
-# from dotenv import load_dotenv
-# from .api_calls import get_OMDB, get_TMDB
-# from .utils import make_api_calls_and_update_database, make_api_calls_and_update_watchlist  # Create this function
 
 class Round(Func):
     function = 'ROUND'
@@ -81,13 +72,14 @@ def get_week_info(movies, today):
     average_rating = movies_sorted.aggregate(avg=Round(Avg('rating')))
     average_critical = movies_sorted.aggregate(avg=Round(Avg('avg_critical_rating')))
     total_runtime = movies_sorted.aggregate(sum=Sum('runtime')).get('sum') if (movies_sorted.aggregate(sum=Sum('runtime')).get('sum')) else 0
-    actors = get_top_actors(movies_week, 4, 0)
-    directors = get_top_directors(movies_week, 4, 0)
+    actors = get_top_actors(movies_week, 3, 0)
+    directors = get_top_directors(movies_week, 3, 0)
     return {
+        'title': 'week',
         'start_date': start_date,
         'end_date': today,
-        # 'ratings_list': ratings_list,
-        # 'count_list': count_list,
+        'span': f"{start_date.strftime("%b. %d, %Y")} - {today.strftime("%b. %d, %Y")}",
+        'badge': 'bi-calendar3-week',
         'movies': movies_week,
         'highest_critical': highest_critical,
         'highest_rated': highest_rated,
@@ -95,11 +87,16 @@ def get_week_info(movies, today):
         'movie_count': movie_count,
         'average_rating': average_rating,
         'average_critical': average_critical,
-        'total_runtime': f"{total_runtime//60}hr{total_runtime%60}min",
+        'total_runtime': total_runtime,
         'actors_by_count': actors.get('by_count'),
         'actors_by_rating': actors.get('by_rating'),
         'directors_by_count': directors.get('by_count'),
         'directors_by_rating': directors.get('by_rating'),
+        'carousel_title': 'All Movies Seen This Week',
+        'use_releases': False,
+        'award_highest': {'text': 'Highest Rated Movie Seen This Week', 'color': 'green', 'icon': 'bi-award-fill'},
+        'award_critical': {'text': 'Highest Critically-Rated Movie Seen This Week', 'color': 'gold', 'icon': 'bi-trophy-fill'},
+        'award_lowest': {'text': 'Lowest Rated Movie Seen This Week', 'color': 'red', 'icon': 'bi-hand-thumbs-down-fill'},
     }
 
 def get_month_info(movies, today):
@@ -107,11 +104,6 @@ def get_month_info(movies, today):
     month = today.month
     movies_month = movies.filter(date__month=month, date__year=year)
     movies_alltime_month = movies.filter(releaseDate__month=month).order_by('-rating')[:10]
-
-    # movies_rating_count = movies_month.values('rating').annotate(count=Count('TMDB_ID')).order_by('-rating')
-
-    # ratings_list = [obj['rating'] for obj in movies_rating_count]
-    # count_list = [obj['count'] for obj in movies_rating_count]
 
     movies_sorted = movies_month.order_by('-rating', 'date')
 
@@ -124,11 +116,12 @@ def get_month_info(movies, today):
     total_runtime = movies_sorted.aggregate(sum=Sum('runtime')).get('sum') if (movies_sorted.aggregate(sum=Sum('runtime')).get('sum')) else 0
     actors = get_top_actors(movies_month, 4, 0)
     directors = get_top_directors(movies_month, 4, 0)
+    span = f"{today.strftime("%B")} {year}"
     return {
+        'title': 'month',
         'month': today.strftime("%B"),
         'year': year,
-        # 'ratings_list': ratings_list,
-        # 'count_list': count_list,
+        'span': span,
         'movies': movies_alltime_month,
         'highest_critical': highest_critical,
         'highest_rated': highest_rated,
@@ -136,11 +129,17 @@ def get_month_info(movies, today):
         'movie_count': movie_count,
         'average_rating': average_rating,
         'average_critical': average_critical,
-        'total_runtime': f"{total_runtime//60}hr{total_runtime%60}min",
+        'total_runtime': total_runtime,
         'actors_by_count': actors.get('by_count'),
         'actors_by_rating': actors.get('by_rating'),
         'directors_by_count': directors.get('by_count'),
         'directors_by_rating': directors.get('by_rating'),
+        'use_releases': True,
+        'carousel_title': f'My Top 10 Movies Released in {today.strftime("%B")} (All-Time)',
+        'award_highest': {'text': f'Highest Rated Movie Seen in {span}', 'color': 'green', 'icon': 'bi-award-fill'},
+        'award_critical': {'text': f'Highest Critically-Rated Movie Seen in {span}', 'color': 'gold', 'icon': 'bi-trophy-fill'},
+        'award_lowest': {'text': f'Lowest Rated Movie Seen in {span}', 'color': 'red', 'icon': 'bi-hand-thumbs-down-fill'},
+
     }
 
 def get_year_info(movies, today):
@@ -165,7 +164,9 @@ def get_year_info(movies, today):
     actors = get_top_actors(movies_year, 4, 0)
     directors = get_top_directors(movies_year, 4, 0)
     return {
+        'title': 'year',
         'year': year,
+        'span': year,
         'movies': movies_released_year,
         'highest_critical': highest_critical,
         'highest_rated': highest_rated,
@@ -178,6 +179,11 @@ def get_year_info(movies, today):
         'actors_by_rating': actors.get('by_rating'),
         'directors_by_count': directors.get('by_count'),
         'directors_by_rating': directors.get('by_rating'),
+        'use_releases': True,
+        'carousel_title': f'My Top 10 Movies Released in {year}',
+        'award_highest': {'text': f'Highest Rated Movie Seen in {year}', 'color': 'green', 'icon': 'bi-award-fill'},
+        'award_critical': {'text': f'Highest Critically-Rated Movie Seen in {year}', 'color': 'gold', 'icon': 'bi-trophy-fill'},
+        'award_lowest': {'text': f'Lowest Rated Movie Seen in {year}', 'color': 'red', 'icon': 'bi-hand-thumbs-down-fill'},
     }
 
 def get_heatmap_data(movies, today):
@@ -332,6 +338,8 @@ def get_streak(today):
         previous_date = record.date
 
     previous_date = None
+    if (records[0].date == today):
+        temp_streak += 1
     for record in records:
         # Calculate the difference in days
         if previous_date:
