@@ -20,7 +20,7 @@ def convert_to_stars(value):
 def convert_to_rating(value):
     try:
         return '★ ' + str(round(value,2)) +' avg'
-    except ValueError:
+    except:
         return ""
 
 @register.filter
@@ -55,7 +55,31 @@ def parse_year(value):
         return int(value)
     except ValueError:
         return value
-    
+
+@register.filter(name='parse_birthday')
+def parse_year(obj):
+    try:
+        return f"{obj.name} war born on this day in {obj.birthday.year}."
+    except ValueError:
+        return ""
+
+@register.filter(name='parse_count')
+def parse_year(value):
+    try:
+        return f"{value} movies"
+    except ValueError:
+        return ""
+
+@register.filter(name="parse_nominees")
+def parse_nominees(obj):
+    ret = "<small class='roboto'>"
+    try:
+        for item in obj:
+            ret += f"{"<b>" if (item['seen']) else ""}{"<i class='bi bi-trophy'></i>" if (item['win']) else ""} {item['title']} ({item['year']}){"</b>" if (item['seen']) else ""}<br>"
+        return (ret + "</small>")
+    except:
+        return ""
+
 @register.filter
 def split_string(value, delimiter):
     return value.split(delimiter)

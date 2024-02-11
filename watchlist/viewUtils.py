@@ -12,9 +12,11 @@ django.setup()
 
 from django.db.models import Case, When, IntegerField, Avg, Count, Min, Sum, Q, Func
 from django.db.models.functions import ExtractWeekDay
+from django.core.exceptions import ObjectDoesNotExist
 from watchlist.models import *
 from datetime import *
 import math
+import json
 
 class Round(Func):
     function = 'ROUND'
@@ -26,7 +28,7 @@ def get_top_actors(movies, num, non_null):
         movie_count=Count('movieactor'),
         nonnull_count=Count('movieactor', filter=Q(movieactor__movie__rating__isnull=False), distinct=True),
         avg_rating=Round(Avg('movieactor__movie__rating'))
-    ).order_by('-movie_count')
+    ).order_by('-movie_count', '-avg_rating')
     by_rating_actors = by_count_actors.filter(nonnull_count__gte=non_null).order_by('-avg_rating')
     
     return {
@@ -41,7 +43,7 @@ def get_top_directors(movies, num, non_null):
         movie_count=Count('moviedirector'),
         nonnull_count=Count('moviedirector', filter=Q(moviedirector__movie__rating__isnull=False), distinct=True),
         avg_rating=Round(Avg('moviedirector__movie__rating'))
-    ).order_by('-movie_count')
+    ).order_by('-movie_count', '-avg_rating')
     by_rating_directors = by_count_directors.filter(nonnull_count__gte=non_null).order_by('-avg_rating')
     
     return {
@@ -114,8 +116,8 @@ def get_month_info(movies, today):
     average_rating = movies_sorted.aggregate(avg=Round(Avg('rating')))
     average_critical = movies_sorted.aggregate(avg=Round(Avg('avg_critical_rating')))
     total_runtime = movies_sorted.aggregate(sum=Sum('runtime')).get('sum') if (movies_sorted.aggregate(sum=Sum('runtime')).get('sum')) else 0
-    actors = get_top_actors(movies_month, 4, 0)
-    directors = get_top_directors(movies_month, 4, 0)
+    actors = get_top_actors(movies_month, 3, 0)
+    directors = get_top_directors(movies_month, 3, 0)
     span = f"{today.strftime("%B")} {year}"
     return {
         'title': 'month',
@@ -161,8 +163,8 @@ def get_year_info(movies, today):
     average_rating = movies_sorted.aggregate(avg=Round(Avg('rating')))
     average_critical = movies_sorted.aggregate(avg=Round(Avg('avg_critical_rating')))
     total_runtime = movies_sorted.aggregate(sum=Sum('runtime')).get('sum') if (movies_sorted.aggregate(sum=Sum('runtime')).get('sum')) else 0
-    actors = get_top_actors(movies_year, 4, 0)
-    directors = get_top_directors(movies_year, 4, 0)
+    actors = get_top_actors(movies_year, 3, 0)
+    directors = get_top_directors(movies_year, 3, 0)
     return {
         'title': 'year',
         'year': year,
@@ -291,26 +293,6 @@ def on_this_day(today):
     }
     return [value for value in data.values() if value['movie'] is not None]
 
-
-
-
-    # if releasedTodayWatchlist:
-    #     print(f"Watchlist Movie Released on this day in {releasedTodayWatchlist.releaseDate.year}... {releasedTodayWatchlist.title} ({releasedTodayWatchlist.year}), {releasedTodayWatchlist.releaseDate}")
-    # if releasedTodayMovie:
-    #     print(f"Watchlog Movie Released on this day in {releasedTodayMovie.releaseDate.year}... {releasedTodayMovie.title} ({releasedTodayMovie.year}), {releasedTodayMovie.releaseDate}")
-    # if seenTodayMovie:
-    #     print(f"Watchlog Movie Seen on this day in {seenTodayMovie.date.year}... {seenTodayMovie.title} ({seenTodayMovie.year}), {seenTodayMovie.date}")
-    # if actorMovieToday:
-    #     if actorMovieToday.watchlistmovie_set.first():
-    #         print(f"Actor {actorMovieToday.name} born on this day in {actorMovieToday.birthday.year}. They appear in {actorMovieToday.watchlistmovie_set.first().title}")
-    #     if actorMovieToday.movie_set.first():
-    #         print(f"Actor {actorMovieToday.name} born on this day in {actorMovieToday.birthday.year}. They appear in {actorMovieToday.movie_set.first().title}")
-    # if directorMovieToday:
-    #     if directorMovieToday.watchlistmovie_set.first():
-    #         print(f"Director {directorMovieToday.name} born on this day in {directorMovieToday.birthday.year}. They directed {directorMovieToday.watchlistmovie_set.first().title}")
-    #     if directorMovieToday.movie_set.first():
-    #         print(f"Director {directorMovieToday.name} born on this day in {directorMovieToday.birthday.year}. They directed {directorMovieToday.movie_set.first().title}")
-
 def get_streak(today):
     # Retrieve all records sorted by date
     records = Movie.objects.filter(date__isnull=False).order_by('-date')
@@ -318,8 +300,6 @@ def get_streak(today):
     current_streak = 0
     temp_streak = 0
     longest_streak = 0
-    # previous_date = today-timedelta(days=1)
-    # print(previous_date)
     previous_date = today
     if (records[0].date == today):
         current_streak += 1
@@ -392,6 +372,44 @@ def get_stats(movies, start, end):
         'total_days': total_days,
         'gap': movie_count - total_days
     }
+
+def get_streaming(movies):
+    movies_rating_count = movies.filter(service__isnull=False).values('service').annotate(count=Count('TMDB_ID')).order_by('-count')
+    return [{'name': item['service'], 'value': item['count'], 'image': f"/static/watchlist/images/{item['service']}.png", 'latest': movies.filter(service=item['service']).order_by('-date').first().title} for item in movies_rating_count]
+
+def get_oscars_year(movies, year, award):
+    with open('./watchlist/the_oscar_award.json') as f, open('./watchlist/the_oscar_map.json') as g:
+            data = json.load(f)
+            map = json.load(g)
+            
+            noms = [{'title': item.get('film'), 'year': item.get('year_film'), 'win': item.get('winner'), 'seen': False} for item in data if (item.get('year_film') == year) and (map[(item.get('category'))] == award) ]
+            seen = 0
+            winner_seen = False
+            for item in noms:
+                try:
+                    if (item['year'] == 2020):
+                        movie = movies.get(title__iexact=item['title'])
+                    else:
+                        movie = movies.get(title__iexact=item['title'], year=item['year'])
+                    item['seen'] = True
+                    if item['win']:
+                        winner_seen = True
+                    seen += 1
+                except ObjectDoesNotExist:
+                    pass
+            return {'seen': seen, 'total': len(noms), 'winner_seen': winner_seen, 'year': year, 'award': award, 'movies': noms}
+
+def get_oscars_range(movies, year_start, year_end, award):
+    return [get_oscars_year(movies, year, award) for year in range(year_end, year_start, -1) ]
+
+def get_top_studios(movies, num):
+    studios = ProdCompany.objects.filter(movie__in=(movies))
+    by_count_studios = studios.annotate(
+        movie_count=Count('moviecompany'),
+        avg_rating=Round(Avg('moviecompany__movie__rating'))
+    ).order_by('-movie_count', '-avg_rating')
+
+    return [{'name': company.name, 'value': company.movie_count, 'logo': company.logo, 'movie': company.movie_set.order_by('-date').first()} for company in by_count_studios[:num]]    
 
 top_10 = ["La La Land",
           "Good Will Hunting",

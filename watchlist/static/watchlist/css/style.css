@@ -37,8 +37,12 @@
     color: #15d37c !important;
 }
 
+.text-body-blue {
+    color: #00a6a4 !important;
+}
+
 .offcanvas {
-    --bs-offcanvas-width: 25%; 
+    --bs-offcanvas-width: 27%; 
 }
 
 .raleway {
@@ -206,4 +210,21 @@
     background: linear-gradient(to bottom, rgb(33,37,41,0.92), rgb(33,37,41,1.0));
     pointer-events: all; /* Allows clicks to pass through to the button below */
     position: absolute;
+}
+
+.gradient-overlay-quarter {
+    bottom: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(to bottom, rgb(33,37,41,0.85), rgb(33,37,41,1.0));
+    pointer-events: all; /* Allows clicks to pass through to the button below */
+    position: absolute;
+}
+
+.bg-image-quarter {
+    height: 70px;
+    width: 100%;
+    object-fit: cover;
+    object-position: 50% 50%;
 }

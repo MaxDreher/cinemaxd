@@ -1,0 +1,15 @@
+{# Actor Card #}
+{% load static %}
+{% load custom_filters %}
+
+<div class="tab-pane fade {{ active|default:"" }}" id="{{ title }}-tab-pane" role="tabpanel" tabindex="0">
+    <div class="row row-cols-1 g-2">
+        {% for item in data %}
+            {% if item.actor%}
+                {% include "./actor-card.html" with person=item.actor movie=item.movie %}
+            {% elif item.director %}
+                {% include "./actor-card.html" with person=item.director movie=item.movie %}
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>

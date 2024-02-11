@@ -259,8 +259,12 @@ def get_providers(tmdb_data):
     preferred_providers = [
         "Netflix", "Hulu", "Max", "Disney Plus", "Apple TV Plus",
         "Amazon Prime Video", "Peacock Premium", "Paramount Plus",
-        "Paramount+ Amazon Channel", "Tubi TV", "Freevee", "TNT", "TBS"
+        "Paramount+ Amazon Channel", "Tubi TV", "Freevee", "TNT", "TBS", 
+        "AMC+", "AMC", "AMC+ Amazon Channel", "AMC Plus Apple TV Channel ", "AMC+ Roku Premium Channel", 
+        "MGM Plus", "Starz"
     ]
+
+    amc_clones = ["AMC", "AMC+ Amazon Channel", "AMC Plus Apple TV Channel ", "AMC+ Roku Premium Channel"]
 
     streaming = []
 
@@ -270,8 +274,10 @@ def get_providers(tmdb_data):
         for provider in provider_list:
             try:
                 if provider['provider_name'] in preferred_providers:
-                    # Append provider information to the streaming list
-                    streaming.append([provider['provider_id'], provider['provider_name']])
+                    if provider['provider_name'] in amc_clones:
+                        streaming.append([526, "AMC+"])
+                    else:
+                        streaming.append([provider['provider_id'], provider['provider_name']])
             except Exception as provider_error:
                 # Print or log the specific exception for debugging
                 print(f"An error occurred while processing providers: {provider_error}")
@@ -518,7 +524,7 @@ def make_api_calls_and_update_database(title, year, rating, review, theaters, da
 
         rating_fields = [IMDB, TMDB, MC, RTCritic, RTUser, LBXD]
         rating_score_maps = [10, 10, 1, 1, 1, 20]
-        ratings = [field * rating_score for (field, rating_score) in zip(rating_fields, rating_score_maps) if field is not None]
+        ratings = [field * rating_score for (field, rating_score) in zip(rating_fields, rating_score_maps) if field is not None and rating_score is not None]
         avg_critical_rating = round((sum(ratings) / 20) / len(ratings), 2) if ratings else None
 
         with transaction.atomic():
@@ -558,7 +564,7 @@ def make_api_calls_and_update_database(title, year, rating, review, theaters, da
                 avg_critical_rating=avg_critical_rating,
                 service=streaming_service,
                 theaters=theaters,
-                elo = (rating * 200) + 900,
+                elo = (rating * 200 + 900) if rating is not None else 900,
                 eloMatches = 0
             )
             movie.save(using='library_db')
@@ -579,7 +585,6 @@ def make_api_calls_and_update_database(title, year, rating, review, theaters, da
             actors = list(executor.map(process_actor, cast))
 
         for actor, role in zip(actors, roles):
-            print(actor.name, role)
             MovieActor.objects.create(movie=movie, actor=actor, role=role)
 
     direc = get_directors(tmdb, type, num=10)

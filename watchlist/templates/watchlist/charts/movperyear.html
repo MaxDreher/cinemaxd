@@ -25,7 +25,10 @@
       panX: true,
       panY: false,
       pinchZoomX: false,
-      paddingLeft:0,
+      paddingLeft:2,
+      paddingTop:5,
+      paddingBottom:8,
+      paddingRight:30,
       layout: root.verticalLayout
     }));
     
@@ -47,6 +50,7 @@
         fill: am5.color('#6f7377'),
         fontSize: "8pt"
     });
+    
     xRenderer.grid.template.set("visible", false);
 
     var yRenderer = am5xy.AxisRendererY.new(root, {
@@ -64,7 +68,6 @@
       minZoomCount: 20,
       categoryField: "year",
       renderer: xRenderer,
-      tooltip: am5.Tooltip.new(root, {})
     }));
     
     var yAxis = chart.yAxes.push(am5xy.ValueAxis.new(root, {
@@ -105,48 +108,40 @@
         cornerRadiusTR: 10
     });
 
-    var tooltip = am5.Tooltip.new(root, {
-        getFillFromSprite: false,
-        autoTextColor: false,
-        labelText: "[bold]{year}[/]\n{value} movies"
-    });
-
-    tooltip.label.setAll({
-        fontFamily: 'Roboto',
-        fontSize: '10pt',
-        fill: am5.color(0xffffff)
-    });
-              
-    tooltip.get("background").setAll({
-        stroke: am5.color(0x000000),
-        strokeOpacity: 0.0,
-        fill: am5.color('#212529'),
-        fillOpacity: 0.8
-    });
+    // Declare & Customize Tooltip
+    var tooltip = am5.Tooltip.new(root, { getFillFromSprite: false, autoTextColor: false, labelText: "[bold]{year}[/]\n{value} movies" });
+    tooltip.label.setAll({ fontFamily: 'Roboto', fontSize: '10pt', fill: am5.color(0xffffff) });    
+    tooltip.get("background").setAll({ stroke: am5.color(0x000000), strokeOpacity: 0.0, fill: am5.color('#212529'), fillOpacity: 0.8 });
+    
+    // Set Tooltip
     series.set("tooltip", tooltip);          
-        
+
     // Set data
     var data = {{ year_count_data|safe }};
-    
     xAxis.data.setAll(data);
     series.data.setAll(data);
-
-    var scrollbarX = am5xy.XYChartScrollbar.new(root, {
-        orientation: "horizontal",
-        start: 0.8,
-        end: 1.0,
-    });
-      
-    scrollbarX.get("background").setAll({
-        fill: am5.color('#109e5d'),
-        fillOpacity: 1.0,
-    });
-
-    scrollbarX.startGrip.set("scale", 0.7);
-    scrollbarX.endGrip.set("scale", 0.7);
     
+    // Declare Scrollbar
+    chart.set("scrollbarX", am5.Scrollbar.new(root, { orientation: "horizontal", height: 8, start: 0.8, end: 1.0 }));
+    let scrollbarX = chart.get("scrollbarX");
+    
+    // Customize thumb and background
+    var gradient = am5.LinearGradient.new(root, { stops: [{color: am5.color('#15d37c')}, {color: am5.color('#00b1a1')}, {color: am5.color('#597581')}], rotation: 0});
+    scrollbarX.thumb.setAll({ fill: am5.color('#474e54'), fillOpacity: 1.0 })
+    scrollbarX.get("background").setAll({ fillGradient: gradient, fillOpacity: 1.0 });
+    
+    // Customize grips
+    scrollbarX.startGrip.set("scale", 1.15);
+    scrollbarX.endGrip.set("scale", 1.15);
+    scrollbarX.startGrip.setAll({ background: am5.Circle.new(root, {fill: am5.color('#6c757d'), fillOpacity: 1.0}), icon: null, centerX: 0, centerY: 0 });
+    scrollbarX.endGrip.setAll({ background: am5.Circle.new(root, {fill: am5.color('#6c757d'), fillOpacity: 1.0}), icon: null, centerX: 0, centerY: 0 });
 
-    chart.set("scrollbarX", scrollbarX);
+    // Set Cursor & Visibility
+    chart.set("cursor", am5xy.XYCursor.new(root, {}));
+    let cursor = chart.get("cursor");
+    cursor.lineY.set("visible", false);
+    cursor.lineX.set("visible", false);
+
     // Make stuff animate on load
     // https://www.amcharts.com/docs/v5/concepts/animations/
     series.appear(1000);

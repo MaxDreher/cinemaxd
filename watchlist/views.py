@@ -30,7 +30,7 @@ def get_random_movies(request):
         'random': rand_movies,
         'url_start': 'https://www.themoviedb.org/t/p/w90_and_h90_face',
     }
-    return render(request, 'watchlist/randomMovies.html', context)
+    return render(request, 'watchlist/elements/random-movies.html', context)
 
     return
 
@@ -282,8 +282,11 @@ class DashboardView(View):
             'country_data': get_country_data(), # from viewUtils,
             'keyword_data': get_keyword_data(), # from viewUtils
             'ratings_data': get_rating_distribution(movies), # from viewUtils
+            'treemap_data': get_streaming(movies), # from viewUtils
+            'studio_data': get_top_studios(movies, 5),
             'weekday_distribution': get_weekday_distribution(movies), # from viewUtils
             'on_this_day': on_this_day(today), # from viewUtils
+            'oscars_data': get_oscars_range(movies, 1927, today.year - 1, "Best Picture"),
             'streak': get_streak(today), # from viewUtils
             'random': get_random_on_streaming(), # from viewUtils
             'actors': get_top_actors(movies, 10, 4), # from viewUtils

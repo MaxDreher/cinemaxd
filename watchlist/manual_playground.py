@@ -32,15 +32,18 @@ from utils import get_awards
 
 from watchlist.models import List, MovieList, Movie
 
-for item in [776503]:
-    mov = Movie.objects.get(pk=item)
-    mov.service = "Apple TV Plus"
-    mov.datetime_added = None
-    mov.save()
+# for item in [280]:
+#     dele = Movie.objects.get(pk=item)
+#     dele.avg_critical_rating = 4.28
+#     dele.save()
+
 # for item in WatchlistAward.objects.all():
 #     item.delete()
 
 def movieOscars():
+    d = MovieAward.objects.all()
+    d.delete()
+
     for movie in Movie.objects.all():
         print(f"{movie.title} {movie.year}")
         awards = get_awards(movie.title, movie.year)
@@ -54,6 +57,9 @@ def movieOscars():
                 MovieAward.objects.create(movie=movie, award=awd, winner=a['win'])
 
 def watchlistOscars():
+    d = WatchlistAward.objects.all()
+    d.delete()
+
     for movie in WatchlistMovie.objects.all():
         print(f"{movie.title} {movie.year}")
         awards = get_awards(movie.title, movie.year)

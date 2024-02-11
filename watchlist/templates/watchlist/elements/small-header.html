@@ -2,5 +2,5 @@
 
 <small class="text-body-{{ color|default:'tertiary' }}">
     <i class="bi {{ icon|default:"bi-film" }}"></i>
-    {{ text }}
+    {{ prefix|default:"" }}{{ text }}
 </small>
