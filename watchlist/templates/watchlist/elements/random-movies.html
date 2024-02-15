@@ -29,6 +29,11 @@
                                 {% if movie.watchlistaward_set.all %}
                                     {% include "./oscar-badge.html" with text=movie.watchlistaward_set.all|parse_oscar num=movie.watchlistaward_set.all|length icon="bi-trophy" color="gold"%}
                                 {% endif %}
+                                {% if movie.tags.all %}
+                                    {% for tag in movie.tags.all %}
+                                        {% include "./tag-badge.html" with name=tag.name|process_badge %}
+                                    {% endfor %}
+                                {% endif %}
                             </small>
         
                         </span>

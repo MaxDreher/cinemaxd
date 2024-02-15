@@ -6,6 +6,7 @@ from .views import *
 urlpatterns = [
     path('', RedirectView.as_view(url='watchlist/dashboard/', permanent=False)),
     path('sidebar_ajax/<int:movie_id>/', sidebar_ajax, name='sidebar_ajax'),
+    path('sidebar_actor_ajax/<int:actor_id>/', sidebar_actor_ajax, name='sidebar_actor_ajax'),
     path('get_random_movies/', get_random_movies, name='get_random_movies'),
     path('get_movie_info/', get_movie_info, name='get_movie_info'),
     path('elo_matchup/', elo_matchup, name='elo_matchup'),

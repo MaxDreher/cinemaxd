@@ -4,9 +4,24 @@
 
 <div class="tab-pane fade {{ active|default:"" }}" id="{{ data.title }}-tab-pane" role="tabpanel" tabindex="0">
     <div class="row g-3">
-        <div class="col-md-12">
-            {% include "./small-carousel.html" with data=data %}
-        </div>
+        {% if data.title != "week" %}
+            {% if data.movies|length == 10 %}
+                <div class="col-md-12">
+                    {% include "./small-carousel.html" with title=data.title carousel_title=data.carousel_title movies=data.movies %}
+                </div>
+            {% elif data.movies_alltime %}
+                <div class="col-md-12">
+                    {% include "./small-carousel.html" with title=data.title_alltime carousel_title=data.carousel_title_alltime movies=data.movies_alltime use_releases="True" %}
+                </div>
+            {% endif %}
+        {% else %}
+            {% if data.movies %}
+                <div class="col-md-12">
+                    {% include "./small-carousel.html" with title=data.title carousel_title=data.carousel_title movies=data.movies %}
+                </div>
+            {% endif %}
+        {% endif %}
+
         {# Highest Rated #}
         <div class="z-1 col-md-7 d-flex flex-fill">
             {% include "./small-movie-card.html" with movie=data.highest_rated award=data.award_highest%}
@@ -31,5 +46,12 @@
         <div class="z-0 col-md-5 d-flex align-items-stretch">
             {% include "./small-table.html" with data=data.directors_by_count text="Most Watched Directors" %}
         </div>
+        {% if data.title != "week" %}
+            {% if data.movies_alltime and data.movies|length == 10 %}
+                <div class="col-md-12">
+                    {% include "./small-carousel.html" with title=data.title_alltime carousel_title=data.carousel_title_alltime movies=data.movies_alltime use_releases="True" %}
+                </div>
+            {% endif %}
+        {% endif %}
     </div>
 </div>

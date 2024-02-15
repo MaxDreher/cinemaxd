@@ -7,6 +7,7 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/searchpanes/2.2.0/css/searchPanes.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/searchpanes/2.2.0/css/searchPanes.bootstrap5.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.7.0/css/select.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/use-bootstrap-tag@2.2.0/dist/use-bootstrap-tag.min.css" crossorigin="anonymous">
     <link rel="stylesheet" href="{% static 'watchlist/css/table.css' %}">
 {% endblock %}
 {% block js %}
@@ -19,107 +20,159 @@
     <script src="https://cdn.datatables.net/searchpanes/2.2.0/js/searchPanes.bootstrap5.min.js"></script>
     <script src="https://cdn.datatables.net/select/1.7.0/js/dataTables.select.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
+    <script src="https://cdn.datatables.net/plug-ins/1.13.7/sorting/natural.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/use-bootstrap-tag@2.2.0/dist/use-bootstrap-tag.min.js" crossorigin="anonymous"></script>
     <script src="{% static 'watchlist/js/watchlist.js' %}"></script>
 {% endblock %}
 {% block content %}
 <div id="container" class="container-fluid" style="display:none">
     <div class="row g-3 mt-1">
-        <div id="sidebar" class="sidebar col-xl-3">
-            <div class="card">
-                <div class="card-header">
-                    <div id="sidebar-header" class="row">
-                    </div>
-                </div>  
-                <div class="card-body py-0">
-                    <div class="dtsp-verticalContainer">
-                        <div id="searchPanes" class="dtsp-verticalPanes">
+
+        <div class="col-md-3">
+            <div id="sidebar" class="sidebar">
+                <div class="card rounded-4">
+                    <div class="card-header">
+                        <div id="sidebar-header" class="row">
                         </div>
-                    </div>  
-                </div>  
+                    </div>
+                    <div class="card-body py-0">
+                        <div class="dtsp-verticalContainer">
+                            <div id="searchPanes" class="dtsp-verticalPanes">
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+
         <div class="col-md-9">
-            <div class="card mb-3">
-                <div class="card-body">
-                    <button class="btn btn-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#formCollapse" aria-expanded="false" aria-controls="formCollapse" role="button" id="collapseButton">
-                        <span id="collapseIcon" class="bi bi-plus-circle"></span>
-                        Add to Watchlist
-                    </button>                    
-                    <div class="collapse" id="formCollapse">
-                        <form id="watchlistInput" method="post" action="{% url 'watchlist' %}">
-                            {% csrf_token %}
-                            <div class="row mt-1 g-3">
-                                <div class="col-md-1">
-                                    <div id="moviePosterContainer" class="d-flex align-items-center justify-content-center h-100 border rounded-2">
-                                        <i class="bi bi-film" style="font-size: 2em; color: #6c757d;"></i>
-                                    </div>
-                                </div>
-                                <div class="col-md-11">
-                                    <div class="row">
-                                        <div class="col-md-4 form-group">
-                                            <label for="id_title" class="form-label">Title</label>
-                                            <div class="input-group">
-                                                <span class="input-group-text">
-                                                    <i class="bi bi-film"></i>
-                                                </span>
-                                                <input type="text" name="title" id="id_title" class="form-control" placeholder="Title">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4 form-group">
-                                            <label for="id_year" class="form-label">Year</label>
-                                            <div class="input-group">
-                                                <span class="input-group-text">
-                                                    <i class="bi bi-calendar2"></i>
-                                                </span>
-                                                <input type="text" name="year" id="id_year" class="form-control" placeholder="YYYY">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4 form-group">
-                                            <label for="id_date_watched" class="form-label">Date Added</label>
-                                            <div class="input-group">
-                                                <span class="input-group-text">
-                                                    <i class="bi bi-calendar2-plus"></i>
-                                                </span>
-                                                <input type="date" name="date_added" id="id_date_added" class="form-control" placeholder="YYYY-MM-DD">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row mt-3">
-                                        <div class="col-md-12 form-group">
-                                            <label for="id_reason" class="form-label">
-                                                Tag(s)
-                                                <i class="bi bi-question-circle-fill" href="#" data-bs-toggle="tooltip" data-bs-title="
-                                                Add comma-seperated tags.
-                                                Ex: (Tag1, Tag2, Tag3)"></i>
-                                            </label>
-                                            <div class="input-group">
-                                                <span class="input-group-text">
-                                                    <i class="bi bi-tags-fill"></i>
-                                                </span>
-                                                <textarea name="reason" id="id_reason" class="form-control" rows="1"></textarea>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>  
-                            <div class="row mt-3">
-                                <div class="col-md-2">
-                                    <button class="btn btn-secondary" type="submit" id="submitButton">
-                                        <span>
-                                            <div id="submitText">
-                                                Submit
-                                            </div>
-                                            <div class="d-none" id="loadingSpinner">
-                                                <span>
-                                                    <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
-                                                    <span role="status">Loading...</span>
-                                                </span>
-                                            </div>
-                                        </span>
-                                    </button>
-                                </div>
+            <div class="row g-3 mb-3">
+                <div class="col-md-12">
+                    <div class="card rounded-4">
+                        <div class="card-body p-0">
+                            <div class="d-grid gap-2 mx-auto">
+
+                                <button class="btn btn-dark shadow text-body-secondary roboto fw-semibold rounded-4" type="button" data-bs-toggle="collapse" data-bs-target="#formCollapse" aria-expanded="false" aria-controls="formCollapse" role="button" id="collapseButton">
+                                    <span id="collapseIcon" class="bi bi-plus-circle"></span>
+                                    Add to Watchlist
+                                </button>
                             </div>
-                        </form>     
+
+                            {# Collapsed Form #}
+                            <div class="collapse px-3 pb-3" id="formCollapse">
+                                <form id="watchlistInput" method="post" action="{% url 'watchlog' %}">
+
+                                    {% csrf_token %}
+                                    {# Form Inputs #}
+                                    <div class="row mt-1 g-3">
+                                        <div class="col-md-1">
+                                            <div id="moviePosterContainer" class="d-flex align-items-center justify-content-center bg-transparent text-body-primary h-100 border rounded-4">
+                                                <i class="bi bi-film" style="font-size: 2em; color: #6c757d;"></i>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-11">
+
+                                            {# Top Row of Inputs #}
+                                            <div class="row g-3 py-1">
+
+                                                {# Title / Fav Input #}
+                                                <div class="col-md-4 form-group">
+                                                    <small>
+
+                                                        {# Form Label #}
+                                                        {% include "./elements/form-label.html" with id="id_title" text="Title" icon="bi-film" %}
+
+                                                        {# Input Group #}
+                                                        <div class="input-group">
+
+                                                            {# Title #}
+                                                            <input type="text" name="title" id="id_title" class="form-control bg-transparent text-body-primary rounded-start-4">
+
+                                                            {# Favorite #}
+                                                            <input type="hidden" id="likeInput" name="favorite">
+                                                            <button type="button" id="likeButton" class="btn btn-sm btn-outline-secondary text-center text-body-red rounded-end-2">
+                                                                <i id="heart-icon" class="bi bi-heart"></i>
+                                                            </button>
+
+                                                        </div>
+
+                                                    </small>
+                                                </div>
+
+                                                {# Year #}
+                                                <div class="col-md-4 form-group">
+                                                    <small>
+
+                                                        {# Form Label #}
+                                                        {% include "./elements/form-label.html" with id="id_year" text="Year" icon="bi-calendar2" %}
+
+                                                        {# Year #}
+                                                        <input type="text" name="year" id="id_year" class="form-control bg-transparent rounded-4 text-body-primary" placeholder="YYYY">
+
+                                                    </small>
+                                                </div>
+
+                                                {# Date #}
+                                                <div class="col-md-4 form-group">
+                                                    <small>
+
+                                                        {# Form Label #}
+                                                        {% include "./elements/form-label.html" with id="id_date_added" text="Date Seen" icon="bi-calendar2-date" %}
+                                                        
+                                                        {# Date #}
+                                                        <input type="date" name="date_added" id="id_date_added" class="form-control bg-transparent rounded-4 text-body-primary" placeholder="YYYY-MM-DD">
+
+                                                    </small>
+                                                </div>
+
+                                                
+                                            </div>
+
+                                            <div class="row g-3 py-1">
+
+                                                {# Tags #}
+                                                <div class="col-md-12 form-group">
+                                                    <small>
+
+                                                        {# Form Label #}
+                                                        {% include "./elements/form-label.html" with id="id_tags" text="Tags" icon="bi-tags" %}
+
+                                                        {# Tag Input #}
+                                                        <input name="tags" id="id_tags" type="text" class="form-control bg-transparent rounded-4 text-body-primary" placeholder="Add a tag then press Comma or Enter" >
+
+                                                    </small>
+                                                </div>
+
+                                            </div>
+       
+                                        </div>
+                                    </div>
+
+                                    {# Submit Button #}
+                                    <div class="row mt-3">
+                                        <div class="col-md-12">
+                                            <div class="d-grid gap-2 col-1 me-auto">
+                                                <button class="btn btn-sm btn-secondary shadow fw-semibold raleway rounded-pill" type="submit" id="submitButton">
+                                                    <span>
+                                                        <div id="submitText">
+                                                            Submit
+                                                        </div>
+                                                        <div class="d-none" id="loadingSpinner">
+                                                            <span>
+                                                                <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                                                                <span role="status">Loading...</span>
+                                                            </span>
+                                                        </div>
+                                                    </span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </form>     
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

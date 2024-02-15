@@ -1,0 +1,178 @@
+{% load custom_filters %}
+{% load static %}
+<script src="{% static 'watchlist/js/offcanvas.js' %}"></script>
+
+<div class="offcanvas offcanvas-start" data-bs-scroll="true" tabindex="-1" id="{{ person.TMDB_ID }}-person-offcanvas">
+    <div class="offcanvas-body p-0">
+        <div class="card border-0 w-100 mx-0">
+
+            {# Gradient Overlay #}
+            <div class="sidebar-gradient-overlay position-absolute top-0 start-0 w-100 ">
+                <div class="card-body p-0">
+
+                    {# Large Card #}
+                    <div class="row g-0 mb-3">
+                    
+                        {# Poster #}
+                        <div class="col-md-5">
+                            <div class="pt-3 pb-0 ps-3 pe-0">
+                                <img src="https://image.tmdb.org/t/p/original{{ person.imgLink }}" class="img-fluid border border-3 rounded-4 shadow-lg" alt="{{ person.name }} Poster" height="180px">
+                            </div>
+                        </div>
+                    
+                        {# Text Body #}
+                        <div class="col-md-7 d-flex flex-column">
+                            <div class="card-body p-3">
+
+                                {# Exit Button #}
+                                <div class="z-2 position-absolute top-0 end-0">
+                                    <button type="button" class="btn-close p-3" data-bs-dismiss="offcanvas"></button>
+                                </div>
+
+                                {# Text Block #}
+                                <span>
+
+                                    {# Title Block #}
+                                    <div class="pe-3">
+                                        <p class="h4 title mb-0">
+                                            <a class="actor-name" data-actor-id="{{ person.TMDB_ID }}" role="button"><b>{{ person.name }}</b></a>
+                                        </p>
+                                    </div>
+
+                                    {# Badges #}
+                                    <small>
+                                        {% if person.movie_set.all %}
+                                            <span class="badge border border-3 border-secondary-subtle rounded-pill fw-semibold text-bg-secondary">
+                                                {{ person.movie_set.all|length|parse_count }}
+                                            </span>
+                                        {% endif %}
+                                        {% if person.watchlistmovie_set.all %}
+                                            <span class="badge border border-3 border-secondary-subtle rounded-pill fw-semibold text-bg-dark">
+                                                {{ person.watchlistmovie_set.all|length }} watchlisted
+                                            </span>
+                                        {% endif %}
+                                        {% if person.avg_rating %}
+                                            {% include "./elements/badge-secondary.html" with text=person.avg_rating|convert_to_rating color="dark" %}
+                                        {% endif %}
+                                    </small>
+
+                                    <hr class="mt-1 mb-2">
+
+                                    {# Dates / Hyperlink #}
+                                    <div class="row">
+
+                                        {# Dates #}
+                                        <div class="col-sm-6 pe-0 text-start">
+                                            <div class="row g-1">
+                                                <small>
+                                                    <div class="col-md-12">
+                                                        <span class="badge bg-transparent text-body-secondary border border-2 fw-normal roboto">
+                                                            <i class="bi bi-cake2"></i>&nbsp;
+                                                            {{ person.birthday }}
+                                                        </span>
+                                                    </div>
+                                                </small>
+                                            </div>
+                                        </div>
+
+                                        {# Hyperlinks #}
+                                        <div class="col-sm-6 ps-0 text-end">
+                                            <div class="row g-1">
+                                                <small>
+                                                    <div class="col-md-12">
+                                                        <a href="https://www.themoviedb.org/person/{{ person.TMDB_ID }}" class="badge bg-transparent text-body-secondary border border-2 fw-normal text-decoration-none roboto" target="blank">
+                                                            TMDB
+                                                            <i class="bi bi-box-arrow-up-right"></i>
+                                                        </a>
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <a href="https://www.imdb.com/name/{{ person.IMDB_ID }}" class="badge bg-transparent text-body-secondary border border-2 fw-normal text-decoration-none roboto" target="blank">
+                                                            IMDB
+                                                            <i class="bi bi-box-arrow-up-right"></i>
+                                                        </a>
+                                                    </div>
+                                                </small>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </span>
+
+                            </div>
+                        </div>
+                    
+                    </div>
+
+                    <div class="row gx-0">
+                        
+                        {# Movies #}
+                        {% if person.movie_set.all %}
+                            <div class="col-md-12 mb-3">
+                                <div class="card bg-dark rounded-4 border border-1 border-dark-subtle shadow-lg mx-3">
+                                    <div class="ps-3 pt-2 pb-0">
+                                        {% include "./elements/small-header.html" with text="Watchlog" icon="bi-collection-play-fill" %}
+                                    </div>    
+                                    <div class="card-body p-3">
+                                        <div class="row g-3">
+                                            {% for film in person.movie_set.all %}
+                                            <div class="col-md-3 position-relative">
+                                                <img src="{{ film.posterLink }}" class="img-fluid border border-2 shadow rounded-3 portrait-lg" alt="{{ film.title }} Poster">
+                                                {% if film.rating %}
+                                                    <span class="position-absolute border border-3 mt-2 top-0 start-50 translate-middle badge rounded-pill fw-normal roboto text-bg-dark">
+                                                        {{ film.rating|convert_to_stars }}
+                                                    </span>
+                                                {% endif %}
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        {# Watchlist Collapse #}
+                        {% if person.watchlistmovie_set.all %}
+                            <div class="col-md-12 mb-3">
+                                <div class="card bg-dark rounded-4 border border-1 border-dark-subtle shadow-lg mx-3">
+                                    <div class="ps-3 pt-2 pb-0">
+                                        {% include "./elements/small-header.html" with text="Watchlist" icon="bi-eye-fill" %}
+                                    </div>    
+                                    <div class="card-body p-3">
+                                        <div class="row g-3">
+                                            {% for film in person.watchlistmovie_set.all %}
+                                            <div class="col-md-3 position-relative">
+                                                <img src="{{ film.posterLink }}" class="img-fluid border border-2 shadow rounded-3 portrait-lg" alt="{{ film.title }} Poster">
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        {# Synopsis Block #}
+                        <div class="col-md-12 mb-3">
+                            <div class="card bg-dark rounded-4 border border-1 border-dark-subtle shadow-lg mx-3">
+                                <div class="ps-3 pt-2 pb-0">
+                                    {% include "./elements/small-header.html" with text="Synopsis" icon="bi-body-text" %}
+                                </div>
+                                <div class="card-body px-3 pt-0 pb-2 mt-0">
+                                    <small class="text-body-secondary">
+                                        {{ person.bio }}
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+
+                </div>
+            </div>
+
+            {# Background Image #}
+            <img src="{{ movie.bgLink }}" class="img-fluid sidebar-bg-image mb-3" alt="Background Image">
+
+        </div>
+    </div>
+</div>                                      

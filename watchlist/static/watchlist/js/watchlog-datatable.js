@@ -6,43 +6,31 @@ $(document).ready(function() {
             [50, 100, 250, -1],
             [50, 100, 250, 'All']
         ],    
-        order: [[5, 'desc'], [1, 'asc']],
+        order: [[7, 'desc'], [1, 'asc']],
         dom: '<"card-header d-flex justify-content-between"lf><"card-body py-0 "t><"card-footer d-flex justify-content-between"ip>',
         // buttons:['colvis'],
-        searchPanes: {
-            order: ['Cast', 'Director', 'Rating', 'Year', 'Decade', 'Date Seen', 'Production Companies', 'Genres', 'Service', 'Theaters',], 
+        searchPanes: { 
+            order: ['Cast', 'Director', 'Rating', 'Year', 'Decade', 'Date Seen', 'Production Companies', 'Genres', 'Service', 'Theaters'], 
             layout: 'columns-2',
             orderable: false,
-            // cascadePanes: true,
         },
         columnDefs: [
+            // make poster, service icon unsortable
+            { targets: [0, 3], sortable: false },
+
+            // hide csv rows that are used for filter data
+            { targets: [20,21,22,23,24,25], visible: false, searchable: true },
+            
             {
-                targets: [0],
-                sortable: false
+                // order Year, Rating, Runtime, Decade SearchPanes by Desc order.
+                searchPanes: { dtOpts: { order: [[0, 'desc']] } },
+                targets: [2, 5, 6, 9]
             },
+
             {
-                targets: [16,17,18,19,20,21],
-                visible: false,
-                searchable: true
-            },
-            {
-                searchPanes: {
-                    dtOpts: {
-                        searching: false,
-                        order: [[0, 'desc']]
-                    }
-                },
-                targets: [2, 3, 4, 7]
-            },
-            {
-                searchPanes: {
-                    show: true,
-                    orthogonal:'sp',
-                    dtOpts: {
-                        order: [[1, "desc"]]
-                    }
-                },
-                targets: [16,17,18,19,20],
+                // enable searchpanes for hidden columns for actor, director, companies, service, genre
+                searchPanes: { show: true, orthogonal:'sp', dtOpts: { order: [[1, "desc"]] }},
+                targets: [20,21,22,23,24],
                 render: function (data, type, row) {
                     if (type === 'sp') {
                         return data.split(', ')
@@ -51,15 +39,9 @@ $(document).ready(function() {
                 }
             },
             {
-                searchPanes: {
-                    header: 'Year Seen',
-                    show: true,
-                    orthogonal:'sp',
-                    dtOpts: {
-                        order: [[0, "desc"]]
-                    }
-                },
-                targets: [5],
+                // create "year seen" searchpane from date seen values
+                searchPanes: { header: 'Year Seen', show: true, orthogonal:'sp', dtOpts: { order: [[0, "desc"]] } },
+                targets: [7],
                 render: function (data, type, row) {
                     if (type === 'sp') {
                         return data.split('-')[0]
@@ -67,27 +49,22 @@ $(document).ready(function() {
                     return data;
                 }
             },
-            {
+            {   
+                // create seen in theaters pane w/ t/f options
                 searchPanes: {
                     options: [
-                        {
-                            label: 'Seen in Theaters',
-                            value: function(rowData, rowIdx) {
-                                return rowData[21] == "True";
-                            }
-                        },
-                        {
-                            label: 'Not Seen in Theaters',
-                            value: function(rowData, rowIdx) {
-                                return rowData[21] != "True";
-                            }
-                        },
+                        { label: 'Seen in Theaters', value: function(rowData, rowIdx) {return rowData[25] == "True";}},
+                        { label: 'Not Seen in Theaters', value: function(rowData, rowIdx) {return rowData[25] != "True";}},
                     ]
                 },
-                targets: [21]
+                targets: [25]
+            },
+            {
+                targets: [6, 18],
+                type: 'natural'
             }
-
         ],
+
         initComplete: function( settings, json ) {
             $('#container').show();
             $('#log').DataTable().columns.adjust();

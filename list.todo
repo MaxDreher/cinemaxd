@@ -5,26 +5,52 @@
         "key": 1705991525805,
         "children": [
           {
-            "key": 1707136085558,
+            "key": 1707136108180,
+            "children": [],
+            "todo": {
+              "content": "Integrate \"Priority\" with Update_Streaming script",
+              "id": 1707136108180,
+              "level": "default",
+              "done": false,
+              "start": 1707136108180
+            }
+          },
+          {
+            "key": 1707136176971,
             "children": [
               {
-                "key": 1707136108180,
+                "key": 1707136190978,
                 "children": [],
                 "todo": {
-                  "content": "Integrate with Update_Streaming script",
-                  "id": 1707136108180,
+                  "content": "Ideally the input could be selectable tags, or a multiple-select dropdown. Things like Oscar Nominations/Wins will be applied as tags inherently.",
+                  "id": 1707136190978,
                   "level": "default",
-                  "done": false,
-                  "start": 1707136108180
+                  "done": true,
+                  "start": 1707136190978,
+                  "focus": false,
+                  "end": 1707900904441
                 }
               }
             ],
             "todo": {
+              "content": "Get rid of the \"Reason\" field in WatchlistMovie altogether. Deprecated by Tags",
+              "id": 1707136176971,
+              "level": "default",
+              "done": false,
+              "start": 1707136176971
+            }
+          },
+          {
+            "key": 1707136085558,
+            "children": [],
+            "todo": {
               "content": "Add \"Priority\" or \"Watching\" to Watchlist (i.e. movies that I'd like to watch as soon as they become available.",
               "id": 1707136085558,
               "level": "default",
-              "done": false,
-              "start": 1707136085558
+              "done": true,
+              "start": 1707136085558,
+              "focus": false,
+              "end": 1707900866781
             }
           },
           {
@@ -34,36 +60,15 @@
               "content": "Add \"Favorite\" field to Watchlog",
               "id": 1707136075503,
               "level": "default",
-              "done": false,
-              "start": 1707136075503
+              "done": true,
+              "start": 1707136075503,
+              "focus": false,
+              "end": 1707900869909
             }
           },
           {
             "key": 1707131730242,
             "children": [
-              {
-                "key": 1707136176971,
-                "children": [
-                  {
-                    "key": 1707136190978,
-                    "children": [],
-                    "todo": {
-                      "content": "Ideally the input could be selectable tags, or a multiple-select dropdown. Things like Oscar Nominations/Wins will be applied as tags inherently.",
-                      "id": 1707136190978,
-                      "level": "default",
-                      "done": false,
-                      "start": 1707136190978
-                    }
-                  }
-                ],
-                "todo": {
-                  "content": "Completely Eliminate the \"REASON\" field, and work it into tags.",
-                  "id": 1707136176971,
-                  "level": "default",
-                  "done": false,
-                  "start": 1707136176971
-                }
-              },
               {
                 "key": 1707135992243,
                 "children": [],
@@ -71,8 +76,10 @@
                   "content": "Use Kaggle dataset and create own JSON, don't need API given that the data is static.",
                   "id": 1707135992243,
                   "level": "default",
-                  "done": false,
-                  "start": 1707135992243
+                  "done": true,
+                  "start": 1707135992243,
+                  "focus": false,
+                  "end": 1707900908191
                 }
               }
             ],
@@ -80,8 +87,10 @@
               "content": "Implement Tag system. Award winners/nominees, franchise pictures. Should be able to filter out things like (\"2019 Best Picture Nominees\") and rank them.",
               "id": 1707131730242,
               "level": "default",
-              "done": false,
-              "start": 1707131730242
+              "done": true,
+              "start": 1707131730242,
+              "focus": false,
+              "end": 1707900912396
             }
           },
           {
@@ -198,8 +207,10 @@
                   "content": "Some kind of \"challenge\" progress list ex( 6/10 2024 Best Picture Nominees, 33/36 MCU Films, etc. ) Essentially challenges/badges. Tie-in to Tag system",
                   "id": 1707131670244,
                   "level": "default",
-                  "done": false,
-                  "start": 1707131670244
+                  "done": true,
+                  "start": 1707131670244,
+                  "focus": false,
+                  "end": 1707900960713
                 }
               },
               {
@@ -270,17 +281,6 @@
                 }
               },
               {
-                "key": 1705478135703,
-                "children": [],
-                "todo": {
-                  "content": "Small button in bottom corner to add items to the watchlist / log",
-                  "id": 1705478135703,
-                  "level": "default",
-                  "done": false,
-                  "start": 1705478135703
-                }
-              },
-              {
                 "key": 1705998244384,
                 "children": [],
                 "todo": {
@@ -345,17 +345,6 @@
             "key": 1705477481508,
             "children": [
               {
-                "key": 1705720685397,
-                "children": [],
-                "todo": {
-                  "content": "Make sidebar static to top of page?",
-                  "id": 1705720685397,
-                  "level": "default",
-                  "done": false,
-                  "start": 1705720685397
-                }
-              },
-              {
                 "key": 1705477511837,
                 "children": [
                   {
@@ -368,9 +357,11 @@
                           "content": "https://codepen.io/mindstorm/pen/aZZvKq",
                           "id": 1707136049802,
                           "level": "default",
-                          "done": false,
+                          "done": true,
                           "start": 1707136049802,
-                          "link": "https://codepen.io/mindstorm/pen/aZZvKq"
+                          "link": "https://codepen.io/mindstorm/pen/aZZvKq",
+                          "focus": false,
+                          "end": 1707901027570
                         }
                       }
                     ],
@@ -378,8 +369,10 @@
                       "content": "Add \"Favorite\" Button with heart animation, ex Letterboxd version.",
                       "id": 1707136030181,
                       "level": "default",
-                      "done": false,
-                      "start": 1707136030181
+                      "done": true,
+                      "start": 1707136030181,
+                      "focus": false,
+                      "end": 1707901028111
                     }
                   },
                   {
@@ -548,35 +541,19 @@
             }
           },
           {
-            "key": 1705477490660,
-            "children": [
-              {
-                "key": 1705477922174,
-                "children": [],
-                "todo": {
-                  "content": "Apply all changes from Watchlog to Watchlist",
-                  "id": 1705477922174,
-                  "level": "default",
-                  "done": true,
-                  "start": 1705477922174,
-                  "focus": false,
-                  "end": 1705720118787
-                }
-              }
-            ],
-            "todo": {
-              "content": "Watchlist",
-              "id": 1705477490660,
-              "level": "default",
-              "done": true,
-              "start": 1705477490660,
-              "focus": false,
-              "end": 1707136019122
-            }
-          },
-          {
             "key": 1705720588587,
             "children": [
+              {
+                "key": 1707901148090,
+                "children": [],
+                "todo": {
+                  "content": "Update / modularize visuals in line with the rest of the site.",
+                  "id": 1707901148090,
+                  "level": "default",
+                  "done": false,
+                  "start": 1707901148090
+                }
+              },
               {
                 "key": 1705720666709,
                 "children": [],
@@ -624,6 +601,33 @@
             }
           },
           {
+            "key": 1705477490660,
+            "children": [
+              {
+                "key": 1705477922174,
+                "children": [],
+                "todo": {
+                  "content": "Apply all changes from Watchlog to Watchlist",
+                  "id": 1705477922174,
+                  "level": "default",
+                  "done": true,
+                  "start": 1705477922174,
+                  "focus": false,
+                  "end": 1705720118787
+                }
+              }
+            ],
+            "todo": {
+              "content": "Watchlist",
+              "id": 1705477490660,
+              "level": "default",
+              "done": true,
+              "start": 1705477490660,
+              "focus": false,
+              "end": 1707136019122
+            }
+          },
+          {
             "key": 1705478353441,
             "children": [
               {
@@ -635,17 +639,6 @@
                   "level": "secondary",
                   "done": false,
                   "start": 1705720771746
-                }
-              },
-              {
-                "key": 1705478091187,
-                "children": [],
-                "todo": {
-                  "content": "Actor/Director popouts",
-                  "id": 1705478091187,
-                  "level": "secondary",
-                  "done": false,
-                  "start": 1705478091187
                 }
               },
               {
@@ -691,8 +684,10 @@
                       "content": "Oscars Nominee integration?",
                       "id": 1705478617384,
                       "level": "secondary",
-                      "done": false,
-                      "start": 1705478617384
+                      "done": true,
+                      "start": 1705478617384,
+                      "focus": false,
+                      "end": 1707901066010
                     }
                   }
                 ],
@@ -700,8 +695,10 @@
                   "content": "Add priority of some kind to Watchlist",
                   "id": 1705478590553,
                   "level": "secondary",
-                  "done": false,
-                  "start": 1705478590553
+                  "done": true,
+                  "start": 1705478590553,
+                  "focus": false,
+                  "end": 1707901065337
                 }
               },
               {
@@ -734,9 +731,22 @@
             "todo": {
               "content": "Potential features",
               "id": 1705478353441,
-              "level": "secondary",
+              "level": "success",
               "done": false,
               "start": 1705478353441
+            }
+          },
+          {
+            "key": 1705478091187,
+            "children": [],
+            "todo": {
+              "content": "Actor/Director popouts",
+              "id": 1705478091187,
+              "level": "default",
+              "done": true,
+              "start": 1705478091187,
+              "focus": false,
+              "end": 1707908216347
             }
           },
           {
@@ -844,18 +854,11 @@
     "expandKeys": [
       1705477213097,
       1705478733655,
-      1705478590553,
       1705991549448,
       1705991919354,
-      1707131730242,
-      1705477907670,
-      1705477490660,
-      1705477511837,
-      1707136030181,
       1707136085558,
-      1705991525805,
-      1705477178694,
-      1707136176971
+      1705720588587,
+      1705477178694
     ],
     "schema": "https://github.com/Saber2pr/vsc-ext-todolist/blob/master/src/api/type.ts#L3",
     "add_mode": "top",
@@ -871,6 +874,6 @@
     "showEndTime": false,
     "simpleMode": false,
     "lang": "en",
-    "version": "1707136248739"
+    "version": "1707917556612"
   }
 }

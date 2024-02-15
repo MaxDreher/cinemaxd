@@ -31,12 +31,15 @@ class MovieForm(forms.Form):
     date_watched = forms.DateField(label='Date Watched', required=False)
     service = forms.ChoiceField(label="Service", choices=SERVICES, required=False)
     theaters = forms.BooleanField(label = "Theater", required=False)
+    favorite = forms.BooleanField(label = "Favorite", required=False)
+    tags = forms.CharField(label='Tags', required=False)
 
 class WatchlistForm(forms.Form):
     title = forms.CharField(label='Title', widget=forms.TextInput(attrs={'class': 'form-control input rounded-1 dark-input'}))
     year = forms.IntegerField(label='Year', widget=forms.TextInput(attrs={'class': 'form-control input rounded-1 dark-input'}))
     date_added = forms.DateField(label='Date Added')
-    reason = forms.CharField(label='Reason', widget=forms.Textarea(attrs={'class': 'form-control input rounded-1 dark-input'}), required=False)
+    favorite = forms.BooleanField(label = "Favorite", required=False)
+    tags = forms.CharField(label='Tags', required=False)
 
 class RankingForm(forms.Form):
     title = forms.CharField(label='Title', widget=forms.TextInput(attrs={'class': 'form-control input rounded-1 dark-input'}))

@@ -1,29 +1,47 @@
 {% load static %}
+{% load custom_filters %}
 
 {% block js %}
     <script src="{% static 'watchlist/js/watchlog-datatable.js' %}"></script>
     <link rel="stylesheet" href="{% static 'watchlist/css/table.css' %}">
 {% endblock %}
 
-<div class="card">
-    <table id="log" class="table-sm compact hover table-borderless mb-3" width="100%">
+<div class="card rounded-4 mb-3">
+    <table id="log" class="table-sm table-borderless roboto" width="100%">
         <thead>
-            <th style="width: 4%;"></th>
-            <th>Title</th>
-            <th>Year</th>
-            <th>Rating</th>
-            <th>Runtime</th>
-            <th>Date Seen</th>
-            <th>Release Date</th>
-            <th>Decade</th>
-            <th>MPA</th>
-            <th class="imdb_rating centered-col"><img src="{% static 'watchlist/images/imdb_logo.png' %}" alt="IMDB" height="20px" width="20px"></img></th>
-            <th class="centered-col"><img src="{% static 'watchlist/images/tmdb_logo.png' %}" height="20px" width="20px"></img></th>
-            <th class="centered-col"><img src="{% static 'watchlist/images/mc_logo.png' %}" height="20px" width="20px"></img></th>
-            <th class="centered-col"><img src="{% static 'watchlist/images/rtcritic_logo.png' %}" height="20px" width="20px"></img></th>
-            <th class="centered-col"><img src="{% static 'watchlist/images/rtuser_logo.png' %}" height="20px" width="20px"></img></th>
-            <th class="centered-col"><img src="{% static 'watchlist/images/lbxd_logo.png' %}" height="20px" width="20px"></img></th>
-            <th>Avg.</th>
+            <th width="3%"></th> {# 3% #}
+            <th width="15%">Title</th> {# 18% #}
+            <th width="3%" class="text-center">Year</th> {# 21% #}
+            <th width="3%" class="text-center"></th> {# 24% #}
+            <th width="3%" class="text-center">Fav</th> {# 27% #}
+            <th width="5%" class="text-center">Rating</th> {# 32% #}
+            <th width="5%" class="text-center">Runtime</th> {# 37% #}
+            <th width="7%" class="text-center">Date Seen</th> {# 44% #}
+            <th width="7%" class="text-center">Released</th> {# 51% #}
+            <th width="5%" class="text-center">Decade</th> {# 56% #}
+            <th width="5%" class="text-center">MPA</th> {# 61% #}
+            <th width="4%" class="text-center"> {# 65% #}
+                <img class="align-top border border-3 border-secondary-subtle border-tertiary rounded-4 shadow-lg" src={% static 'watchlist/images/imdb_logo.png' %} height="20px">
+            </th> 
+            <th width="4%" class="text-center"> {# 69% #}
+                <img class="align-top border border-3 border-secondary-subtle border-tertiary rounded-4 shadow-lg" src={% static 'watchlist/images/tmdb_logo.png' %} height="20px">
+            </th>
+            <th width="4%" class="text-center"> {# 73% #}
+                <img class="align-top border border-3 border-secondary-subtle border-tertiary rounded-4 shadow-lg" src={% static 'watchlist/images/mc_logo.png' %} height="20px">
+            </th>
+            <th width="4%" class="text-center"> {# 77% #}
+                <img class="align-top border border-3 border-secondary-subtle border-tertiary rounded-4 shadow-lg" src={% static 'watchlist/images/rtcritic_logo.png' %} height="20px">
+            </th>
+            <th width="4%" class="text-center"> {# 81% #}
+                <img class="align-top border border-3 border-secondary-subtle border-tertiary rounded-4 shadow-lg" src={% static 'watchlist/images/rtuser_logo.png' %} height="20px">
+            </th>
+            <th width="4%" class="text-center"> {# 85% #}
+                <img class="align-top border border-3 border-secondary-subtle border-tertiary rounded-4 shadow-lg" src={% static 'watchlist/images/lbxd_logo.png' %} height="20px">
+            </th>
+            <th width="6%" class="text-center">Avg</th> {# 91% #}
+            <th width="4%" class="text-center">Oscar</th> {# 95% #}
+            <th width="5%" class="text-center">Elo</th> {# 100% #}
+            
             <th>Cast</th>
             <th>Director</th>
             <th>Genres</th>
@@ -33,36 +51,119 @@
         </thead>
         {% for instance in data %}
             <tr>
-                <td><img class="poster" src="{{ instance.posterLink }}" width="65%"></img></td>
+                {# Poster #}
                 <td>
-                    <a class="movie-title" data-movie-id="{{ instance.TMDB_ID }}" href="#{{ instance.TMDB_ID }}" role="button">
+                    <img class="poster rounded-1 border border-2" src="{{ instance.posterLink }}" width="100%">
+                </td>
+
+                {# Title #}
+                <td>
+                    <a class="movie-title" data-movie-id="{{ instance.TMDB_ID }}" role="button" style="cursor: pointer;">
                         {{ instance.title }}
                     </a>
                 </td>
-                <td>{{ instance.year }}</td>
-                <td>
-                    {% if instance.rating %}
-                        <span class="badge rounded-pill badge-green">
-                            ★ {{ instance.rating|default:""}}
-                        </span>
-                    {% else %}
-                        <span class="badge rounded-pill badge-green">
-                            &nbsp;
-                        </span>
+
+                {# Year #}
+                <td class="text-center">{{ instance.year }}</td>
+
+                {# Service #}
+                <td class="text-center">
+                    {% if instance.service %}
+                        <img class="align-top border border-3 border-secondary-subtle border-tertiary rounded-4 shadow-lg" src="/static/watchlist/images/{{ instance.service|striptags }}.png" height="24px">
                     {% endif %}
                 </td>
-                <td>{{ instance.runtime|default:"" }}</td>
-                <td>{{ instance.date|date:"Y-m-d" }}</td>
-                <td>{{ instance.releaseDate|date:"Y-m-d" }}</td>
-                <td>{{ instance.decade }}</td>
-                <td>{{ instance.MPA|default:""}}</td>
-                <td>{{ instance.IMDB|default:""}}</td>
-                <td>{{ instance.TMDB|default:""}}</td>
-                <td>{{ instance.MC|default:""}}</td>
-                <td>{{ instance.RTCritic|default:""}}</td>
-                <td>{{ instance.RTUser|default:""}}</td>
-                <td>{{ instance.LBXD|default:""}}</td>
-                <td>{{ instance.avg_critical_rating }}</td>
+                
+                {# Favorite #}
+                <td class="text-center align-middle">
+                    {% if instance.favorite %}
+                        <i class="bi bi-heart-fill text-danger"></i>
+                    {% endif %}
+                </td>
+
+                {# Rating #}
+                <td class="text-center align-middle">
+                    {% if instance.rating %}
+                        {% include "./elements/badge-secondary.html" with text=instance.rating|convert_to_stars color="green-dark" mb="0" %}
+                    {% endif %}
+                </td>
+
+                {# Runtime #}
+                <td class="text-center align-middle">
+                    {% if instance.runtime %}
+                        {% include "./elements/badge-secondary.html" with text=instance.runtime|convert_to_hrs fw="normal" mb="0" %}
+                    {% endif %}
+                </td>
+
+                {# Date Seen #}
+                <td class="text-center">
+                    {{ instance.date|date:"Y-m-d" }}
+                </td>
+
+                {# Release Date #}
+                <td class="text-center">
+                    {{ instance.releaseDate|date:"Y-m-d" }}
+                </td>
+
+                {# Decade #}
+                <td class="text-center">
+                    {{ instance.decade }}
+                </td>
+
+                {# MPA #}
+                <td class="text-center">
+                    {{ instance.MPA|default:""}}
+                </td>
+
+                {# IMDB #}
+                <td class="text-center text-body-secondary">
+                    {{ instance.IMDB|default:""}}
+                </td>
+
+                {# TMDB #}
+                <td class="text-center text-body-secondary">
+                    {{ instance.TMDB|default:""}}
+                </td>
+
+                {# MC #}
+                <td class="text-center text-body-secondary">
+                    {{ instance.MC|default:""}}
+                </td>
+
+                {# RTCritic #}
+                <td class="text-center text-body-secondary">
+                    {{ instance.RTCritic|default:""}}
+                </td>
+
+                {# RTUser #}
+                <td class="text-center text-body-secondary">
+                    {{ instance.RTUser|default:""}}
+                </td>
+
+                {# LBXD #}
+                <td class="text-center text-body-secondary">
+                    {{ instance.LBXD|default:""}}
+                </td>
+
+                {# Average Rating #}
+                <td class="text-center">
+                    {% include "./elements/badge-secondary.html" with text=instance.avg_critical_rating|convert_to_rating color="dark" fw="normal" mb="0" %}
+                </td>
+
+                {# Oscars #}
+                <td class="text-center">
+                    {% if instance.movieaward_set.all %}
+                        {% include "./elements/oscar-badge.html" with text=instance.movieaward_set.all|parse_oscar num=instance.movieaward_set.all|length icon="bi-trophy" color="gold" mb="0" %}
+                    {% endif %}
+                </td>
+
+                {# Elo #}
+                <td class="text-center">
+                    {% if instance.elo %}
+                        {{ instance.elo|default:""}}
+                    {% endif %}
+                </td>
+
+
                 <td>{% for actor in instance.cast.all %}{{actor.name|striptags}}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
                 <td>{% for director in instance.director.all %}{{director.name|striptags}}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
                 <td>{% for genre in instance.genres.all %}{{genre.name|striptags}}{% if not forloop.last %}, {% endif %}{% endfor %}</td>

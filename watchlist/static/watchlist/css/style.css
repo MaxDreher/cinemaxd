@@ -98,14 +98,6 @@
     justify-content: space-between;
 }
 
-.btn-secondary {
-    --bs-btn-bg: #6c757d;
-    --bs-btn-border-color: #6c757d;
-    color:#000000;
-    font-family: 'Roboto', sans-serif !important;
-    font-size: 10pt;
-}
-
 .nav {
     --bs-nav-link-hover-color: #fff;
     --bs-link-color: #adb5bd;
@@ -227,4 +219,8 @@
     width: 100%;
     object-fit: cover;
     object-position: 50% 50%;
+}
+
+.dropdown-item.active, .dropdown-item:active {
+    background-color: #15d37c !important;
 }

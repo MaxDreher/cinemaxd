@@ -10,6 +10,7 @@ from datetime import datetime
 from watchlist.models import *
 from watchlist.api_calls import *  
 import concurrent.futures
+from django.utils import timezone
 from django.db import transaction, IntegrityError
 from functools import partial
 
@@ -502,7 +503,7 @@ def get_rotten_tomatoes(title, year):
 Database update functions.
 '''
 
-def make_api_calls_and_update_database(title, year, rating, review, theaters, date_watched=None, service=None):
+def make_api_calls_and_update_database(title, year, rating, review, theaters, favorite, date_watched=None, service=None):
     start_time = time.time()
 
     try:
@@ -514,7 +515,6 @@ def make_api_calls_and_update_database(title, year, rating, review, theaters, da
         viewing_date = date_watched if date_watched is not None else None
         streaming_service = service if service and service != "" else None
         release_date = get_release_date(tmdb, type)
-
         IMDB = float(omdb["imdbRating"]) if omdb["imdbRating"] != "N/A" else None
         TMDB = float(tmdb["vote_average"]) if tmdb["vote_average"] != "N/A" else None
         MC = int(omdb["Metascore"]) if omdb["Metascore"] != 'N/A' else None
@@ -538,7 +538,7 @@ def make_api_calls_and_update_database(title, year, rating, review, theaters, da
                 rating=rating,
                 review=review if review != "" else None,
                 date=viewing_date,
-                datetime_added=datetime.now(),
+                datetime_added=timezone.now(),
                 timesSeen=1,
                 seasonsSeen=None,
                 episodesSeen=None,
@@ -564,6 +564,7 @@ def make_api_calls_and_update_database(title, year, rating, review, theaters, da
                 avg_critical_rating=avg_critical_rating,
                 service=streaming_service,
                 theaters=theaters,
+                favorite=favorite,
                 elo = (rating * 200 + 900) if rating is not None else 900,
                 eloMatches = 0
             )
@@ -635,7 +636,7 @@ def make_api_calls_and_update_database(title, year, rating, review, theaters, da
 
     print(f"{title} added in {time.time() - start_time} seconds.")
 
-def make_api_calls_and_update_watchlist(title, year, reason, date_watched=None):
+def make_api_calls_and_update_watchlist(title, year, favorite, tags, date_watched=None):
     start_time = time.time()
 
     try:
@@ -667,7 +668,7 @@ def make_api_calls_and_update_watchlist(title, year, reason, date_watched=None):
                 title=title,
                 year=year,
                 date=viewing_date,
-                reason=reason,
+                reason=None,
                 posterLink=f"https://image.tmdb.org/t/p/original{tmdb['poster_path']}",
                 bgLink=f"https://image.tmdb.org/t/p/original{tmdb['backdrop_path']}",
                 trailerLink=f"https://youtube.com/embed/{get_trailer(tmdb)}",
@@ -687,6 +688,7 @@ def make_api_calls_and_update_watchlist(title, year, reason, date_watched=None):
                 RTCritic=RTCritic,
                 RTUser=RTUser,
                 LBXD=LBXD,
+                favorite=favorite,
                 avg_critical_rating=avg_critical_rating,
             )
             movie.save(using='library_db')
@@ -762,7 +764,17 @@ def make_api_calls_and_update_watchlist(title, year, reason, date_watched=None):
             except:
                 awd = Award.objects.get(name=a['award'], year=a['year'])
             WatchlistAward.objects.create(movie=movie, award=awd, winner=a['win'])
-            
+
+    if tags:
+        data = tags.split(',')
+        for t in data:
+            tag = Tag(name=t)
+            try:
+                tag.save(using='library_db')
+            except:
+                tag = Tag.objects.get(name=t)
+            WatchlistTag.objects.create(movie=movie, tag=tag)
+
     print(f"{title} added in {time.time() - start_time} seconds.")
 
 def make_api_calls_and_update_database_from_id(id, rating, review, theaters, date_Watched=None, service=None):

@@ -39,9 +39,20 @@ def convert_to_eps(value):
     except:
         return value
 
+@register.filter
+def convert_elo_to_stars(value):
+    if value <= 1000:
+        return f"★ {round(0.0 + ((value / 1000) * 0.50),2)} "
+    elif 1000 < value < 2000:
+        range_start = (value - 1000) // 100 * 0.5
+        return f"★ {round((range_start + ((value - 1000) % 100 / 100) * 0.49) + 0.50,2)} "
+    else:
+        return f"★ {round(5.0 + ((value / 2000) * 0.50),2)} "
+
+
 @register.filter(name="parse_oscar")
 def parse_oscar(obj):
-    ret = "<small class='roboto'>"
+    ret = f"<small class='roboto'> {len(obj)} Oscar Nominations in {obj[0].award.year + 1}<br>"
     try:
         for item in obj:
             ret += f"{"<b>" if (item.winner) else ""}{item.award.year} {item.award.name} {"Winner" if (item.winner) else "Nominee"}{"</b>" if (item.winner) else ""}<br>"
@@ -84,3 +95,27 @@ def parse_nominees(obj):
 def split_string(value, delimiter):
     return value.split(delimiter)
 
+@register.filter
+def process_badge(name):
+    data = {    "With Abby": {"name": "With Abby", "class": "text-bg-pink", "icon": "bi-heart-fill"},
+                "Abby": {"name": "Abby", "class": "text-bg-pink2", "icon": "bi-chat-left-heart"},
+                "Andrew": {"name": "Andrew", "class": "text-bg-black-gold", "icon": "bi-git"},
+                "Colton": {"name": "Colton", "class": "text-bg-orange", "icon": "bi-rocket-takeoff-fill"},
+                "Gaven": {"name": "Gaven", "class": "text-bg-pondering", "icon": "bi-magic"},
+                "Mom": {"name": "Mom", "class": "text-bg-mom", "icon": "bi-person-standing-dress"},
+                "Dad": {"name": "Dad", "class": "text-bg-dad", "icon": "bi-person-standing"},
+                "r/Letterboxd": {"name": "r/Letterboxd", "class": "text-bg-reddit", "icon": "bi-reddit"},
+                "IMDB Poster": {"name": "IMDB Poster", "class": "text-bg-imdb", "icon": "bi-play-fill"},
+                "Tik Tok": {"name": "Tik Tok", "class": "text-bg-tiktok", "icon": "bi-tiktok"},
+                "Gooby": {"name": "Gooby", "class": "text-bg-gooby", "icon": "bi-globe-americas"},
+                "Mia": {"name": "Mia", "class": "text-bg-mia", "icon": "bi-palette-fill"},
+                "The Yard": {"name": "The Yard", "class": "text-bg-yt", "icon": "bi-youtube"},
+                "Will Neff": {"name": "Will Neff", "class": "text-bg-yt", "icon": "bi-youtube"},
+                "Schaffarillis": {"name": "Schaffarillis", "class": "text-bg-yt", "icon": "bi-youtube"},
+                "Nando v Movies": {"name": "Nando v Movies", "class": "text-bg-yt", "icon": "bi-youtube"},
+            }
+    try:
+        return data[name] 
+    except: 
+        return {"name": name, "class": "text-bg-secondary", "icon": "bi-tag-fill"}
+    

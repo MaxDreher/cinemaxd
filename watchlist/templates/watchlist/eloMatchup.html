@@ -4,61 +4,20 @@
 <div class="card">
     {{ matches }} total matches since Jan. 29, 2024
 </div>
-{% for movie in movies%}
-    <div class="col-md-6">
-        <div class="card shadow">
-            <div class="row g-0">
-                <div class="col-md-4 shadow-lg">
-                    <img src="{{ movie.posterLink }}" class="img-fluid shadow rounded-start h-100" alt="{{ movie.title }} Poster">
-                </div>
-                <div class="col-md-8 d-flex flex-column">
-                    <div class="card-body p-0" style="position: relative;">
-                        <div class="gradient-overlay rounded-end position-absolute top-0 start-0 w-100 ">
-                            <span class="p-3 position-absolute">
-                                {% if movie.date %}
-                                    {% if movie.date == date_today %}
-                                        <span class="badge rounded-pill text-bg-green" style="vertical-align: text-bottom;">New!</span>                        
-                                    {% endif %}
-                                    <small class="text-body-tertiary roboto">    
-                                        <i class="bi bi-film"></i>  
-                                        {{ movie.date }}
-                                    </small>
-                                {% endif %}
-                                <p class="card-title mb-0">
-                                    <span class="h4 title">
-                                        <a class="movie-title" data-movie-id="{{movie.TMDB_ID}}" href="#{{movie.TMDB_ID}}" role="button"><b>{{ movie.title }}</b></a>
-                                        <span class="card-subtitle text-body-secondary roboto">({{ movie.year }})</span>
-                                    </span>
-                                </p>
-                                {% if movie.tagline %}
-                                    <small class="text-body-tertiary d-block mb-1"><i>{{ movie.tagline }}</i></small>
-                                {% endif %}
-                                <p class="h6 badge rounded-pill text-bg-secondary">{{ movie.rating|convert_to_stars }}</p>
-                                {% if movie.runtime %}
-                                    <p class="h6 badge rounded-pill text-bg-secondary">{{ movie.runtime }} mins</p>
-                                {% else %}
-                                    <p class="h6 badge rounded-pill text-bg-secondary">{{ movie.episodes }} episodes</p>
-                                {% endif %}
-                                <hr class="my-1">
-                                <p class="card-text mb-0"><small class="text-body-secondary">{{ movie.plot }}</small></p>
-                            </span>
-                        </div>
-                        <img src="{{ movie.bgLink }}" class="img-fluid rounded-end bg-image" alt="Background Image" style="object-fit: cover;">
-                    </div>
-                    {% comment %} <div class="card-footer">
-                        <small class="text-body-secondary">Seen on: {{ newest.date }}</small>
-                    </div>                             {% endcomment %}
-                </div>
+<div class="row g-2">
+    {% for movie in movies %}
+        <div class="col-md-6">            
+            {% if forloop.first %}            
+                {% include "./elements/big-card-mirrored.html" with movie=movie %}
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+            {% else %}
+                {% include "./elements/big-card.html" with movie=movie %}
+                <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+            {% endif %}
+                <button class="z-2 btn btn-secondary border border-2 rounded-pill roboto mt-3" id="{{ movie.TMDB_ID }}" type="submit">
+                {{ movie.title }} ({{ movie.year }}) [<b class="text-body-primary">{{ movie.elo }}</b>]
+                </button>
             </div>
         </div>
-        {% if forloop.first %}
-            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-        {% else %}
-            <div class="d-grid gap-2 d-md-flex justify-content-md-start">
-        {% endif %}
-            <button class="z-2 btn btn-secondary roboto mt-3" id="{{ movie.TMDB_ID }}" type="submit">
-            {{ movie.title }} {{ movie.year }} <i class="text-body-green">{{ movie.elo }}</i>
-            </button>
-        </div>
-    </div>
-{% endfor %}
+    {% endfor %}
+</div>

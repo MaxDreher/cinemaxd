@@ -37,6 +37,7 @@ def get_top_actors(movies, num, non_null):
         'worst_by_rating': [{'actor': actor, 'movie': actor.movie_set.filter(rating__isnull=False).order_by('rating').first()} for actor in by_rating_actors.reverse()[:num]],
     }
 
+
 def get_top_directors(movies, num, non_null):
     directors = Director.objects.filter(movie__in=(movies))
     by_count_directors = directors.annotate(
@@ -52,21 +53,11 @@ def get_top_directors(movies, num, non_null):
         'worst_by_rating': [{'director': director, 'movie': director.movie_set.filter(rating__isnull=False).order_by('rating').first()} for director in by_rating_directors.reverse()[:num]],
     }
 
+
 def get_week_info(movies, today):
-    # Filter movies for the last 7 days
     start_date = today - timedelta(days=7)
     movies_week = movies.filter(date__range=[start_date, today]).order_by('-datetime_added')
-
-    # Get weekly rating counts
-    # movies_rating_count = movies_week.values('rating').annotate(count=Count('TMDB_ID')).order_by('-rating')
-
-    # Create lists of ratings and counts
-    # ratings_list = [obj['rating'] for obj in movies_rating_count]
-    # count_list = [obj['count'] for obj in movies_rating_count]
-
-    # Get movies for the week, sorted by rating and date
     movies_sorted = movies_week.order_by('-rating', 'date')
-    # Get additional information (first movie, count of movies, average rating)
     highest_rated = movies_sorted.first()
     lowest_rated = movies_sorted.last()
     highest_critical = movies_week.order_by('-avg_critical_rating').first()
@@ -101,30 +92,47 @@ def get_week_info(movies, today):
         'award_lowest': {'text': 'Lowest Rated Movie Seen This Week', 'color': 'red', 'icon': 'bi-hand-thumbs-down-fill'},
     }
 
+
+def get_last_12_months(today):
+    last_12_months = []
+
+    for i in range(12):
+        current_month = today - timedelta(days=today.day-1)
+        last_12_months.append(current_month)
+        today = current_month - timedelta(days=current_month.day)
+
+    return last_12_months
+
+
 def get_month_info(movies, today):
-    year = today.year
-    month = today.month
-    movies_month = movies.filter(date__month=month, date__year=year)
-    movies_alltime_month = movies.filter(releaseDate__month=month).order_by('-rating')[:10]
+    month_dict = []
+    months = get_last_12_months(today)
+    for date in months:
+        month = date.month
+        year = date.year
+        movies_month = movies.filter(date__month=month, date__year=year)
+        movies_alltime_month = movies.filter(releaseDate__month=month).order_by('-rating')[:10]
 
-    movies_sorted = movies_month.order_by('-rating', 'date')
+        movies_sorted = movies_month.order_by('-rating', 'date')
 
-    highest_rated = movies_sorted.first()
-    lowest_rated = movies_sorted.last()
-    highest_critical = movies_month.order_by('-avg_critical_rating').first()
-    movie_count = len(movies_sorted)
-    average_rating = movies_sorted.aggregate(avg=Round(Avg('rating')))
-    average_critical = movies_sorted.aggregate(avg=Round(Avg('avg_critical_rating')))
-    total_runtime = movies_sorted.aggregate(sum=Sum('runtime')).get('sum') if (movies_sorted.aggregate(sum=Sum('runtime')).get('sum')) else 0
-    actors = get_top_actors(movies_month, 3, 0)
-    directors = get_top_directors(movies_month, 3, 0)
-    span = f"{today.strftime("%B")} {year}"
-    return {
-        'title': 'month',
-        'month': today.strftime("%B"),
+        highest_rated = movies_sorted.first()
+        lowest_rated = movies_sorted.last()
+        highest_critical = movies_month.order_by('-avg_critical_rating').first()
+        movie_count = len(movies_sorted)
+        average_rating = movies_sorted.aggregate(avg=Round(Avg('rating')))
+        average_critical = movies_sorted.aggregate(avg=Round(Avg('avg_critical_rating')))
+        total_runtime = movies_sorted.aggregate(sum=Sum('runtime')).get('sum') if (movies_sorted.aggregate(sum=Sum('runtime')).get('sum')) else 0
+        actors = get_top_actors(movies_month, 3, 0)
+        directors = get_top_directors(movies_month, 3, 0)
+        span = f"{date.strftime("%B")} {year}"
+        month_dict.append({
+        'title': date.strftime("%B"),
+        'title_alltime': f"{date.strftime("%B")}-alltime",
+        'month': date.strftime("%B"),
         'year': year,
         'span': span,
-        'movies': movies_alltime_month,
+        'movies': movies_month.order_by('-rating', 'date')[:10],
+        'movies_alltime': movies_alltime_month,
         'highest_critical': highest_critical,
         'highest_rated': highest_rated,
         'lowest_rated': lowest_rated,
@@ -136,57 +144,57 @@ def get_month_info(movies, today):
         'actors_by_rating': actors.get('by_rating'),
         'directors_by_count': directors.get('by_count'),
         'directors_by_rating': directors.get('by_rating'),
-        'use_releases': True,
-        'carousel_title': f'My Top 10 Movies Released in {today.strftime("%B")} (All-Time)',
+        'carousel_title': f'My Top 10 Movies Seen in {span}',
+        'carousel_title_alltime': f'My Top 10 Movies Released in {date.strftime("%B")} (All-Time)',
         'award_highest': {'text': f'Highest Rated Movie Seen in {span}', 'color': 'green', 'icon': 'bi-award-fill'},
         'award_critical': {'text': f'Highest Critically-Rated Movie Seen in {span}', 'color': 'gold', 'icon': 'bi-trophy-fill'},
         'award_lowest': {'text': f'Lowest Rated Movie Seen in {span}', 'color': 'red', 'icon': 'bi-hand-thumbs-down-fill'},
-
-    }
+    })
+    return month_dict
+        
 
 def get_year_info(movies, today):
-    year = today.year
-    movies_year = movies.filter(date__year=year)
-    movies_released_year = movies.filter(releaseDate__year=year).order_by('-rating')[:10]
+    year_dict = []
+    current_year = today.year
+    for year in range(current_year, 2022, -1):
+        movies_year = movies.filter(date__year=year)
+        movies_released_year = movies.filter(releaseDate__year=year).order_by('-rating')[:10]
+        movies_sorted = movies_year.order_by('-rating', 'date')
+        highest_rated = movies_sorted.first()
+        lowest_rated = movies_sorted.last()
+        highest_critical = movies_year.order_by('-avg_critical_rating').first()
+        movie_count = len(movies_sorted)
+        average_rating = movies_sorted.aggregate(avg=Round(Avg('rating')))
+        average_critical = movies_sorted.aggregate(avg=Round(Avg('avg_critical_rating')))
+        total_runtime = movies_sorted.aggregate(sum=Sum('runtime')).get('sum') if (movies_sorted.aggregate(sum=Sum('runtime')).get('sum')) else 0
+        actors = get_top_actors(movies_year, 3, 0)
+        directors = get_top_directors(movies_year, 3, 0)
+        year_dict.append({
+            'title': year,
+            'title_alltime': f"{year}-alltime",
+            'year': year,
+            'span': year,
+            'movies': movies_year.order_by('-rating')[:10],
+            'movies_alltime': movies_released_year,
+            'highest_critical': highest_critical,
+            'highest_rated': highest_rated,
+            'lowest_rated': lowest_rated,
+            'movie_count': movie_count,
+            'average_rating': average_rating,
+            'average_critical': average_critical,
+            'total_runtime': f"{total_runtime//60}hr{total_runtime%60}min",
+            'actors_by_count': actors.get('by_count'),
+            'actors_by_rating': actors.get('by_rating'),
+            'directors_by_count': directors.get('by_count'),
+            'directors_by_rating': directors.get('by_rating'),
+            'carousel_title': f'My Top 10 Movies Seen in {year}',
+            'carousel_title_alltime': f'My Top 10 Movies Released in {year}',
+            'award_highest': {'text': f'Highest Rated Movie Seen in {year}', 'color': 'green', 'icon': 'bi-award-fill'},
+            'award_critical': {'text': f'Highest Critically-Rated Movie Seen in {year}', 'color': 'gold', 'icon': 'bi-trophy-fill'},
+            'award_lowest': {'text': f'Lowest Rated Movie Seen in {year}', 'color': 'red', 'icon': 'bi-hand-thumbs-down-fill'},
+        })
+    return year_dict
 
-    # movies_rating_count = movies_year.values('rating').annotate(count=Count('TMDB_ID')).order_by('-rating')
-
-    # ratings_list = [obj['rating'] for obj in movies_rating_count]
-    # count_list = [obj['count'] for obj in movies_rating_count]
-
-    movies_sorted = movies_year.order_by('-rating', 'date')
-
-    highest_rated = movies_sorted.first()
-    lowest_rated = movies_sorted.last()
-    highest_critical = movies_year.order_by('-avg_critical_rating').first()
-    movie_count = len(movies_sorted)
-    average_rating = movies_sorted.aggregate(avg=Round(Avg('rating')))
-    average_critical = movies_sorted.aggregate(avg=Round(Avg('avg_critical_rating')))
-    total_runtime = movies_sorted.aggregate(sum=Sum('runtime')).get('sum') if (movies_sorted.aggregate(sum=Sum('runtime')).get('sum')) else 0
-    actors = get_top_actors(movies_year, 3, 0)
-    directors = get_top_directors(movies_year, 3, 0)
-    return {
-        'title': 'year',
-        'year': year,
-        'span': year,
-        'movies': movies_released_year,
-        'highest_critical': highest_critical,
-        'highest_rated': highest_rated,
-        'lowest_rated': lowest_rated,
-        'movie_count': movie_count,
-        'average_rating': average_rating,
-        'average_critical': average_critical,
-        'total_runtime': f"{total_runtime//60}hr{total_runtime%60}min",
-        'actors_by_count': actors.get('by_count'),
-        'actors_by_rating': actors.get('by_rating'),
-        'directors_by_count': directors.get('by_count'),
-        'directors_by_rating': directors.get('by_rating'),
-        'use_releases': True,
-        'carousel_title': f'My Top 10 Movies Released in {year}',
-        'award_highest': {'text': f'Highest Rated Movie Seen in {year}', 'color': 'green', 'icon': 'bi-award-fill'},
-        'award_critical': {'text': f'Highest Critically-Rated Movie Seen in {year}', 'color': 'gold', 'icon': 'bi-trophy-fill'},
-        'award_lowest': {'text': f'Lowest Rated Movie Seen in {year}', 'color': 'red', 'icon': 'bi-hand-thumbs-down-fill'},
-    }
 
 def get_heatmap_data(movies, today):
     dateStart = today - timedelta(weeks=6, days=today.weekday())
@@ -207,6 +215,7 @@ def get_heatmap_data(movies, today):
     
     return [day_dict for weekday_list in weekday_lists for day_dict in weekday_list]
 
+
 def get_year_count_data(movies, today):
     year = today.year
     years = list(range(year - 99, year + 1))
@@ -216,9 +225,11 @@ def get_year_count_data(movies, today):
     movie_counts = [{'year': str(year), 'value': movies.filter(year=year).count(), 'movies': getMovies(movies, year)} for year in years]
     return movie_counts
 
+
 def get_rating_distribution(movies):
     movies_rating_count = movies.filter(rating__isnull=False).values('rating').annotate(count=Count('TMDB_ID')).order_by('-rating')
     return [{'rating': item['rating'], 'value': item['count'], 'latest': movies.filter(rating=item['rating']).order_by('-date').first().title} for item in movies_rating_count]
+
 
 def get_weekday_distribution(movies):
     dayKey = {1: 'Sunday', 2: 'Monday', 3: 'Tuesday', 4: 'Wednesday', 5: 'Thursday', 6: 'Friday', 7: 'Saturday'}
@@ -228,9 +239,11 @@ def get_weekday_distribution(movies):
     ).order_by('weekday')
     return [{'weekday': dayKey[item['weekday']], 'rating': item['avg_rating'], 'count': item['count']} for item in weekly_stats]
 
+
 def get_keyword_data():
     keywords = Keyword.objects.all().annotate(count=Count('movie')).order_by('-count')
     return[{'tag': item.name, 'weight': item.count} for item in keywords[3:33]]
+
 
 def standardize_country_name(country_name):
     # You can extend this mapping as needed
@@ -240,6 +253,7 @@ def standardize_country_name(country_name):
         # Add more mappings as needed
     }
     return country_name_mapping.get(country_name, country_name)
+
 
 def get_country_code(country_name):
     try:
@@ -260,6 +274,7 @@ def get_country_code(country_name):
     # Handle cases where the country name is not found
     return None
 
+
 def get_country_data():
     queryset = Movie.objects.all().values('countrys')
     countries_list = [standardize_country_name(country.strip()) for entry in queryset for country in entry['countrys'].split(',')]
@@ -271,6 +286,31 @@ def get_country_data():
     countries_with_counts = list(country_counts.items())
     data = [{'id': get_country_code(item[0]), 'name': item[0], 'value': math.log(item[1]), 'count': item[1]} for item in countries_with_counts]
     return data
+
+
+# def on_this_day_new(today):
+#     seed = today.toordinal()
+#     random.seed(seed)
+#     movies = Movie.objects.all()
+#     random_index = random.randint(0, movies.count() - 1)
+#     random_movie = movies[random_index]
+#     random.seed
+
+#     released_today_watchlist = WatchlistMovie.objects.filter(releaseDate__month=today.month, releaseDate__day=today.day).order_by('date')[:3]
+#     released_today_watchlog = Movie.objects.filter(releaseDate__month=today.month, releaseDate__day=today.day).order_by('-rating')[:3]
+#     actor_born_today_list = Actor.objects.filter(birthday__month=today.month, birthday__day=today.day)[:3]
+#     actor_born_today = [actor.watchlistmovie_set.first() or actor.movie_set.first() for actor in actor_born_today_list]
+#     director_born_today_list = Director.objects.filter(birthday__month=today.month, birthday__day=today.day)[:3]
+#     director_born_today = [actor.watchlistmovie_set.first() or actor.movie_set.first() for actor in director_born_today_list]
+#     return {
+#         'released_today_watchlist': released_today_watchlist,
+#         'released_today_watchlog': released_today_watchlog,
+#         'actor_born_today': actor_born_today,
+#         'director_born_today': director_born_today,
+#         'random_movie': random_movie,
+#         'length': len(released_today_watchlist) + len(released_today_watchlog) + len(actor_born_today) + len(director_born_today) + 1,
+#     }
+
 
 def on_this_day(today):
     seed = today.toordinal()
@@ -292,6 +332,7 @@ def on_this_day(today):
         'random_movie': {'movie': random_movie},
     }
     return [value for value in data.values() if value['movie'] is not None]
+
 
 def get_streak(today):
     # Retrieve all records sorted by date
@@ -343,10 +384,12 @@ def get_streak(today):
         'longest': longest_streak,
     }
 
+
 def get_random_on_streaming():
     idlist = [i.TMDB_ID for i in WatchlistMovie.objects.filter(provider__isnull=False)]
     rand_ids = random.sample(idlist, 5)
     return [WatchlistMovie.objects.get(pk=i) for i in rand_ids]
+
 
 def get_list_in_order(id):
     movie_list = MovieList.objects.filter(list_id=id)
@@ -354,10 +397,12 @@ def get_list_in_order(id):
     ordering = Case(*[When(TMDB_ID=movie_id, then=pos) for pos, movie_id in enumerate(movie_ids)], output_field=IntegerField())
     return Movie.objects.filter(TMDB_ID__in=movie_ids).order_by(ordering)
 
+
 def get_longest_days(movies, num):
     common_date = movies.exclude(date__isnull=True).values('date').annotate(count=Count('TMDB_ID')).annotate(time=Sum('runtime')).order_by('-count', '-time')[:num]
     return [{'date': item['date'], 'count': item['count'], 'time': (f"{item['time']//60}hr{int(item['time']%60)}min"), 'movies': movies.filter(date=item['date'])} for item in common_date]
     # common_date_movies = movies_in_order.filter(date=common_date)
+
 
 def get_stats(movies, start, end):
     total_days = (end - start).days
@@ -373,9 +418,11 @@ def get_stats(movies, start, end):
         'gap': movie_count - total_days
     }
 
+
 def get_streaming(movies):
     movies_rating_count = movies.filter(service__isnull=False).values('service').annotate(count=Count('TMDB_ID')).order_by('-count')
     return [{'name': item['service'], 'value': item['count'], 'image': f"/static/watchlist/images/{item['service']}.png", 'latest': movies.filter(service=item['service']).order_by('-date').first().title} for item in movies_rating_count]
+
 
 def get_oscars_year(movies, year, award):
     with open('./watchlist/the_oscar_award.json') as f, open('./watchlist/the_oscar_map.json') as g:
@@ -399,8 +446,10 @@ def get_oscars_year(movies, year, award):
                     pass
             return {'seen': seen, 'total': len(noms), 'winner_seen': winner_seen, 'year': year, 'award': award, 'movies': noms}
 
+
 def get_oscars_range(movies, year_start, year_end, award):
     return [get_oscars_year(movies, year, award) for year in range(year_end, year_start, -1) ]
+
 
 def get_top_studios(movies, num):
     studios = ProdCompany.objects.filter(movie__in=(movies))

@@ -4,17 +4,17 @@
 
 <small class="text-body-tertiary roboto ms-2">
     <i class="bi bi-collection-play-fill"></i>
-    {{ data.carousel_title }}
+    {{ carousel_title }}
 </small>
 <div class="card rounded-4 border border-0 shadow">
-    <div id="{{ data.title }}-movie-carousel" class="carousel slide carousel-fade">
+    <div id="{{ title }}-movie-carousel" class="carousel slide carousel-fade">
         <div class="carousel-indicators">
-            {% for movie in data.movies %}
-                <button type="button" data-bs-target="#{{ data.title }}-movie-carousel" data-bs-slide-to="{{ forloop.counter0 }}" {% if forloop.first %}class="active"{% endif %}></button>
+            {% for movie in movies %}
+                <button type="button" data-bs-target="#{{ title }}-movie-carousel" data-bs-slide-to="{{ forloop.counter0 }}" {% if forloop.first %}class="active"{% endif %}></button>
             {% endfor %}
         </div>
         <div class="carousel-inner">
-            {% for movie in data.movies %}
+            {% for movie in movies %}
                 <div class="carousel-item{% if forloop.first %} active{% endif %}">
                     <div class="card-body p-0" style="position: relative;">
                         {# Gradient Overlay #}
@@ -22,7 +22,7 @@
                             <span class="py-3 px-4 position-absolute">
 
                                 {# Date Sub-Heading #}
-                                {% if data.use_releases %}
+                                {% if use_releases %}
                                     {% include "./small-header.html" with text=movie.releaseDate icon="bi-broadcast-pin" %}
                                 {% elif movie.date %}
                                     {% include "./small-header.html" with text=movie.date %}
@@ -57,9 +57,9 @@
                 </div>
             {% endfor %}
         </div>
-        <button class="carousel-control-prev week-button" type="button" data-bs-target="#{{ data.title }}-movie-carousel" data-bs-slide="prev">
+        <button class="carousel-control-prev week-button" type="button" data-bs-target="#{{ title }}-movie-carousel" data-bs-slide="prev">
         </button>
-        <button class="carousel-control-next week-button" type="button" data-bs-target="#{{ data.title }}-movie-carousel" data-bs-slide="next">
+        <button class="carousel-control-next week-button" type="button" data-bs-target="#{{ title }}-movie-carousel" data-bs-slide="next">
         </button>    
     </div>
 </div>

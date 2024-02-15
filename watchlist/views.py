@@ -59,6 +59,29 @@ def sidebar_ajax(request, movie_id):
     }
     return render(request, 'watchlist/offcanvas_movie.html', context)
 
+def sidebar_actor_ajax(request, actor_id):
+    person = Actor.objects.filter(pk=actor_id).annotate(
+        movie_count=Count('movieactor'),
+        nonnull_count=Count('movieactor', filter=Q(movieactor__movie__rating__isnull=False), distinct=True),
+        avg_rating=Round(Avg('movieactor__movie__rating'))
+    ).first()
+
+    if person is None:
+        person = Director.objects.filter(pk=actor_id).annotate(
+            movie_count=Count('moviedirector'),
+            nonnull_count=Count('moviedirector', filter=Q(moviedirector__movie__rating__isnull=False), distinct=True),
+            avg_rating=Round(Avg('moviedirector__movie__rating'))
+        ).first()
+        
+    movie = person.movie_set.order_by('?').first() if person.movie_set.first() else person.watchlistmovie_set.order_by('?').first()
+
+    context = {
+        'person': person,
+        'movie': movie,
+    }
+    return render(request, 'watchlist/offcanvas_actor.html', context)
+
+
 def elo_matchup(request):
     winner = Movie.objects.get(pk=request.GET.get('id_winner'))
     loser = Movie.objects.get(pk=request.GET.get('id_loser'))
@@ -66,8 +89,10 @@ def elo_matchup(request):
     p1 = 1.0 / (1 + 10 ** ((winner.elo - loser.elo) / 400))
     p2 = 1.0 - p1
 
-    winner.elo += round(64 * (1 - p2), 2)
-    loser.elo += round(64 * (0 - p1), 2)
+    winner.elo += 64 * (1 - p2)
+    loser.elo += 64 * (0 - p1)
+    winner.elo = float('%.2f' % winner.elo)
+    loser.elo = float('%.2f' % loser.elo)
     winner.eloMatches += 1
     loser.eloMatches += 1
     winner.save()
@@ -75,6 +100,7 @@ def elo_matchup(request):
 
     movies = Movie.objects.filter(rating__isnull=False)
     matches = movies.aggregate((Sum('eloMatches'))).get('eloMatches__sum') // 2
+    random.seed()
     context = {
         'movies': random.sample(list(movies), 2),
         'matches': matches
@@ -119,6 +145,7 @@ class WatchlogView(View):
             date_watched = form.cleaned_data['date_watched']
             service = form.cleaned_data['service']
             theaters = form.cleaned_data['theaters']
+            favorite = form.cleaned_data['favorite']
             cleaned = {
                 'title': title,
                 'year': year,
@@ -126,7 +153,8 @@ class WatchlogView(View):
                 'review': review,
                 'date': date_watched,
                 'service': service,
-                'theaters': theaters
+                'theaters': theaters,
+                'favorite': favorite
             }
             try:
                 update_object = Movie.objects.get(title=title, year=year)
@@ -136,7 +164,7 @@ class WatchlogView(View):
                             setattr(update_object, key, value)
                 update_object.save()
             except Movie.DoesNotExist:
-                make_api_calls_and_update_database(title, year, rating, review, theaters, date_watched, service)
+                make_api_calls_and_update_database(title, year, rating, review, theaters, favorite, date_watched, service)
 
             # Fetch the updated data after saving
             data = Movie.objects.all()
@@ -177,13 +205,15 @@ class WatchlistView(View):
             title = form.cleaned_data['title']
             year = form.cleaned_data['year']
             date_added = form.cleaned_data['date_added']
-            reason = form.cleaned_data['reason']
+            favorite = form.cleaned_data['favorite']
+            tags = form.cleaned_data['tags']
 
             cleaned = {
                 'title': title,
                 'year': year,
                 'date': date_added,
-                'reason': reason,
+                'favorite': favorite,
+                'tags': tags
             }
 
             try:
@@ -193,7 +223,7 @@ class WatchlistView(View):
                         setattr(update_object, key, value)
                 update_object.save()
             except WatchlistMovie.DoesNotExist:
-                make_api_calls_and_update_watchlist(title, year, reason, date_added)
+                make_api_calls_and_update_watchlist(title, year, favorite, tags, date_added)
             data = WatchlistMovie.objects.all()
             title_year = f'<span><i class="bi bi-check-circle-fill"></i>&nbsp;&nbsp;{title} ({year}) has been successfully added!<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></span>'
             response_data = {

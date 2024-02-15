@@ -32,12 +32,15 @@
 
                                 {# Badges #}
                                 <small class="my-0">
-                                    {% if item.movie.service %}
-                                        <img class="align-middle border border-3 border-tertiary border-secondary-subtle rounded-4 shadow-lg" src="/static/watchlist/images/{{ item.movie.service|striptags }}.png" height="24px">
-                                    {% endif %}
                                     {% if item.movie.timesSeen %}
+                                        {% if item.movie.service %}
+                                            <img class="align-middle border border-3 border-tertiary border-secondary-subtle rounded-4 shadow-lg" src="/static/watchlist/images/{{ item.movie.service|striptags }}.png" height="24px">
+                                        {% endif %}
                                         {% include "./badge-secondary.html" with text='<i class="bi bi-check-lg"></i>' color="green" %}
                                     {% else %}
+                                        {% if movie.provider %}
+                                            <img class="align-middle border border-3 border-tertiary border-secondary-subtle rounded-4 shadow-lg" src="/static/watchlist/images/{{ movie.provider.first.name|striptags }}.png" height="24px">
+                                        {% endif %}
                                         {% include "./badge-secondary.html" with text='<i class="bi bi-x-lg"></i>' color="red" %}
                                     {% endif %}
                                     {% if item.movie.rating %}
@@ -53,11 +56,34 @@
                                     {% endif %}
                                     {% if item.movie.movieaward_set.all %}
                                         {% include "./oscar-badge.html" with text=item.movie.movieaward_set.all|parse_oscar num=item.movie.movieaward_set.all|length icon="bi-trophy" color="gold"%}
+                                    {% elif item.movie.watchlistaward_set.all %}
+                                        {% include "./oscar-badge.html" with text=item.movie.watchlistaward_set.all|parse_oscar num=item.movie.watchlistaward_set.all|length icon="bi-trophy" color="gold"%}
                                     {% endif %}
                                 </small>
 
                             </span>
                         </div>
+
+                        {% comment %} <div class="carousel-indicators">
+                            {% for i in 'x'|rjust:on_this_day.length %}
+                                <button type="button" data-bs-target="#on-this-day-carousel" data-bs-slide-to="{{ forloop.counter0 }}" {% if forloop.first %}class="active"{% endif %}></button>
+                            {% endfor %}
+                        </div>
+                        <div class="carousel-inner">
+                            {% for movie in on_this_day.released_today_watchlist %}
+                                {% include "./on-this-day-carousel-item.html" with movie=movie %}
+                            {% endfor %}
+                            {% for movie in on_this_day.released_today_watchlog %}
+                                {% include "./on-this-day-carousel-item.html" with movie=movie %}
+                            {% endfor %}
+                            {% for movie in on_this_day.actor_born_today %}
+                                {% include "./on-this-day-carousel-item.html" with movie=movie %}
+                            {% endfor %}
+                            {% for movie in on_this_day.director_born_today %}
+                                {% include "./on-this-day-carousel-item.html" with movie=movie %}
+                            {% endfor %}
+                            {% include "./on-this-day-carousel-item.html" with movie=on_this_day.random_movie active="active" %} {% endcomment %}
+                
                         {# Background Image #}
                         <img src="{{ item.movie.bgLink }}" class="img-fluid rounded-4 border border-1 border-dark bg-image-half" alt="Background Image">
                     </div>                                    

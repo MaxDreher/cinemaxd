@@ -43,4 +43,3 @@ collapseButton.addEventListener('click', function () {
     collapseIcon.classList.add('bi-plus-circle');
   }
 });
-

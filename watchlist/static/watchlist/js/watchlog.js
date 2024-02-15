@@ -1,3 +1,5 @@
+UseBootstrapTag(document.getElementById('id_tags'))
+
 $(document).ready(function() {
     // Initialize variables for debouncing
     let debounceTimer;
@@ -31,7 +33,7 @@ $(document).ready(function() {
                 success: function(response) {
                     // Display the actual movie poster
                     const posterUrl = response.poster_url;
-                    $('#moviePosterContainer').html(`<img src="${posterUrl}" class="img-fluid rounded" alt="Movie Poster">`);
+                    $('#moviePosterContainer').html(`<img src="${posterUrl}" class="img-fluid rounded-4" alt="Movie Poster">`);
                 },
                 error: function(error) {
                     console.error('Error fetching movie info:', error);
@@ -65,9 +67,10 @@ $(document).ready(function() {
                 $('#sidebar-header').html('');
                 $('#tableContainer').html('');
                 $('#tableContainer').html(response.table_html);
-                console.log(response.title_year)
                 $('#successAlert').html(response.title_year);
                 $('#successAlert').removeClass('d-none');
+                $('#moviePosterContainer').html('<i class="bi bi-film" style="font-size: 2em; color: #6c757d;"></i>');
+                $('#watchlogInput')[0].reset();
             },
             error: function(error) {
                 console.error('Error:', error);
@@ -77,7 +80,7 @@ $(document).ready(function() {
                 // Hide loading spinner when request is complete
                 $('#loadingSpinner').addClass('d-none');
                 $('#submitButton').removeClass('disabled');
-                $('#submitText').removeClass('d-none');        
+                $('#submitText').removeClass('d-none');
             }
         });
     });
@@ -95,4 +98,42 @@ collapseButton.addEventListener('click', function () {
     collapseIcon.classList.remove('bi-dash-circle');
     collapseIcon.classList.add('bi-plus-circle');
   }
+});
+
+$(document).ready(function() {
+    $('#likeInput').val('False');
+    $('#theaterInput').val('False');
+});
+
+$(document).ready(function() {
+    $('#likeButton').on('click', function() {
+        var likeInput = $('#likeInput');
+        var currentLikeState = likeInput.val();
+
+        var newLikeState = currentLikeState === 'True' ? 'False' : 'True';
+
+        $(this).toggleClass('btn-outline-secondary btn-danger');
+        $('#heart-icon').toggleClass('bi-heart bi-heart-fill')
+
+        likeInput.val(newLikeState);
+    });
+});
+
+$(document).ready(function() {
+    $('#theaterButton').on('click', function() {
+        var theaterInput = $('#theaterInput');
+        var currentTheaterState = theaterInput.val();
+
+        var newTheaterState = currentTheaterState === 'True' ? 'False' : 'True';
+
+        $(this).toggleClass('btn-outline-secondary btn-secondary');
+        $('#theater-icon').toggleClass('bi-camera-reels bi-camera-reels-fill')
+
+        theaterInput.val(newTheaterState);
+    });
+});
+
+var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+  return new bootstrap.Tooltip(tooltipTriggerEl);
 });

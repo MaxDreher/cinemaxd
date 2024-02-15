@@ -95,7 +95,7 @@ div.dtsp-searchPane div.dtsp-topRow.dtsp-bordered:hover {
 /* DATATABLE ENTRY AMOUNT SELECTOR DROPDOWN */
 div.dataTables_wrapper div.dataTables_length select {
   color: #fff; /* Set the text color to white */
-  background-color: transparent; /* Set the background color to the dark theme background */
+  background-color: #212529; /* Set the background color to the dark theme background */
   border: 1px solid #787e84; /* Set the border color */
   border-radius: 7px;
 }
@@ -189,4 +189,50 @@ div.dataTables_wrapper div.dataTables_length select {
   background-color: #109e5d !important;
   font-family: 'Roboto', sans-serif !important;
   font-size: 8.5pt;
+}
+
+.dtsp-nameCont .badge {
+  border-radius: var(--bs-border-radius-pill)!important;
+  font-weight: 400!important;
+  border: var(--bs-border-width) var(--bs-border-style) var(--bs-border-color)!important;
+  border-color: var(--bs-secondary-border-subtle)!important;
+  border-width: 3px!important;
+}
+
+div.dtsp-panesContainer div.dtsp-searchPane div.dataTables_wrapper div.dtsp-nameCont span.badge {
+  min-width: inherit;
+  line-height: 1;
+  margin-top: inherit;
+}
+
+div.dtsp-panesContainer div.dtsp-searchPane div.dtsp-topRow {
+  border-top-left-radius: var(--bs-border-radius-xl)!important;
+  border-top-right-radius: var(--bs-border-radius-xl)!important;
+}
+
+div.dtsp-panesContainer div.dtsp-searchPane div.dataTables_wrapper {
+  border-bottom-left-radius: var(--bs-border-radius-xl)!important;
+  border-bottom-right-radius: var(--bs-border-radius-xl)!important;
+}
+
+div.dtsp-panesContainer div.dtsp-searchPane div.dtsp-topRow div.dtsp-subRow1 input {
+  border-radius: var(--bs-border-radius-xl)!important;
+}
+
+.btn-group {
+  border-radius: var(--bs-border-radius-xl)!important;
+}
+
+.btn-group>.btn-group:not(:first-child), .btn-group>:not(.btn-check:first-child)+.btn {
+  border-top-right-radius: var(--bs-border-radius-xl)!important;
+  border-bottom-right-radius: var(--bs-border-radius-xl)!important;
+}
+
+.btn-group>.btn-group:not(:last-child)>.btn, .btn-group>.btn.dropdown-toggle-split:first-child, .btn-group>.btn:not(:last-child):not(.dropdown-toggle) {
+  border-top-left-radius: var(--bs-border-radius-xl)!important;
+  border-bottom-left-radius: var(--bs-border-radius-xl)!important;
+}
+
+#id_service {
+  background-color: #212529 !important;
 }

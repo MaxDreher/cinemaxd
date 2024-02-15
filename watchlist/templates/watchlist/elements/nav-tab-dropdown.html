@@ -1,0 +1,12 @@
+{# Nav Tabs #}
+
+<li class="nav-item dropdown" role="presentation">
+    <button class="small nav-link rounded-top-4 dropdown-toggle data-tabs {{ active|default:"" }}" id="{{ title }}-tab" data-bs-toggle="dropdown" type="button" role="tab" {{ disabled|default:"" }}>
+        <i class="bi {{ icon }}"></i> {{ title|upper }}
+    </button>
+    <ul class="dropdown-menu roboto">
+        {% for item in data %}
+            <li><a class="dropdown-item small roboto" type="button" data-bs-toggle="tab" data-bs-target="#{{ item.title }}-tab-pane">{{ item.span|upper }}</a></li>
+        {% endfor %}
+    </ul>
+</li>
