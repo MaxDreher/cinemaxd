@@ -2,3 +2,26 @@
 
 # Exclude .env file
 .env
+__pycache__/
+MovieSite/
+
+watchlist/__pycache__/
+watchlist/migrations/
+watchlist/static/watchlist/images/
+watchlist/templatetags/__pycache__/
+watchlist/__init.py
+watchlist/admin.py
+watchlist/config.py
+watchlist/manual_playground.py
+watchlist/tests.py
+
+
+*.pyc
+*.pyo
+*.pyd
+
+db.sqlite3
+library.sqlite3
+list.todo
+manage.py
+manual_audit_log.txt

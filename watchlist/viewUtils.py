@@ -1,15 +1,9 @@
-import sys
-sys.path.append(r"D:\Users\Max\MovieSite")
 
 import os
 import django
 from collections import Counter
 import pycountry
 import random
-
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'MovieSite.settings')
-django.setup()
-
 from watchlist.api_calls import get_TMDB_posters_from_id
 from django.db.models import Case, When, IntegerField, Avg, Count, Min, Sum, Q, Func
 from django.db.models.functions import ExtractWeekDay

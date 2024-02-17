@@ -17,6 +17,7 @@ from dotenv import load_dotenv
 from .api_calls import get_OMDB, get_TMDB
 from .utils import make_api_calls_and_update_database, make_api_calls_and_update_watchlist  # Create this function
 from .viewUtils import *
+
 class Round(Func):
     function = 'ROUND'
     template = '%(function)s(%(expressions)s, 2)'
