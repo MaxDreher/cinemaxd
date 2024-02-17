@@ -1,0 +1,11 @@
+{# Tag Badge #}
+
+<p class="badge mb-0 border border-{{ border|default:"3" }} border-secondary-subtle rounded-pill fw-{{ fw|default:'semibold' }} {{ name.class }}">
+    <span data-bs-toggle="tooltip" 
+        data-bs-placement="bottom"
+        data-bs-html="true"
+        data-bs-title="{{ name.name|safe }}"
+    >
+        <i class="bi {{ name.icon }}"></i>
+    </span>
+</p>

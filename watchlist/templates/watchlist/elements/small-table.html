@@ -1,0 +1,30 @@
+{% load static %}
+{% load custom_filters %}
+{# Small Table Card: As Used in Tabs #}
+
+<div class="card border border-0 text-bg-dark flex-fill">
+    <div class="card-body px-0 py-1">
+        {% include "./small-header.html" with text=text icon="bi-person-video" %}
+        <table class="table nowrap table-sm table-borderless m-0">
+            <tbody>
+                {% for item in data %}
+                    <tr>
+                        {% if item.actor %}
+                            <td><img class="portrait border border-3 rounded-5 shadow-lg" src="https://image.tmdb.org/t/p/original{{ item.actor.imgLink }}" height="28px"></td>
+                            <td><a class="actor-name small text-body-tertiary">{{ item.actor.name }}</a></td>
+                            <td>
+                                {% include "./badge-secondary.html" with text=item.actor.nonnull_count color="green-dark" %}
+                            </td>
+                        {% else %}
+                            <td><img class="portrait border border-3 rounded-5 shadow-lg" src="https://image.tmdb.org/t/p/original{{ item.director.imgLink }}" height="28px"></td>
+                            <td><a class="director-name small text-body-tertiary">{{ item.director.name }}</a></td>
+                            <td>
+                                {% include "./badge-secondary.html" with text=item.director.nonnull_count color="green-dark" %}
+                            </td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>

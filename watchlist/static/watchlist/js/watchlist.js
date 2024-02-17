@@ -1,3 +1,5 @@
+UseBootstrapTag(document.getElementById('id_tags'))
+
 $(document).ready(function() {
     // Initialize variables for debouncing
     let debounceTimer;
@@ -65,9 +67,10 @@ $(document).ready(function() {
                 $('#sidebar-header').html('');
                 $('#tableContainer').html('');
                 $('#tableContainer').html(response.table_html);
-                console.log(response.title_year)
                 $('#successAlert').html(response.title_year);
                 $('#successAlert').removeClass('d-none');
+                $('#moviePosterContainer').html('<i class="bi bi-film" style="font-size: 2em; color: #6c757d;"></i>');
+                $('#watchlistInput')[0].reset();
             },
             error: function(error) {
                 console.error('Error:', error);
@@ -78,29 +81,6 @@ $(document).ready(function() {
                 $('#loadingSpinner').addClass('d-none');
                 $('#submitButton').removeClass('disabled');
                 $('#submitText').removeClass('d-none');        
-            }
-        });
-    });
-});
-
-$(document).ready(function() {
-    // Use event delegation for dynamically added elements
-    $(document).on('click', '.movie-title', function(e) {
-        // e.preventDefault();
-
-        var movieId = $(this).data('movie-id');
-        
-        $.ajax({
-            url: '/sidebar_ajax/' + movieId + '/',
-            method: 'GET',
-            success: function(response) {
-                // Append the response to the sidebar container
-                $('#sidebarContainer').html(response);
-                var myOffcanvas = new bootstrap.Offcanvas(document.getElementById(movieId));
-                myOffcanvas.toggle();
-            },
-            error: function(error) {
-                console.error('Error fetching sidebar content:', error);
             }
         });
     });
@@ -120,6 +100,25 @@ collapseButton.addEventListener('click', function () {
   }
 });
 
-const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
-const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+$(document).ready(function() {
+    $('#likeInput').val('False');
+});
+
+$(document).ready(function() {
+    $('#likeButton').on('click', function() {
+        var likeInput = $('#likeInput');
+        var currentLikeState = likeInput.val();
+
+        var newLikeState = currentLikeState === 'True' ? 'False' : 'True';
+
+        $(this).toggleClass('btn-outline-secondary btn-danger');
+        $('#heart-icon').toggleClass('bi-heart bi-heart-fill')
+
+        likeInput.val(newLikeState);
+    });
+});
+
+$(document).ready(function() {
+    $('[data-bs-toggle="tooltip"]').tooltip();
+});
 

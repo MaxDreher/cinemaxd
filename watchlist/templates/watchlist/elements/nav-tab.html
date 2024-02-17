@@ -1,0 +1,7 @@
+{# Nav Tabs #}
+
+<li class="nav-item" role="presentation">
+    <button class="small nav-link rounded-top-4 data-tabs {{ active|default:"" }}" id="{{ title }}-tab" data-bs-toggle="tab" data-bs-target="#{{ title }}-tab-pane" type="button" role="tab" {{ disabled|default:"" }}>
+        <i class="bi {{ icon }}"></i> {{ title|upper }}
+    </button>
+</li>

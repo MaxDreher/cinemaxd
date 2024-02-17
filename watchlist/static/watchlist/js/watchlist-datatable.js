@@ -6,11 +6,11 @@ $(document).ready(function() {
             [50, 100, 250, -1],
             [50, 100, 250, 'All']
         ],    
-        order: [[6, 'desc'], [1, 'asc']],
+        order: [[7, 'desc'], [1, 'asc']],
         dom: '<"card-header d-flex justify-content-between"lf><"card-body py-0 "t><"card-footer d-flex justify-content-between"ip>',
         // buttons:['colvis'],
         searchPanes: {
-            order: ['Streaming', 'Runtime', 'Decade', 'Reason', 'Cast', 'Director', 'Production Companies', 'Genres', 'Year', 'Providers'], 
+            order: ['Streaming', 'Runtime', 'Decade', 'Tags', 'Cast', 'Director', 'Production Companies', 'Genres', 'Year', 'Providers'], 
             layout: 'columns-2',
             orderable: false,
             panes: [
@@ -20,14 +20,14 @@ $(document).ready(function() {
                         {
                             label: 'Streaming',
                             value: function(rowData, rowIdx) {
-                                return rowData[21] != '';
+                                return rowData[23] != '';
                             },
                             className: 'streaming'
                         },
                         {
                             label: 'Not Streaming',
                             value: function(rowData, rowIdx) {
-                                return rowData[21] === '';
+                                return rowData[23] === '';
                             },
                             className: 'not_streaming'
                         }
@@ -40,15 +40,12 @@ $(document).ready(function() {
             ]
         },
         columnDefs: [
-            {
-                targets: [0],
-                sortable: false
-            },
-            {
-                targets: [17,18,19,20,21],
-                visible: false,
-                searchable: true
-            },
+            // make poster, service icon unsortable
+            { targets: [0, 3], sortable: false },
+
+            // hide csv rows that are used for filter data
+            { targets: [19,20,21,22,23], visible: false, searchable: true },
+
             {
                 searchPanes: {
                     show: true,
@@ -57,7 +54,7 @@ $(document).ready(function() {
                         order: [[1, "desc"]]
                     }
                 },
-                targets: [4,17,18,19,20,21],
+                targets: [5,19,20,21,22,23],
                 render: function (data, type, row) {
                     if (type === 'sp') {
                         return data.split(', ')
@@ -70,46 +67,49 @@ $(document).ready(function() {
                     options: [
                         {
                             label: 'Under 1hr30',
-                            value: function(rowData, rowIdx) {
-                                return rowData[5] < 90 && rowData[5] != '';
+                            value: function (rowData, rowIdx, columnIndex) {
+                                return parseRuntime(rowData[6]) < 90 && rowData[6] !== '';
                             }
                         },
                         {
                             label: 'Under 2hr00',
-                            value: function(rowData, rowIdx) {
-                                return rowData[5] < 120 && rowData[5] != '';
+                            value: function (rowData, rowIdx, columnIndex) {
+                                return parseRuntime(rowData[6]) < 120 && rowData[6] !== '';
                             }
                         },
                         {
                             label: 'Under 2hr30',
-                            value: function(rowData, rowIdx) {
-                                return rowData[5] < 150 && rowData[5] != '';
+                            value: function (rowData, rowIdx, columnIndex) {
+                                return parseRuntime(rowData[6]) < 150 && rowData[6] !== '';
                             }
                         },
                         {
                             label: 'Under 3hr00',
-                            value: function(rowData, rowIdx) {
-                                return rowData[5] < 180 && rowData[5] != '';
+                            value: function (rowData, rowIdx, columnIndex) {
+                                return parseRuntime(rowData[6]) < 180 && rowData[6] !== '';
                             }
                         },
                         {
                             label: 'Unlimited Time',
-                            value: function(rowData, rowIdx) {
-                                return rowData[5] > 0 && rowData[5] != '';
+                            value: function (rowData, rowIdx, columnIndex) {
+                                return parseRuntime(rowData[6]) > 0 && rowData[6] !== '';
                             }
                         }
                     ]
                 },
-                targets: [5]
+                targets: [6]
             },
             {
                 searchPanes: {
                     dtOpts: {
-                        searching: false,
                         order: [[0, 'desc']]
                     }
                 },
-                targets: [2, 8]
+                targets: [2, 9]
+            },
+            {
+                targets: [6, 18],
+                type: 'natural'
             }
         ],
         initComplete: function(settings, json) {
@@ -134,3 +134,16 @@ $(document).ready(function() {
     });
     titleRow.appendChild(buttonContainer);
 });
+
+// Custom function to parse runtime string into minutes
+function parseRuntime(runtimeString) {
+    if (runtimeString) {
+        var parts = runtimeString.split(' ');
+        if (parts.length === 14) {
+            var hours = parseInt(parts[12].replace('hr', ''), 10) || 0;
+            var minutes = parseInt(parts[13].replace('min\n</p>', ''), 10) || 0;
+            return hours * 60 + minutes;
+        }
+    }
+    return 0;  // Return 0 if the format is unexpected or runtimeString is undefined
+}

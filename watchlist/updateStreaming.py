@@ -10,34 +10,38 @@ django.setup()
 
 from watchlist.models import WatchlistMovie, WatchlistProvider, Provider
 from api_calls import get_TMDB_from_id
-from utils import getProviders
+from utils import get_providers
 from dotenv import load_dotenv
 import time
 import concurrent.futures
 
 def main():
-    def updateStreaming(movie):
-        print(f"Updating Streaming for {movie.title} {movie.year}")
-        load_dotenv()
-        TMDB_KEY = os.getenv("TMDB_KEY")
-        tmdb = get_TMDB_from_id(TMDB_KEY, movie.TMDB_ID, movie.type)
+    def updateStreaming(movies):
+        for movie in movies:
+            print(f"Updating Streaming for {movie.title} {movie.year}")
+            tmdb = get_TMDB_from_id(movie.TMDB_ID, movie.type)
 
-        providers = getProviders(tmdb)
-        if providers:
-            for p in providers:
-                prov = Provider(id=p[0],name=p[1])
-                try:
-                    prov.save(using='library_db')
-                except:
-                    None
-                movie.provider.add(prov)
-        else:
-            None
+            providers = get_providers(tmdb)
+            if providers:
+                for p in providers:
+                    prov = Provider(id=p[0],name=p[1])
+                    try:
+                        prov.save(using='library_db')
+                    except:
+                        None
+                    movie.provider.add(prov)
+            else:
+                None
 
-    t1 = time.time()
+    # Specify the batch size for fetching movie details
+    batch_size = 5
     movies = WatchlistMovie.objects.all()
+    t1 = time.time()
+
     with concurrent.futures.ThreadPoolExecutor() as executor:
-        executor.map(updateStreaming, movies)
+        for i in range(0, len(movies), batch_size):
+            movie_batch = movies[i:i + batch_size]
+            executor.submit(updateStreaming, movie_batch)
 
     print(f"Time to Update Streaming Services: {time.time()-t1}")
 

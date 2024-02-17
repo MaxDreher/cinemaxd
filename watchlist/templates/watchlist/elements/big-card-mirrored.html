@@ -1,0 +1,62 @@
+{# Big Card element #}
+{# Used as Last Seen, Elo #}
+{% load static %}
+{% load custom_filters %}
+
+<div class="card border border-0 rounded-4 shadow">
+    <div class="row g-0">
+
+        {# Body #}
+        <div class="col-md-8 d-flex flex-column">
+            <div class="card-body p-0" style="position: relative;">
+                {# Gradient Overlay #}
+                <div class="gradient-overlay rounded-start-4 border border-1 border-end-0 position-absolute top-0 start-0 w-100 ">
+                    <span class="p-3 position-absolute">
+
+                        {# Date Seen Sub-Heading #}
+                        {% if movie.date %}
+                            {% include "./small-header.html" with text=movie.date icon="bi-film" %}
+                        {% endif %}
+
+                        {# Title Block #}
+                        {% include "./movie-title.html" with movie=movie size="h4" %}
+
+                        {# Tagline #}
+                        {% if movie.tagline %}
+                            <small class="text-body-tertiary d-block mb-1"><i>"{{ movie.tagline }}"</i></small>
+                        {% endif %}
+
+                        {# Badges #}
+                        {% if movie.service %}
+                            <img class="align-top border border-3 border-secondary-subtle border-tertiary rounded-4 shadow-lg" src="/static/watchlist/images/{{ movie.service|striptags }}.png" height="28px">
+                        {% endif %}
+                        {% include "./badge-secondary.html" with text='<i class="bi bi-check-lg"></i>' color="green" %}
+                        {% include "./badge-secondary.html" with text=movie.rating|convert_to_stars %}
+                        {% if movie.runtime %}
+                            {% include "./badge-secondary.html" with text=movie.runtime|convert_to_hrs %}
+                        {% else %}
+                            {% include "./badge-secondary.html" with text=movie.episodes|convert_to_eps %}
+                        {% endif %}
+                        {% include "./badge-secondary.html" with text=movie.avg_critical_rating|convert_to_rating color="dark" %}
+                        {% if movie.movieaward_set.all %}
+                            {% include "./oscar-badge.html" with text=movie.movieaward_set.all|parse_oscar num=movie.movieaward_set.all|length icon="bi-trophy" color="gold"%}
+                        {% endif %}
+
+                        {# Plot #}
+                        <hr class="my-1">
+                        <p class="card-text mb-0"><small class="text-body-secondary">{{ movie.plot }}</small></p>
+
+                    </span>
+                </div>
+                {# Background Image #}
+                    <img src="{{ movie.bgLink }}" class="img-fluid border border-1 border-end-0 rounded-start-4 bg-image" alt="Background Image" style="object-fit: cover;">
+            </div>
+        </div>
+
+        {# Poster #}
+        <div class="col-md-4">
+            <img src="{{ movie.posterLink }}" class="img-fluid border border-1 border-start-0 shadow-lg rounded-end-4 h-100" alt="{{ movie.title }} Poster">
+        </div>
+        
+    </div>
+</div>

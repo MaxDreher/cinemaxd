@@ -1,0 +1,91 @@
+{% load static %}
+{% load custom_filters %}
+
+<div class="col">
+    <div class="card rounded-5 border border-0 shadow">
+        <div class="gradient-overlay-sidebar-people rounded-5 position-absolute top-0 start-0 w-100 h-100">
+            <div class="row g-0">
+                <div class="col-md-1 shadow-lg">
+                    {% if person.imgLink %}
+                        <img src="https://image.tmdb.org/t/p/original{{ person.imgLink }}" class="img-fluid border border-3 shadow rounded-5 portrait-lg" alt="{{ person.name }} Poster">
+                    {% else %}
+                        <div class="d-flex align-items-center justify-content-center h-100">
+                            <i class="bi bi-person-circle" style="font-size: 2em; color: #6c757d;"></i>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="col-md-11 d-flex flex-column">
+                    <div class="card-body p-0" style="position: relative;">
+                        <span class="position-absolute px-2 py-1">
+                            <p class="mb-0 pb-0">
+                                <span class="h6 title mb-0">
+                                    <a class="actor-name" data-actor-id="{{ person.TMDB_ID }}" role="button"><b>{{ person.name }}</b></a>
+                                </span>
+                                <small class="align-top">
+                                    {% if person.movie_set.all %}
+                                        <a class="badge border border-3 border-secondary-subtle rounded-pill fw-semibold text-bg-secondary text-decoration-none" data-bs-toggle="collapse" data-bs-target="#{{ person.TMDB_ID }}_director_movie_collapse" role="button">
+                                            <i id="collapseIcon" class="bi bi-plus-circle"></i>
+                                            &nbsp;{{ person.movie_set.all|length|parse_count }}
+                                        </a>
+                                    {% endif %}
+                                    {% if person.watchlistmovie_set.all %}
+                                        <a class="badge border border-3 border-secondary-subtle rounded-pill fw-semibold text-bg-dark text-decoration-none" data-bs-toggle="collapse" data-bs-target="#{{ person.TMDB_ID }}_director_watchlist_collapse" role="button">
+                                            <i id="collapseIcon" class="bi bi-eye"></i>
+                                            &nbsp;{{ person.watchlistmovie_set.all|length }} watchlisted
+                                        </a>
+                                    {% endif %}
+                                </small>
+                            </p>
+                            {% if role %}
+                                <p class="small text-body-tertiary my-0 py-0 pb-2">
+                                    {{ role }}
+                                </p>
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% if person.movie_set.first %}
+            <img src="{{ person.movie_set.first.bgLink }}" class="img-fluid border border-1 border-dark rounded-5 bg-image-sidebar-people" alt="Background Image" style="object-fit: cover;">
+        {% elif person.watchlistmovie_set.first %}
+            <img src="{{ person.watchlistmovie_set.first.bgLink }}" class="img-fluid border border-1 border-dark rounded-5 bg-image-sidebar-people" alt="Background Image" style="object-fit: cover;">
+        {% endif %}
+    </div>
+
+    {# Movie Collapse #}
+    {% if person.movie_set.all %}
+        <div class="collapse multi-collapse" id="{{ person.TMDB_ID }}_director_movie_collapse">
+            <div class="card-body bg-dark mt-1 mb-0 px-0 pb-0">
+                <div class="row g-3">
+                    {% for film in person.movie_set.all %}
+                    <div class="col-md-3 position-relative">
+                        <img src="{{ film.posterLink }}" class="img-fluid border border-2 shadow rounded-3 portrait-lg" alt="{{ film.title }} Poster">
+                        {% if film.rating %}
+                            <span class="position-absolute border border-3 mt-2 top-0 start-50 translate-middle badge rounded-pill fw-normal roboto text-bg-dark">
+                                {{ film.rating|convert_to_stars }}
+                            </span>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    {# Watchlist Collapse #}
+    {% if person.watchlistmovie_set.all %}
+        <div class="collapse multi-collapse" id="{{ person.TMDB_ID }}_director_watchlist_collapse">
+            <div class="card-body bg-dark mt-1 mb-0 px-0 pb-0">
+                <div class="row g-3">
+                    {% for film in person.watchlistmovie_set.all %}
+                    <div class="col-md-3 position-relative">
+                        <img src="{{ film.posterLink }}" class="img-fluid border border-2 shadow rounded-3 portrait-lg" alt="{{ film.title }} Poster">
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    
+</div>

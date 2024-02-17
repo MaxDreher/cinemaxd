@@ -1,4 +1,3 @@
-console.log("script loaded");
 $(function () {
     $("#sortable").sortable({
         update: function (event, ui) {

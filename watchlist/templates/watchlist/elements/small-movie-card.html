@@ -1,0 +1,52 @@
+{% load static %}
+{% load custom_filters %}
+{# Small Movie Card: As Used in Tabs #}
+
+<div class="card rounded-4 border-dark shadow">
+    <div class="row g-0">
+        {# Poster #}
+            <div class="col-md-4">
+                {% if movie.posterLink %}
+                    <img src="{{ movie.posterLink }}" class="img-fluid border border-1 border-end-0 border-dark rounded-start-4 h-100" alt="{{ movie.title }} Poster">
+                {% else %}
+                    <img src="{% static 'watchlist/images/empty-poster.png' %}" class="img-fluid border border-0 border-end-1 rounded-start-4 h-100" alt="None">
+                {% endif %}
+            </div>
+        {# Body #}
+        <div class="col-md-8 d-flex flex-column">
+            <div class="card-body p-0" style="position: relative;">
+                {# Gradient Overlay #}
+                <div class="gradient-overlay border border-1 border-start-0 rounded-end-4 border-dark position-absolute top-0 start-0 w-100 ">
+                    <span class="p-2 position-absolute">
+                        {% if movie %}
+
+                            {# Date Seen Sub-Heading #}
+                            {% if movie.date %}
+                                {% include "./small-header.html" with text=movie.date icon="bi-film" %}
+                            {% endif %}
+
+                            {# Title Block #}
+                            {% include "./movie-title.html" with movie=movie size="h6" %}
+
+                            {# Badges #}
+                            <small class="my-0">
+                                {% include "./award-badge.html" with text=award.text icon=award.icon color=award.color%}
+                                {% if movie.rating %}
+                                    {% include "./badge-secondary.html" with text=movie.rating|convert_to_stars fw="medium" %}
+                                {% endif %}
+                                {% if movie.avg_critical_rating %}
+                                    {% include "./badge-secondary.html" with text=movie.avg_critical_rating|convert_to_rating color="dark" %}
+                                {% endif %}
+                            </small>
+                            
+                        {% endif %}
+                    </span>
+                </div>
+                {# Background Image #}
+                {% if movie.bgLink %}
+                    <img src="{{ movie.bgLink }}" class="img-fluid rounded-end-4 border border-1 border-dark bg-image" alt="Background Image" style="object-fit: cover;">
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>

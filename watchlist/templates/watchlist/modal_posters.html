@@ -1,0 +1,41 @@
+{% load custom_filters %}
+{% load static %}
+<script src="{% static 'watchlist/js/modal.js' %}"></script>
+
+<div id="{{ movie.TMDB_ID }}-modal" class="modal fade" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5">
+                    <span class="movie-title">{{ movie.title }}</span> Posters
+                </h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row g-3">
+                    {% for poster in posters %}
+                        <div class="col-md-3">
+                            <img class="image-select poster rounded-3 border border-3" src="{{ poster }}" width="100%">
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger roboto" data-bs-dismiss="modal">Close</button>
+                <button type="button" data-movie-id="{{movie.TMDB_ID}}" class="btn btn-secondary roboto" id="modalSubmit">
+                    <span>
+                        <div id="modalSubmitText">
+                            Save Poster
+                        </div>
+                        <div class="d-none" id="modalSpinner">
+                            <span>
+                                <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                                <span role="status">Loading...</span>
+                            </span>
+                        </div>
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

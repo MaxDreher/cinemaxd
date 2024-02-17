@@ -1,0 +1,98 @@
+{% load static %}
+{% load custom_filters %}
+
+<div class="card rounded-4 border border-0 shadow">
+    <div id="on-this-day-carousel" class="carousel slide carousel-fade">
+        <div class="carousel-indicators">
+            {% for item in on_this_day %}
+                <button type="button" data-bs-target="#on-this-day-carousel" data-bs-slide-to="{{ forloop.counter0 }}" {% if forloop.first %}class="active"{% endif %}></button>
+            {% endfor %}
+        </div>
+        <div class="carousel-inner">
+            {% for item in on_this_day %}
+                <div class="carousel-item{% if forloop.first %} active{% endif %}">
+                    <div class="card-body p-0" style="position: relative;">
+                        {# Gradient Overlay #}
+                        <div class="gradient-overlay-half rounded-4 border border-1 position-absolute top-0 start-0 w-100 ">
+                            <span class="py-3 px-4 position-absolute">
+                                
+                                {# Small Header #}
+                                {% if forloop.last %}
+                                    {% include "./small-header.html" with text="Random Throwback Movie of the Day" icon="bi-dice-5-fill" %}
+                                {% elif item.director %}
+                                    {% include "./small-header.html" with text=item.director|parse_birthday icon="bi-cake2" prefix="Director "%} 
+                                {% elif item.actor %}
+                                    {% include "./small-header.html" with text=item.actor|parse_birthday icon="bi-cake2" prefix="Actor "%} 
+                                {% else %}
+                                    {% include "./small-header.html" with text=item.movie.releaseDate.year icon="bi-broadcast-pin" prefix="Released on this day in " %} 
+                                {% endif %}
+
+                                {# Movie Title Block #}
+                                {% include "./movie-title.html" with movie=item.movie size="h5" %}
+
+                                {# Badges #}
+                                <small class="my-0">
+                                    {% if item.movie.timesSeen %}
+                                        {% if item.movie.service %}
+                                            <img class="align-middle border border-3 border-tertiary border-secondary-subtle rounded-4 shadow-lg" src="/static/watchlist/images/{{ item.movie.service|striptags }}.png" height="24px">
+                                        {% endif %}
+                                        {% include "./badge-secondary.html" with text='<i class="bi bi-check-lg"></i>' color="green" %}
+                                    {% else %}
+                                        {% if movie.provider %}
+                                            <img class="align-middle border border-3 border-tertiary border-secondary-subtle rounded-4 shadow-lg" src="/static/watchlist/images/{{ movie.provider.first.name|striptags }}.png" height="24px">
+                                        {% endif %}
+                                        {% include "./badge-secondary.html" with text='<i class="bi bi-x-lg"></i>' color="red" %}
+                                    {% endif %}
+                                    {% if item.movie.rating %}
+                                        {% include "./badge-secondary.html" with text=item.movie.rating|convert_to_stars %}
+                                    {% endif %}
+                                    {% if item.movie.runtime %}
+                                        {% include "./badge-secondary.html" with text=item.movie.runtime|convert_to_hrs %}
+                                    {% else %}
+                                        {% include "./badge-secondary.html" with text=item.movie.episodes|convert_to_eps %}
+                                    {% endif %}
+                                    {% if item.movie.avg_critical_rating %}
+                                        {% include "./badge-secondary.html" with text=item.movie.avg_critical_rating|convert_to_rating color="dark" %}
+                                    {% endif %}
+                                    {% if item.movie.movieaward_set.all %}
+                                        {% include "./oscar-badge.html" with text=item.movie.movieaward_set.all|parse_oscar num=item.movie.movieaward_set.all|length icon="bi-trophy" color="gold"%}
+                                    {% elif item.movie.watchlistaward_set.all %}
+                                        {% include "./oscar-badge.html" with text=item.movie.watchlistaward_set.all|parse_oscar num=item.movie.watchlistaward_set.all|length icon="bi-trophy" color="gold"%}
+                                    {% endif %}
+                                </small>
+
+                            </span>
+                        </div>
+
+                        {% comment %} <div class="carousel-indicators">
+                            {% for i in 'x'|rjust:on_this_day.length %}
+                                <button type="button" data-bs-target="#on-this-day-carousel" data-bs-slide-to="{{ forloop.counter0 }}" {% if forloop.first %}class="active"{% endif %}></button>
+                            {% endfor %}
+                        </div>
+                        <div class="carousel-inner">
+                            {% for movie in on_this_day.released_today_watchlist %}
+                                {% include "./on-this-day-carousel-item.html" with movie=movie %}
+                            {% endfor %}
+                            {% for movie in on_this_day.released_today_watchlog %}
+                                {% include "./on-this-day-carousel-item.html" with movie=movie %}
+                            {% endfor %}
+                            {% for movie in on_this_day.actor_born_today %}
+                                {% include "./on-this-day-carousel-item.html" with movie=movie %}
+                            {% endfor %}
+                            {% for movie in on_this_day.director_born_today %}
+                                {% include "./on-this-day-carousel-item.html" with movie=movie %}
+                            {% endfor %}
+                            {% include "./on-this-day-carousel-item.html" with movie=on_this_day.random_movie active="active" %} {% endcomment %}
+                
+                        {# Background Image #}
+                        <img src="{{ item.movie.bgLink }}" class="img-fluid rounded-4 border border-1 border-dark bg-image-half" alt="Background Image">
+                    </div>                                    
+                </div>
+            {% endfor %}
+        </div>
+        <button class="carousel-control-prev week-button" type="button" data-bs-target="#on-this-day-carousel" data-bs-slide="prev">
+        </button>
+        <button class="carousel-control-next week-button" type="button" data-bs-target="#on-this-day-carousel" data-bs-slide="next">
+        </button>    
+    </div>
+</div>

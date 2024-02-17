@@ -1,0 +1,92 @@
+<!-- Styles -->
+<style>
+    #companytree {
+      width: 100%;
+      height: 300px;
+    }
+</style>
+
+<!-- Chart code -->
+<script>
+    am5.ready(function() {
+    
+    // Create root element
+    // https://www.amcharts.com/docs/v5/getting-started/#Root_element
+    var root = am5.Root.new("companytree");
+    root._logo.dispose(); // TESTING USE ONLY, REMOVE BEFORE PUBLICATION
+
+    // Set themes
+    // https://www.amcharts.com/docs/v5/concepts/themes/
+    root.setThemes([
+      am5themes_Animated.new(root)
+    ]);
+    
+    // Create wrapper container
+    var container = root.container.children.push(
+      am5.Container.new(root, {
+        width: am5.percent(100),
+        height: am5.percent(100),
+        layout: root.verticalLayout,
+      })
+    );
+    
+    // Create series
+    // https://www.amcharts.com/docs/v5/charts/hierarchy/#Adding
+    var series = container.children.push(
+      am5hierarchy.Treemap.new(root, {
+        singleBranchOnly: false,
+        downDepth: 1,
+        upDepth: -1,
+        initialDepth: 1,
+        valueField: "value",
+        categoryField: "name",
+        childDataField: "children",
+        layoutAlgorithm: "slice",
+        nodePaddingOuter: 0,
+        nodePaddingInner: 0
+      })
+    );
+    
+    series.rectangles.template.setAll({
+      fillOpacity: 0.0,
+      cornerRadiusTL: 20,
+      cornerRadiusTR: 20,
+      cornerRadiusBL: 20,
+      cornerRadiusBR: 20,
+      stroke: false,
+      strokeWidth: 0,
+    });
+    
+    // Generate and set data
+    // https://www.amcharts.com/docs/v5/charts/hierarchy/#Setting_data
+    var data = {
+      name: "Root",
+      children: {{ studio_data|safe }}
+    };
+    
+    series.data.setAll([data]);
+    series.set("selectedDataItem", series.dataItems[0]);
+    series.labels.template.set("forceHidden", true);
+
+    series.bullets.push(function (root, series, dataItem) {
+      var depth = dataItem.get("depth");
+    
+      if (depth == 1) {
+        var picture = am5.Picture.new(root, {
+          src: "https://image.tmdb.org/t/p/original" + dataItem.dataContext.logo + ".png",
+          centerX: am5.p50,
+          centerY: am5.p50,
+          height: am5.percent(75),
+          isMeasured: true
+        });
+    
+        picture.states.lookup("default").setAll({ opacity: 0.70 });
+    
+        return am5.Bullet.new(root, { sprite: picture });
+      }
+    });
+        // Make stuff animate on load
+    series.appear(1000, 100);
+    
+    }); // end am5.ready()
+</script>

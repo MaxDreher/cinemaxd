@@ -1,0 +1,33 @@
+{% load static %}
+{% load custom_filters %}
+
+<div class="col">
+    <div class="card rounded-5 border border-0 shadow">
+        <div class="gradient-overlay-half rounded-5 position-absolute top-0 start-0 w-100">
+            <div class="row g-0">
+                <div class="col-md-2 shadow-lg">
+                    <img src="https://image.tmdb.org/t/p/original{{ person.imgLink }}" class="img-fluid border border-3 shadow rounded-5 portrait-lg" alt="{{ person.name }} Poster">
+                    <span class="position-absolute border border-3 mx-1 mt-2 top-0 start-0 translate-middle badge rounded-pill fw-normal roboto text-bg-dark">
+                        {{ forloop.counter }}
+                    </span>
+                </div>
+                <div class="col-md-10 d-flex flex-column">
+                    <div class="card-body p-0" style="position: relative;">
+                        <span class="position-absolute px-2 py-2">
+                            <p class="h6 title mb-0">
+                                <a class="actor-name" data-actor-id="{{ person.TMDB_ID }}" role="button"><b>{{ person.name }}</b></a>
+                            </p>
+                            <small>
+                                {% include "./badge-secondary.html" with text=person.movie_count|parse_count %}
+                                {% if person.avg_rating %}
+                                    {% include "./badge-secondary.html" with text=person.avg_rating|convert_to_rating color="dark" %}
+                                {% endif %}
+                            </small>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <img src="{{ movie.bgLink }}" class="img-fluid border border-1 border-dark rounded-5 bg-image-actor" alt="Background Image" style="object-fit: cover;">
+    </div>
+</div>

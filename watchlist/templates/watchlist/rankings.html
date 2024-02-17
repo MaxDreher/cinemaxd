@@ -14,102 +14,204 @@
 {% endblock %}
 {% block content %}
 <div class="container mt-3">
-    <div class="row">
-        <div class="col-md-3">
-            <div id="addMovieControl">
-                <a class="btn btn-secondary " data-bs-toggle="collapse" data-bs-target="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
-                    Show/Hide Add to Rankings
-                </a>
-                <div class="collapse" id="collapseExample">
-                    <form id="addMovieForm" method="post" action="{% url 'rankings' %}">
-                        {% csrf_token %}
-                        <div class="row mt-3">
-                            <div class="col-md-12 form-group">
-                                <label for="id_title" class="form-label"><b>Title:</b></label>
-                                <div class="input-group">
-                                    <span class="input-group-text">
-                                        <svg class="bi d-block mx-auto" width="16" height="16"><use xlink:href="#film"></use></svg>
-                                    </span>
-                                    <input type="text" name="title" id="id_title" class="form-control" placeholder="Title">
-                                    {{ form.title.errors }}
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div id="addMovieControl" class="card mb-3">
+                <div class="card-body">
+                    <button class="btn btn-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#formCollapse" aria-expanded="false" aria-controls="formCollapse" role="button" id="collapseButton">
+                        <span id="collapseIcon" class="bi bi-plus-circle"></span> <!-- Initial icon: Plus sign -->
+                        Add to Rankings
+                    </button>                    
+                    <div class="collapse" id="formCollapse">
+                        <form id="addMovieForm" method="post" action="{% url 'rankings' %}">
+                            {% csrf_token %}
+                            <div class="row mt-1 g-3">
+                                {% comment %} <div class="col-md-1">
+                                    <div id="moviePosterContainer" class="d-flex align-items-center justify-content-center h-100 border rounded-2">
+                                        <i class="bi bi-film" style="font-size: 2em; color: #6c757d;"></i>
+                                    </div>
+                                </div> {% endcomment %}
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        {% comment %} title {% endcomment %}
+                                        <div class="col-md-12 form-group">
+                                            <label for="id_title" class="form-label">Title</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text">
+                                                    <i class="bi bi-film"></i>
+                                                </span>
+                                                <input type="text" name="title" id="id_title" class="form-control" placeholder="Title">
+                                            </div>
+                                        </div>
+                                        {% comment %} year {% endcomment %}
+                                        <div class="col-md-12 form-group">
+                                            <label for="id_year" class="form-label">Year</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text">
+                                                    <i class="bi bi-calendar2"></i>
+                                                </span>
+                                                <input type="text" name="year" id="id_year" class="form-control" placeholder="YYYY">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-md-2">
+                                        <button class="btn btn-secondary" type="submit" id="submitButton">
+                                            <span>
+                                                <div id="submitText">
+                                                    Submit
+                                                </div>
+                                                <div class="d-none" id="loadingSpinner">
+                                                    <span>
+                                                        <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                                                        <span role="status">Loading...</span>
+                                                    </span>
+                                                </div>
+                                            </span>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row mt-3">
-                            <div class="col-md-12 form-group">
-                                <label for="id_year" class="form-label"><b>Year:</b></label>
-                                <div class="input-group">
-                                    <span class="input-group-text">
-                                        <svg class="bi d-block mx-auto" width="16" height="16"><use xlink:href="#calendar-year"></use></svg>
-                                    </span>
-                                    <input type="text" name="year" id="id_year" class="form-control" placeholder="YYYY">
-                                    {{ form.year.errors }}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4 mt-3">
-                            <button class="btn btn-secondary" type="submit">Submit</button>
-                        </div>
-                    </form>    
+                        </form>
+                    </div>
                 </div>
             </div>
-            <div class="card rounded-3">
-                <div class="card card-body">
-                    <p style="text-align: center;"><b class="big-number-card">{{ total }}</b><b class="small-number-card">&nbsp;&nbsp;MOVIES</b></p>
-                    <p style="text-align: center;"><b class="big-number-card">{{ days }}</b><b class="small-number-card">&nbsp;&nbsp;DAYS</b></p>
-                    <p class="dates" style="text-align: center;">{{ start }} - {{ end }}</p>
-                </div>        
-            </div>
-            <div class="card rounded-3 mt-3">
-                <div class="card card-body">
-                    <p style="text-align: center;">Average Rating: {{ avg }}★</p>
-                    <p style="text-align: center;">Total Minutes: {{ runtime.runtime__sum }}</p>
-                </div>        
-            </div>
-            <div class="card rounded-3 mt-3">
-                <div class="card card-body">
-                    <b class="section-heading">NEWEST ADDITION:</b>
+            <div class="card mb-3">
+                <div class="card-body text-center py-3 px-3">
+                    <small class="text-body-tertiary">
+                        <i class="bi bi-calendar3-week"></i>
+                        {{ start }} - {{ end }}
+                    </small>
                     <div class="row mt-2">
-                        <div class="col-md-2 text-center">
-                            <img class="poster shadow-lg" src="{{ newest.posterLink }}" height="60px">
+                        <div class="col-md-12">
+                            <span><b class="h2 big-number-card">{{ stats.movie_count }}</b></span>
+                            <small class="h3 fw-semibold text-body-tertiary">movies</small>
                         </div>
-                        <div class="col-md-10">
-                            <div class="fw-bold sidebar-title">
-                                {{ newest.title }} <b class="year">{{ newest.year }}</b>
-                            </div>
-                            <div class="little-stars">
-                                {{ newest.rating|convert_to_stars }}
-                            </div>
+                        <div class="col-md-12">
+                            <span><b class="h2 big-number-card">{{ stats.total_days }}</b></span>
+                            <small class="h3 fw-semibold text-body-tertiary">days</small>
+                        </div>
+                        <div class="col-md-12">
+                            <small class="h6 fw-semilight">
+                                {% if stats.gap > 0 %}
+                                    <span class="text-body-green">(+{{ stats.gap }})</span>
+                                {% else %}
+                                    <span class="text-body-red">({{ stats.gap }})</span>
+                                {% endif %}
+                            </small>
                         </div>
                     </div>
-                </div>        
+                    <hr class="mt-2 mb-3">
+                    <span class="badge rounded-pill bg-secondary">{{ stats.days_runtime }}</span>
+                    <span class="badge rounded-pill bg-secondary">{{ stats.total_runtime }}</span>
+                    <span class="badge rounded-pill bg-secondary">★ {{ stats.average_rating.avg }} avg</span>
+                    <span class="badge rounded-pill bg-secondary">★ {{ stats.average_critical.avg }} critical avg</span>
+                </div>
             </div>
-            <div class="card rounded-3 mt-3">
-                <div class="card card-body">
-                    <span><b class="section-heading">BUSIEST DAY:</b> <span class="dates">{{ busiestDay }}</span></span>
-                    {% for instance in busiestMovies %}
-                    <div class="row mt-2">
-                        <div class="col-md-2 text-center">
-                            <img class="poster shadow-lg" src="{{ instance.posterLink }}" height="60px">
-                        </div>
-                        <div class="col-md-10">
-                            <div class="fw-bold sidebar-title">
-                                {{ instance.title }} <b class="year">{{ instance.year }}</b>
+            <div class="card mb-3">
+                <div class="card-body p-0" style="position: relative;">
+                    <div class="gradient-overlay-half rounded position-absolute top-0 start-0 w-100 ">
+                        <span class="py-3 px-3 position-absolute">
+                            <small class="text-body-tertiary roboto">    
+                                <i class="bi bi-film"></i>  
+                                Newest Addition
+                            </small>
+                            <p class="card-title mb-0">
+                                <span class="h5 title">
+                                    <a class="movie-title" data-movie-id="{{latest.TMDB_ID}}" href="#{{latest.TMDB_ID}}" role="button"><b>{{ latest.title }}</b></a>
+                                    <span class="card-subtitle text-body-secondary roboto">({{ latest.year }})</span>
+                                </span>
+                            </p>
+                            <p class="h6 badge rounded-pill text-bg-secondary">{{ latest.rating|convert_to_stars }}</p>
+                            {% if latest.runtime %}
+                                <p class="h6 badge rounded-pill text-bg-secondary">{{ latest.runtime }} mins</p>
+                            {% else %}
+                                <p class="h6 badge rounded-pill text-bg-secondary">{{ latest.episodes }} episodes</p>
+                            {% endif %}
+                        </span>
+                    </div>
+                    <img src="{{ latest.bgLink }}" class="img-fluid rounded bg-image-half" alt="Background Image">
+                </div>
+            </div>
+            <div class="card mb-3">
+                <div class="card-body">
+                    <small class="text-body-tertiary roboto">    
+                        <i class="bi bi-stopwatch"></i>
+                        Longest Days
+                    </small>
+                    {% for instance in longest_days %}
+                        <div class="row mt-3">
+                            <small class="text-body-secondary roboto">    
+                                <i class="bi bi-calendar3-event"></i>
+                                {{ instance.date }}
+                                <p class="h6 badge rounded-pill text-bg-secondary mx-1">{{ instance.count }} movies</p>
+                                <p class="h6 badge rounded-pill text-bg-secondary mx-1">{{ instance.time }}</p>
+                            </small>
+                            <div class="row">
+                                {% for movie in instance.movies %}
+                                    <div class="col-md-3">
+                                        <img class="poster shadow-lg" src="{{ movie.posterLink }}" width="100%">
+                                    </div>
+                                {% endfor %}
                             </div>
-                            <div class="little-stars">
-                                {{ instance.rating|convert_to_stars }}
-                            </div>
-                        </div>
-                    </div>        
+                        </div>        
                     {% endfor %}
                 </div>        
             </div>
         </div>
-        <div class="col-md-9">
+        <div class="col-md-8">
             <div class="row flex-nowrap">
                 <ul class="list-group list-group-numbered" id="sortable">
-                    {% for instance in data %}
-                        <li class="list-group-item d-flex justify-content-center ui-state-default mb-2" data-movie-id="{{ instance.TMDB_ID }}">
+                    {% for movie in data %}
+                        <li class="list-group-item rounded-4 border-dark p-0" data-movie-id="{{ movie.TMDB_ID }}">
+                            <div class="card rounded-4 border-0 mb-3 shadow">
+                                <div class="card-body p-0" style="position: relative;">
+                                    <div class="gradient-overlay-partial rounded-4 position-absolute top-0 start-0 w-100 ">
+                                        <div class="row g-0">
+                                            <div class="col-md-1">
+                                                <img src="{{ movie.posterLink }}" class="img-fluid shadow rounded-start-4 h-100" alt="{{ movie.title }} Poster">
+                                            </div>
+                                            <div class="col-md-10">
+                                                <span class="pt-2 px-3 position-absolute">
+                                                    <p class="h6 badge rounded-pill text-bg-green">
+                                                        #<span class="counterItem"></span>
+                                                    </p>
+                                                    {% if movie.date %}
+                                                        <small class="text-body-tertiary roboto fw-b">    
+                                                            &nbsp;&nbsp;<i class="bi bi-film"></i>  
+                                                            {{ movie.date }}
+                                                        </small>
+                                                    {% endif %}
+                                                    <p class="card-title mb-0">
+                                                        <span class="h4 title">
+                                                            <a class="movie-title" data-movie-id="{{movie.TMDB_ID}}" href="#{{movie.TMDB_ID}}" role="button"><b>{{ movie.title }}</b></a>
+                                                            <span class="card-subtitle text-body-secondary roboto">({{ movie.year }})</span>
+                                                        </span>
+                                                    </p>
+                                                    <p class="h6 badge rounded-pill text-bg-secondary">{{ movie.rating|convert_to_stars }}</p>
+                                                    {% if movie.runtime %}
+                                                        <p class="h6 badge rounded-pill text-bg-secondary">{{ movie.runtime }} mins</p>
+                                                    {% else %}
+                                                        <p class="h6 badge rounded-pill text-bg-secondary">{{ movie.episodes }} episodes</p>
+                                                    {% endif %}
+                                                    <p class="h6 badge rounded-pill text-bg-secondary">
+                                                        ★ {{ movie.avg_critical_rating }} Avg.
+                                                    </p>
+                                                </span>
+                                            </div>
+                                            <div class="col-md-1 d-flex align-items-center">
+                                                <i class="h2 text-body-secondary bi bi-list"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <img src="{{ movie.bgLink }}" class="img-fluid rounded-4 bg-image-partial" alt="Background Image">
+                                </div>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+                        {% comment %} <li class="list-group-item d-flex justify-content-center ui-state-default mb-2" data-movie-id="{{ instance.TMDB_ID }}">
                             <div class="col-md-1 text-center">
                                 <img class="poster shadow-lg" src="{{ instance.posterLink }}" height="80px">
                             </div>
@@ -141,10 +243,23 @@
                                     </div>
                                 </div> 
                             </div>
+                        </li> {% endcomment %}
+            </div>
+            {% comment %} <div class="row cols-6">
+                <ul class="list-group list-group-numbered" id="sortable">
+                    {% for movie in data %}
+                        <li class="list-group-item rounded-4 border-dark p-0" data-movie-id="{{ movie.TMDB_ID }}">
+                            <div class="col-md-2 mb-3">
+                                <img src="{{ movie.posterLink }}" class="img-fluid shadow rounded-4 h-100" alt="{{ movie.title }} Poster">
+                                    <span class="position-absolute translate-middle badge rounded-pill text-bg-secondary">
+                                        <span class="counterItem">
+                                    </span>
+                                </img>
+                            </div>
                         </li>
                     {% endfor %}
                 </ul>
-            </div>
+            </div> {% endcomment %}
         </div>
     </div>
 </div>

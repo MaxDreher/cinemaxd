@@ -1,0 +1,7 @@
+{# Form Label #}
+{# Takes "id" "text" "icon" #}
+
+<label for="{{ id }}" class="badge rounded-pill bg-transparent text-body-secondary border border-1 form-label fw-normal roboto mx-0">
+    <i class="bi {{ icon }}"></i>
+    {{ text|safe }}
+</label>

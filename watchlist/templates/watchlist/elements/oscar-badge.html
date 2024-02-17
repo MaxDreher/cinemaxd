@@ -1,0 +1,11 @@
+{# Award Badge #}
+
+<p class="badge mb-{{ mb|default:"1" }} border border-3 rounded-pill fw-{{ fw|default:'semibold' }} text-bg-{{ color|default:'secondary' }}" data-bs-title={{num}}>
+    <span data-bs-toggle="tooltip" 
+        data-bs-placement="bottom"
+        data-bs-html="true"
+        data-bs-title="{{ text|safe }}"
+    >
+        <i class="bi {{ icon }}"></i> x{{ num }}
+    </span>
+</p>

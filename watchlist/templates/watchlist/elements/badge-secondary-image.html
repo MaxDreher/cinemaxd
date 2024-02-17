@@ -1,0 +1,8 @@
+{# Gray Image Badge #}
+{% load static %}
+{% load custom_filters %}
+
+<p class="badge mb-1 d-inline-flex align-items-center justify-content-middle border border-{{ border|default:"3" }} border-secondary-subtle rounded-pill fw-{{ fw|default:'semibold' }} text-bg-{{ color|default:'secondary' }}">
+    <img class="rounded-{{ rounded|default:"5"}}" src="{% static "watchlist/images/"|add:name|add:"_logo.png" %}" alt='IMDB' height="{{ size|default:"16" }}px" width="{{ size|default:"16" }}px"></img>
+    &nbsp;&nbsp;{{ text|safe }}{{ suffix|default:"" }}
+</p>

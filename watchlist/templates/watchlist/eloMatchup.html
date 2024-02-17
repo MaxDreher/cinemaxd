@@ -1,0 +1,23 @@
+{% load static %}
+{% load custom_filters %}
+
+<div class="card">
+    {{ matches }} total matches since Jan. 29, 2024
+</div>
+<div class="row g-2">
+    {% for movie in movies %}
+        <div class="col-md-6">            
+            {% if forloop.first %}            
+                {% include "./elements/big-card-mirrored.html" with movie=movie %}
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+            {% else %}
+                {% include "./elements/big-card.html" with movie=movie %}
+                <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+            {% endif %}
+                <button class="z-2 btn btn-secondary border border-2 rounded-pill roboto mt-3" id="{{ movie.TMDB_ID }}" type="submit">
+                {{ movie.title }} ({{ movie.year }}) [<b class="text-body-primary">{{ movie.elo }}</b>]
+                </button>
+            </div>
+        </div>
+    {% endfor %}
+</div>

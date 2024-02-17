@@ -1,166 +1,190 @@
+<style>
+    #weekdayCount {
+        height:100%;
+        width:100%;
+    }
+</style>
 <script>
-    var weekdayCount = {
-        colors: ['#6c757d'],
-        series: [
-            {
-                name: 'Count',
-                data: {{ weekday_counts }}
-            }, 
-        ],
-        chart: {
-            toolbar: {
-                show: false
-            },
-            type: 'bar',
-            height: 284
-        },
-        legend: {
-            show: false
-        },
-        plotOptions: {
-            bar: {
-                horizontal: true,
-                dataLabels: {
-                    position: 'top',
-                },
-                borderRadius: 11, // radius of bars
-                borderRadiusApplication: 'around', // end, around
-            }
-        },
-        dataLabels: {
-            enabled: true,
-            offsetX: -16,
-            style: {
-                fontFamily: 'Roboto',
-            }
-        },
-        grid: {
-            show: false,
-            padding: {
-                top: 0,
-                bottom: 0
-            }
-        },
-        xaxis: {
-            categories: ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'],
-            labels: {
-                show: false,
-            },
-            position: 'bottom',
-            axisTicks: {
-                show: false
-            },
-            axisBorder: {
-                show: false,
-            }
-        },
-        yaxis: {
-            labels: {
-                show: true,
-                style: {
-                    fontFamily: 'Roboto',
-                    fontSize: '10px',
-                    colors: "#6c757d"
-                }
-            },
-        },
-        tooltip: {
-            enabled: true,
-            followCursor: false,
-            intersect: false,
-            theme: 'dark',
-            style: {
-              fontSize: '12px',
-              fontFamily: 'Roboto'
-            },
-            onDatasetHover: {
-                highlightDataSeries: false,
-            },
-        },
+    am5.ready(function() {
+    
+    // Create root element
+    // https://www.amcharts.com/docs/v5/getting-started/#Root_element
+    var root = am5.Root.new("weekdayCount");
+    root._logo.dispose(); // TESTING USE ONLY, REMOVE BEFORE PUBLICATION
 
-    };
+    // Set themes
+    // https://www.amcharts.com/docs/v5/concepts/themes/
+    root.setThemes([
+        am5themes_Animated.new(root)
+    ]);
 
-    var weekdayRatings = {
-        colors: ['#15d37c'],
-        series: [
-            {
-                name: 'Avg. Rating',
-                data: {{ weekday_avg }}
-            }, 
-        ],
-        chart: {
-            toolbar: {
-                show: false
-            },
-            type: 'bar',
-            height: 284
-        },
-        legend: {
-            show: false
-        },
-        plotOptions: {
-            bar: {
-                horizontal: true,
-                dataLabels: {
-                    position: 'top',
-                },
-                borderRadius: 11, // radius of bars
-                borderRadiusApplication: 'around', // end, around
-            }
-        },
-        dataLabels: {
-            enabled: true,
-            offsetX: -16,
-            formatter: function (val, opts) {
-                return (val + "★")
-            },
-            style: {
-                fontFamily: 'Roboto',
-            }
-        },
-        grid: {
-            show: false
-        },
-        xaxis: {
-            categories: ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'],
-            labels: {
-                show: false,
-            },
-            position: 'bottom',
-            axisTicks: {
-                show: false
-            },
-            axisBorder: {
-                show: false,
-            }
-        },
-        yaxis: {
-            labels: {
-                show: true,
-                style: {
-                    fontFamily: 'Roboto',
-                    fontSize: '10px',
-                    colors: "#6c757d"
-                }
-            },
-        },
-        tooltip: {
-            enabled: true,
-            followCursor: false,
-            intersect: false,
-            theme: 'dark',
-            style: {
-              fontSize: '12px',
-              fontFamily: 'Roboto'
-            },
-            onDatasetHover: {
-                highlightDataSeries: false,
-            },
-        },
 
-    };
-    var chart = new ApexCharts(document.querySelector("#weekdayCount"), weekdayCount);
-    var chart2 = new ApexCharts(document.querySelector("#weekdayRatings"), weekdayRatings);
-    chart.render();
-    chart2.render();
+    // Create chart
+    // https://www.amcharts.com/docs/v5/charts/xy-chart/
+    var chart = root.container.children.push(am5xy.XYChart.new(root, {
+        panX: false,
+        panY: false,
+        paddingLeft:0,
+        paddingRight:0,
+        paddingTop:0,
+        paddingBottom:0,
+        layout: root.verticalLayout
+    }));
+
+    chart.get("colors").set("colors", [
+        am5.color('#15d17c'),
+        am5.color('#00c78d'),
+        am5.color('#00bd99'),
+        am5.color('#00b1a1'),
+        am5.color('#00a6a4'),
+        am5.color('#019aa2'),
+        am5.color('#358d9b'),
+        am5.color('#4c8190'),
+        am5.color('#597581'),
+        am5.color('#616a70'),
+    ]);
+
+
+    var data = {{ weekday_distribution|safe }}
+
+    // Add cursor
+    // https://www.amcharts.com/docs/v5/charts/xy-chart/cursor/
+    var cursor = chart.set("cursor", am5xy.XYCursor.new(root, {}));
+    cursor.lineY.set("visible", false);
+    cursor.lineX.set("visible", false);
+
+    // Create axes
+    // https://www.amcharts.com/docs/v5/charts/xy-chart/axes/
+    var xRenderer = am5xy.AxisRendererX.new(root, {
+        minorGridEnabled: false,
+        minorLabelsEnabled: false,
+        strokeWidth: 0.0,
+        strokeOpacity: 0.0
+    });
+    xRenderer.grid.template.set("visible", false);
+    xRenderer.labels.template.setAll({
+        inside: true
+    });
+    xRenderer.labels.template.set('visible', false);
+
+    var xAxis = chart.xAxes.push(am5xy.CategoryAxis.new(root, {
+        categoryField: "weekday",
+        renderer: xRenderer,
+        tooltip: am5.Tooltip.new(root, {})
+    }));
+    
+    xAxis.data.setAll(data);
+    var yRenderer = am5xy.AxisRendererY.new(root, {
+        minorGridEnabled: false,
+        minorLabelsEnabled: false,
+        strokeWidth: 0.0,
+        strokeOpacity: 0.0
+    })
+    yRenderer.grid.template.set("visible", false);
+    yRenderer.labels.template.setAll({
+        inside: true
+    });
+    yRenderer.labels.template.set('visible', false);
+
+    var yAxis = chart.yAxes.push(am5xy.ValueAxis.new(root, {
+        logarithmic: true,
+        renderer: yRenderer
+    }));
+
+    var series1 = chart.series.push(am5xy.ColumnSeries.new(root, {
+        name: "Count",
+        stacked: true,
+        xAxis: xAxis,
+        yAxis: yAxis,
+        valueYField: 'count',
+        categoryXField: "weekday",
+        fill: am5.color('#acb4bc'),
+    }));
+
+    var series2 = chart.series.push(am5xy.ColumnSeries.new(root, {
+        name: "Rating",
+        stacked: true,
+        xAxis: xAxis,
+        yAxis: yAxis,
+        valueYField: 'rating',
+        categoryXField: "weekday",
+        fill: am5.color('#15d17c'),
+    }));
+
+    series1.columns.template.setAll({
+        width: am5.percent(90),
+        cornerRadiusBL: 7, 
+        cornerRadiusBR: 7, 
+        strokeOpacity: 0 
+    });
+    series2.columns.template.setAll({
+        width: am5.percent(90),
+        cornerRadiusTL: 7, 
+        cornerRadiusTR: 7, 
+        strokeOpacity: 0 
+    });
+
+    var tooltip = am5.Tooltip.new(root, {
+        getFillFromSprite: false,
+        autoTextColor: false,
+        paddingLeft:5,
+        paddingRight:5,
+        paddingTop:5,
+        paddingBottom:5,  
+        labelText: "[bold]{categoryX}[/]\n{name}: {valueY}",
+    });
+
+    tooltip.label.setAll({
+        fontFamily: 'Roboto',
+        fontSize: '10pt',
+        fill: am5.color(0xffffff)
+    });
+
+    tooltip.get("background").setAll({
+        stroke: am5.color(0x000000),
+        strokeOpacity: 0.0,
+        fill: am5.color('#212529'),
+        fillOpacity: 0.8
+    });
+
+    var tooltip2 = am5.Tooltip.new(root, {
+        getFillFromSprite: false,
+        autoTextColor: false,
+        labelText: "[bold]{categoryX}[/]\n{name}: {valueY}",
+    });
+
+    tooltip2.label.setAll({
+        fontFamily: 'Roboto',
+        fontSize: '10pt',
+        fill: am5.color(0xffffff)
+    });
+
+    tooltip2.get("background").setAll({
+        stroke: am5.color(0x000000),
+        strokeOpacity: 0.0,
+        fill: am5.color('#212529'),
+        fillOpacity: 0.8
+    });
+
+    series1.columns.template.adapters.add("fill", function (fill, target) {
+        return chart.get("colors").getIndex(series1.columns.indexOf(target));
+    });
+    
+    series2.columns.template.adapters.add("fill", function (fill, target) {
+        return chart.get("colors").getIndex(series2.columns.indexOf(target) + 2);
+    });
+
+
+    series1.set("tooltip", tooltip);
+    series1.data.setAll(data);
+    series2.set("tooltip", tooltip2);
+    series2.data.setAll(data);
+
+    series1.appear();
+    series2.appear();
+    // Make stuff animate on load
+    // https://www.amcharts.com/docs/v5/concepts/animations/
+    chart.appear(1000, 100);
+
+    }); // end am5.ready()
 </script>
