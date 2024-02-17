@@ -8,6 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 from .forms import MovieForm, WatchlistForm, RankingForm
 from django.conf import settings
 from .models import *
+import time as t
 from datetime import *
 import json 
 import random
@@ -60,27 +61,58 @@ def sidebar_ajax(request, movie_id):
     return render(request, 'watchlist/offcanvas_movie.html', context)
 
 def sidebar_actor_ajax(request, actor_id):
-    person = Actor.objects.filter(pk=actor_id).annotate(
+    actor = Actor.objects.filter(pk=actor_id).annotate(
         movie_count=Count('movieactor'),
         nonnull_count=Count('movieactor', filter=Q(movieactor__movie__rating__isnull=False), distinct=True),
         avg_rating=Round(Avg('movieactor__movie__rating'))
     ).first()
 
-    if person is None:
-        person = Director.objects.filter(pk=actor_id).annotate(
-            movie_count=Count('moviedirector'),
-            nonnull_count=Count('moviedirector', filter=Q(moviedirector__movie__rating__isnull=False), distinct=True),
-            avg_rating=Round(Avg('moviedirector__movie__rating'))
-        ).first()
-        
+    director = Director.objects.filter(pk=actor_id).annotate(
+        movie_count=Count('moviedirector'),
+        nonnull_count=Count('moviedirector', filter=Q(moviedirector__movie__rating__isnull=False), distinct=True),
+        avg_rating=Round(Avg('moviedirector__movie__rating'))
+    ).first()
+    
+    person = actor if actor else director
     movie = person.movie_set.order_by('?').first() if person.movie_set.first() else person.watchlistmovie_set.order_by('?').first()
 
     context = {
         'person': person,
+        'actor': actor,
+        'director': director,
         'movie': movie,
     }
     return render(request, 'watchlist/offcanvas_actor.html', context)
 
+def modal_ajax(request, movie_id):
+    try:
+        movie = Movie.objects.get(pk=movie_id)
+    except:
+        movie = WatchlistMovie.objects.get(pk=movie_id)
+    
+    context = {
+        'movie': movie,
+        'posters': get_posters(movie),
+        'url_start': 'https://www.themoviedb.org/t/p/original',
+    }
+    return render(request, 'watchlist/modal_posters.html', context)
+
+@csrf_exempt
+def poster_update(request):
+    if request.method == 'POST':
+        t1 = t.time()
+        id = request.POST.get('movie')
+        url = request.POST.get('poster')
+        try:
+            movie = Movie.objects.get(pk=id)
+        except:
+            movie = WatchlistMovie.objects.get(pk=id)
+        
+        movie.posterLink = url
+        movie.save()
+        print(f"{movie.title} poster updated in {t.time()-t1} seconds.")
+        return JsonResponse({'message': 'Link saved successfully'})
+    return JsonResponse({'message': 'Invalid request method'}, status=400)
 
 def elo_matchup(request):
     winner = Movie.objects.get(pk=request.GET.get('id_winner'))

@@ -15,7 +15,7 @@
                     <div class="card-body p-0" style="position: relative;">
                         <span class="position-absolute px-2 py-2">
                             <p class="h6 title mb-0">
-                                <a class="actor-name" data-actor-id="{{ person.TMDB_ID }}" href="#{{ person.TMDB_ID }}" role="button"><b>{{ person.name }}</b></a>
+                                <a class="actor-name" data-actor-id="{{ person.TMDB_ID }}" role="button"><b>{{ person.name }}</b></a>
                             </p>
                             <small>
                                 {% include "./badge-secondary.html" with text=person.movie_count|parse_count %}

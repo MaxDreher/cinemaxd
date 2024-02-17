@@ -83,12 +83,12 @@
     font-size: 1.0rem;
 }
 
-.movie-title, .actor-name, .director-name, #customPosterForm a {
+.movie-title, .actor-name, .director-name, #posterButton {
     color: inherit; /* blue colors for links too */
     text-decoration: inherit; /* no underline */
 }
 
-.movie-title:hover, .actor-name:hover, .director-name:hover, #customPosterForm a:hover {
+.movie-title:hover, .actor-name:hover, .director-name:hover, #posterButton:hover {
     color: inherit; /* blue colors for links too */
     text-decoration: underline; /* no underline */
 }
@@ -224,3 +224,12 @@
 .dropdown-item.active, .dropdown-item:active {
     background-color: #15d37c !important;
 }
+
+.active-image {
+    border: 3px solid #15d37c !important;
+}
+
+.modal-open {
+    overflow: scroll;
+}
+  

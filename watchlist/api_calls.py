@@ -1,6 +1,6 @@
 import requests
 import xml.etree.ElementTree as ET
-from watchlist.config import OMDB_KEY, TMDB_KEY
+from watchlist.config import OMDB_KEY, TMDB_KEY, tmdb_headers
 
 def get_OMDB(title, year):
     omdb_url = f"http://www.omdbapi.com/?apikey={OMDB_KEY}&t={title}&y={year}&r=json"
@@ -52,6 +52,20 @@ def get_TMDB_from_id(id, type):
         tmdb_url = f"https://api.themoviedb.org/3/movie/{id}?api_key={TMDB_KEY}&append_to_response=credits,keywords,videos,watch/providers"
 
     tmdb_response = requests.get(tmdb_url)
+    if tmdb_response.status_code == 200:
+        return tmdb_response.json()
+    else:
+        print(f"Error accessing TMDB API: {tmdb_response.status_code}")
+        return None
+
+def get_TMDB_posters_from_id(id, type):
+    # TV SERIES
+    if type == "series":
+        tmdb_url = f"https://api.themoviedb.org/3/tv/{id}/images?include_image_language=en%2Cnull"
+    # MOVIE
+    else:
+        tmdb_url = f"https://api.themoviedb.org/3/movie/{id}/images?include_image_language=en%2Cnull"
+    tmdb_response = requests.get(tmdb_url, headers=tmdb_headers)
     if tmdb_response.status_code == 200:
         return tmdb_response.json()
     else:

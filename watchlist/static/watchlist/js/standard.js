@@ -46,3 +46,33 @@ $(document).ready(function() {
     });
 });
 
+$(document).ready(function() {
+    $(document).on('click', '.poster-button', function(e) {
+        var movieId = $(this).data('movie-id');
+
+        $('#posterButton').addClass('disabled');
+        $('#posterButtonText').addClass('d-none');
+        $('#posterLoadingSpinner').removeClass('d-none');
+
+        $.ajax({
+            url: '/modal_ajax/' + movieId + '/',
+            method: 'GET',
+            success: function(response) {
+                $('#modalContainer').html(response);
+                var newId = movieId + '-modal'
+                var myModal = new bootstrap.Modal(document.getElementById(newId));
+                myModal.toggle();
+                $('#posterLoadingSpinner').addClass('d-none');
+                $('#posterButton').removeClass('disabled');
+                $('#posterButtonText').removeClass('d-none');
+                var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+                });
+            },
+            error: function(error) {
+                console.error('Error fetching sidebar content:', error);
+            }
+        });
+    });
+});

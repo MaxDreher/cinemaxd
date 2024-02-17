@@ -18,6 +18,12 @@ from api_calls import get_TMDB_from_id
 from utils import get_awards
 
 
+# Manual Poster Entry Link
+"https://a.ltrbxd.com/resized/alternative-poster/7/3/1/2/2/2/p/8y7tqHjwN2HPdQewW83euyj1os0-0-500-0-750-crop.jpg"
+# or 
+key = "alternative-poster/7/3/1/2/2/2/p/8y7tqHjwN2HPdQewW83euyj1os0"
+link = f"https://a.ltrbxd.com/resized/{key}-0-500-0-750-crop.jpg"
+
 # Manual Movie Deletion given List of IDs
 def deleteMovie(list):
     for item in list:

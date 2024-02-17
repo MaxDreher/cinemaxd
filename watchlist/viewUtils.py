@@ -10,6 +10,7 @@ import random
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'MovieSite.settings')
 django.setup()
 
+from watchlist.api_calls import get_TMDB_posters_from_id
 from django.db.models import Case, When, IntegerField, Avg, Count, Min, Sum, Q, Func
 from django.db.models.functions import ExtractWeekDay
 from django.core.exceptions import ObjectDoesNotExist
@@ -459,6 +460,13 @@ def get_top_studios(movies, num):
     ).order_by('-movie_count', '-avg_rating')
 
     return [{'name': company.name, 'value': company.movie_count, 'logo': company.logo, 'movie': company.movie_set.order_by('-date').first()} for company in by_count_studios[:num]]    
+
+
+def get_posters(movie):
+    tmdb = get_TMDB_posters_from_id(movie.TMDB_ID, movie.type)
+    url_start = 'https://www.themoviedb.org/t/p/original'
+    return [f"{url_start}{url['file_path']}" for url in tmdb['posters']]
+
 
 top_10 = ["La La Land",
           "Good Will Hunting",

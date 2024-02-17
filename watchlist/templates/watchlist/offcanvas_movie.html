@@ -53,9 +53,11 @@
                                         {% endif %}
                                         {% if movie.timesSeen %}
                                             {% include "./elements/badge-secondary.html" with text='<i class="bi bi-check-lg"></i>' color="green" %}
-                                            {% include "./elements/badge-secondary.html" with text=movie.rating|convert_to_stars %}
                                         {% else %}
                                             {% include "./elements/badge-secondary.html" with text='<i class="bi bi-x-lg"></i>' color="red" %}
+                                        {% endif %}
+                                        {% if movie.rating %}
+                                            {% include "./elements/badge-secondary.html" with text=movie.rating|convert_to_stars %}
                                         {% endif %}
                                         {% if movie.runtime %}
                                             {% include "./elements/badge-secondary.html" with text=movie.runtime|convert_to_hrs %}
@@ -139,30 +141,30 @@
                     </div>
 
                     <div class="row gy-3 gx-0">
-
+                                                    
                         {# Custom Poster Submit Form #}
                         <div class="col-md-12">
                             <div class="card bg-dark rounded-1 border border-0">
                                 <div class="card-body p-0 px-3">
 
                                     {# Custom Poster Submit Form #}
-                                    <div id="customPosterForm" class="my-1 mx-3 text-body-tertiary">
-                                        <a class="collapsed p-0" type="button" data-bs-toggle="collapse" data-bs-target="#posterCollapse" aria-expanded="false" aria-controls="posterCollapse" role="button" id="collapseButton">
+                                    <div class="my-1 mx-3 text-body-tertiary">
+                                        <a id="posterButton" data-movie-id="{{movie.TMDB_ID}}" type="button" class=" poster-button">
                                             <small class="text-bg-tertiary">
-                                                <span id="collapseIcon" class="bi bi-plus-circle"></span> <!-- Initial icon: Plus sign -->
-                                                Custom Poster Upload
+                                                <span>
+                                                    <div id="posterButtonText">
+                                                        <i class="bi bi-plus-square"></i>
+                                                        Custom Poster Upload
+                                                    </div>
+                                                    <div class="d-none" id="posterLoadingSpinner">
+                                                        <span>
+                                                            <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                                                            Custom Poster Upload
+                                                        </span>
+                                                    </div>
+                                                </span>
                                             </small>
                                         </a>
-                                        <div class="collapse mt-1" id="posterCollapse" style="">
-                                            <form id="customPosterUploadForm">
-                                                <input type="hidden" name="movieId" value="{{ movie.TMDB_ID }}">
-                                                <div class="input-group">
-                                                    <input type="text" class="form-control px-1 py-1 p-0" id="posterLink" placeholder="https://image.tmdb.org/t/p/original/..." aria-label="https://image.tmdb.org/t/p/original/..." aria-describedby="button-addon2">
-                                                    <button class="btn btn-outline-secondary px-1 py-1 p-0" type="submit" id="button-addon2">Submit</button>
-                                                </div>
-                                                <div class="text-body-tertiary form-text" id="basic-addon4">Find posters <a href="https://www.themoviedb.org/movie/{{ movie.TMDB_ID }}/images/posters" target="blank">here</a></div>
-                                            </form>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
