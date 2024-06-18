@@ -1,113 +1,146 @@
 from django.http import JsonResponse
 from django.db.models import Prefetch, Case, When, IntegerField, Avg, Count, Min, Sum, Q, Func
-from django.db.models.functions import ExtractWeekDay
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.template.loader import render_to_string
 from django.views import View
+from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-from .forms import MovieForm, WatchlistForm, RankingForm
+from django.db import transaction
 from django.conf import settings
 from .models import *
 import time as t
 from datetime import *
-import json 
 import random
-import os
-from dotenv import load_dotenv
-from .api_calls import get_OMDB, get_TMDB
-from .utils import make_api_calls_and_update_database, make_api_calls_and_update_watchlist  # Create this function
-from .viewUtils import *
+from .api_calls import get_OMDB, get_TMDB, find_TMDB
+from .utils import make_api_calls_and_update_database, make_api_calls_and_update_watchlist, download_csv  # Create this function
+from .views_utils import *
+from .config import initial_data, elo_match, get_elo_movies, get_elo_selective
 
 class Round(Func):
     function = 'ROUND'
     template = '%(function)s(%(expressions)s, 2)'
 
-# ACTIVE:
+"""
+Universal non-paged functions.
 
-def get_random_movies(request):
-    idlist = [i.TMDB_ID for i in WatchlistMovie.objects.filter(provider__isnull=False)]
-    rand_ids = random.sample(idlist, 5)
-    rand_movies = [WatchlistMovie.objects.get(pk=i) for i in rand_ids]
-    context = {
-        'random': rand_movies,
-        'url_start': 'https://www.themoviedb.org/t/p/w90_and_h90_face',
-    }
-    return render(request, 'watchlist/elements/random-movies.html', context)
+These views can be processed from any page on the server, and return a non-static page element,
+such as a modal or a sidebar element.
 
-    return
+"""
 
-def get_movie_info(request):
-    # Get movie name and year from the request
-    title = request.GET.get('id_title')
-    year = request.GET.get('id_year')
-
-    omdb = get_OMDB(title, year)
-    tmdb = get_TMDB(omdb)
-    
-
-    # Process the API response (replace this with your actual response processing)
-    poster_url = f"https://image.tmdb.org/t/p/original{tmdb['poster_path']}"
-
-    return JsonResponse({'poster_url': poster_url})
-
+# Get a sidebar element describing a film given its ID.
 def sidebar_ajax(request, movie_id):
-    try:
-        movie = Movie.objects.get(pk=movie_id)
-    except:
-        movie = WatchlistMovie.objects.get(pk=movie_id)
+    movie = Movie.objects.get(pk=movie_id)
+    cast = [{'actor': item.actor, 'role': item.role, 'seen': item.actor.movie_set.filter(seen=True), 'unseen': item.actor.movie_set.filter(seen=False)} for item in movie.movieactor_set.all()]
+    directors = [{'director': item.director, 'seen': item.director.movie_set.filter(seen=True), 'unseen': item.director.movie_set.filter(seen=False)} for item in movie.moviedirector_set.all()]
+
     context = {
         'movie': movie,
+        'directors': directors,
+        'cast': cast,
         'url_start': 'https://www.themoviedb.org/t/p/w90_and_h90_face',
     }
-    return render(request, 'watchlist/offcanvas_movie.html', context)
+    return render(request, 'offcanvas/offcanvas_movie.html', context)
 
+
+# Get a sidebard element describing a person given their ID.
 def sidebar_actor_ajax(request, actor_id):
     actor = Actor.objects.filter(pk=actor_id).annotate(
-        movie_count=Count('movieactor'),
+        movie_count=Count('movieactor', filter=Q(movieactor__movie__seen=True)),
+        unseen_count=Count('movieactor', filter=Q(movieactor__movie__seen=False)),
         nonnull_count=Count('movieactor', filter=Q(movieactor__movie__rating__isnull=False), distinct=True),
-        avg_rating=Round(Avg('movieactor__movie__rating'))
+        avg_rating=Round(Avg('movieactor__movie__rating', filter=Q(movieactor__movie__seen=True)))
     ).first()
 
     director = Director.objects.filter(pk=actor_id).annotate(
-        movie_count=Count('moviedirector'),
+        movie_count=Count('moviedirector', filter=Q(moviedirector__movie__seen=True)),
+        unseen_count=Count('moviedirector', filter=Q(moviedirector__movie__seen=False)),
         nonnull_count=Count('moviedirector', filter=Q(moviedirector__movie__rating__isnull=False), distinct=True),
-        avg_rating=Round(Avg('moviedirector__movie__rating'))
+        avg_rating=Round(Avg('moviedirector__movie__rating', filter=Q(moviedirector__movie__seen=True)))
     ).first()
-    
+
+
     person = actor if actor else director
-    movie = person.movie_set.order_by('?').first() if person.movie_set.first() else person.watchlistmovie_set.order_by('?').first()
+    movie = person.movie_set.order_by('?').first() if person.movie_set.first() else person.unseen_set.order_by('?').first()
+
 
     context = {
         'person': person,
         'actor': actor,
+        'seen_actor': actor.movie_count if actor else None,
+        'unseen_actor': actor.unseen_count if actor else None,
+        'watchlog_actor': actor.movie_set.filter(seen=True) if actor else None,
+        'watchlist_actor': actor.movie_set.filter(seen=False) if actor else None,
         'director': director,
+        'seen_director': director.movie_count if director else None,
+        'unseen_director': director.unseen_count if director else None,
+        'watchlog_director': director.movie_set.filter(seen=True) if director else None,
+        'watchlist_director': director.movie_set.filter(seen=False) if director else None,
         'movie': movie,
     }
-    return render(request, 'watchlist/offcanvas_actor.html', context)
+    return render(request, 'offcanvas/offcanvas_actor.html', context)
 
+
+# Get the custom posters modal for a film given its ID.
 def modal_ajax(request, movie_id):
-    try:
-        movie = Movie.objects.get(pk=movie_id)
-    except:
-        movie = WatchlistMovie.objects.get(pk=movie_id)
+    movie = Movie.objects.get(pk=movie_id)
     
     context = {
         'movie': movie,
         'posters': get_posters(movie),
-        'url_start': 'https://www.themoviedb.org/t/p/original',
     }
-    return render(request, 'watchlist/modal_posters.html', context)
+    return render(request, 'modals/modal_posters.html', context)
 
+
+# Get the YouTube trailer modal for a film given its ID.
+def yt_player(request, movie_id):
+    
+    context = {
+        'url': f'https://youtube.com/embed/{movie_id}',
+    }
+    return render(request, 'modals/modal_yt.html', context)
+
+
+# Get the edit form modal for a film given its ID.
+def edit_ajax(request, movie_id):
+    movie = Movie.objects.get(pk=movie_id)
+
+    context = {
+        'movie': movie,
+        'streamers': get_streamers(),
+    }
+    return render(request, 'modals/modal_edit.html', context)
+
+
+# Get the Elo matchup modal for a film given its ID.
+def elo_modal(request, movie_id):
+    movie = Movie.objects.get(pk=movie_id)
+    
+    context = {
+        'movie': movie,
+        'movies': get_elo_selective(movie),
+    }
+    return render(request, 'modals/modal_elo.html', context)
+
+
+"""
+Update functions
+
+These functions update an element, usually from a form or modal.
+
+Many of these functions are written to be CSRF exept, as of 6/17/2024
+
+"""
+
+# Update a movie's poster, from the Poster Modal
 @csrf_exempt
 def poster_update(request):
     if request.method == 'POST':
         t1 = t.time()
         id = request.POST.get('movie')
         url = request.POST.get('poster')
-        try:
-            movie = Movie.objects.get(pk=id)
-        except:
-            movie = WatchlistMovie.objects.get(pk=id)
+
+        movie = Movie.objects.get(pk=id)
         
         movie.posterLink = url
         movie.save()
@@ -115,256 +148,391 @@ def poster_update(request):
         return JsonResponse({'message': 'Link saved successfully'})
     return JsonResponse({'message': 'Invalid request method'}, status=400)
 
-def elo_matchup(request):
-    winner = Movie.objects.get(pk=request.GET.get('id_winner'))
-    loser = Movie.objects.get(pk=request.GET.get('id_loser'))
 
-    p1 = 1.0 / (1 + 10 ** ((winner.elo - loser.elo) / 400))
-    p2 = 1.0 - p1
-
-    winner.elo += 64 * (1 - p2)
-    loser.elo += 64 * (0 - p1)
-    winner.elo = float('%.2f' % winner.elo)
-    loser.elo = float('%.2f' % loser.elo)
-    winner.eloMatches += 1
-    loser.eloMatches += 1
-    winner.save()
-    loser.save()
-
-    movies = Movie.objects.filter(rating__isnull=False)
-    matches = movies.aggregate((Sum('eloMatches'))).get('eloMatches__sum') // 2
-    random.seed()
-    context = {
-        'movies': random.sample(list(movies), 2),
-        'matches': matches
-    }
-    return render(request, 'watchlist/eloMatchup.html', context)
-
-@csrf_exempt  # Use this decorator for simplicity; you might want to use a proper csrf token setup in production
-def save_poster_link(request):
+# Update a movie's favorite bool from the Movie Sidebar.
+@csrf_exempt
+def update_favorite(request):
     if request.method == 'POST':
         movie_id = request.POST.get('movieId')
-        poster_link = request.POST.get('posterLink')
-        try:
-            movie = Movie.objects.get(pk=movie_id)
-        except:
-            movie = WatchlistMovie.objects.get(pk=movie_id)
-        movie.posterLink = poster_link
+        favorite = request.POST.get('favorite')
+
+        movie = Movie.objects.get(pk=movie_id)
+
+        movie.favorite = favorite
         movie.save()
-        return JsonResponse({'message': 'Link saved successfully'})
+        return JsonResponse({'message': 'Favorite updated successfully'})
 
     return JsonResponse({'message': 'Invalid request method'}, status=400)
 
-class WatchlogView(View):
-    template_name = 'watchlist/watchlog.html'
 
-    def get(self, request):
-        data = Movie.objects.all()
-        form = MovieForm()
-        context = {
-            'data': data,
-            'form': form,
-            'url_start': 'https://www.themoviedb.org/t/p/w90_and_h90_face',
-        }
-        return render(request, self.template_name, context)
+# Update a movie's IncludeElo bool from the Movie Sidebar.
+@csrf_exempt
+def update_include(request):
+    movie_id = request.POST.get('movieId')
+    include = request.POST.get('favorite')
 
-    def post(self, request):
-        form = MovieForm(request.POST)
-        if form.is_valid():
-            title = form.cleaned_data['title']
-            year = form.cleaned_data['year']
-            rating = form.cleaned_data['rating']
-            review = form.cleaned_data['review']
-            date_watched = form.cleaned_data['date_watched']
-            service = form.cleaned_data['service']
-            theaters = form.cleaned_data['theaters']
-            favorite = form.cleaned_data['favorite']
-            cleaned = {
-                'title': title,
-                'year': year,
-                'rating': rating,
-                'review': review,
-                'date': date_watched,
-                'service': service,
-                'theaters': theaters,
-                'favorite': favorite
-            }
-            try:
-                update_object = Movie.objects.get(title=title, year=year)
-                for key, value in cleaned.items():
-                    if value != "" and value is not None and value != False:
-                        if getattr(update_object, key) != value:
-                            setattr(update_object, key, value)
-                update_object.save()
-            except Movie.DoesNotExist:
-                make_api_calls_and_update_database(title, year, rating, review, theaters, favorite, date_watched, service)
+    movie = Movie.objects.get(pk=movie_id)
+    movie.eloInclude = include
+    movie.save()
 
-            # Fetch the updated data after saving
-            data = Movie.objects.all()
-            title_year = f'<span><i class="bi bi-check-circle-fill"></i>&nbsp;&nbsp;{title} ({year}) has been successfully added!<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></span>'
-            # Render the table HTML using Django template
-            response_data = {
-                'title_year': title_year,
-                'table_html': render_to_string('watchlist/watchlog-table.html', {'data': data})
-            }
+    return JsonResponse({'message': 'Include updated successfully'})
 
-            return JsonResponse(response_data)
-        else:
-            print(form.errors)
-        
-        data = Movie.objects.all()
-        context = {
-            'data': data,
-            'form': form,
-        }
-        return render(request, self.template_name, context)
 
-class WatchlistView(View):
-    template_name = 'watchlist/watchlist.html'
-
-    def get(self, request):
-        data = WatchlistMovie.objects.all()
-        form = WatchlistForm()
-        context = {
-            'data': data,
-            'form': form,
-            'url_start': 'https://www.themoviedb.org/t/p/w90_and_h90_face',
-        }
-        return render(request, self.template_name, context)
-    
-    def post(self, request):
-        form = WatchlistForm(request.POST)
-        if form.is_valid():
-            title = form.cleaned_data['title']
-            year = form.cleaned_data['year']
-            date_added = form.cleaned_data['date_added']
-            favorite = form.cleaned_data['favorite']
-            tags = form.cleaned_data['tags']
-
-            cleaned = {
-                'title': title,
-                'year': year,
-                'date': date_added,
-                'favorite': favorite,
-                'tags': tags
-            }
-
-            try:
-                update_object = WatchlistMovie.objects.get(title=title, year=year)
-                for key, value in cleaned.items():
-                    if getattr(update_object, key) != value:
-                        setattr(update_object, key, value)
-                update_object.save()
-            except WatchlistMovie.DoesNotExist:
-                make_api_calls_and_update_watchlist(title, year, favorite, tags, date_added)
-            data = WatchlistMovie.objects.all()
-            title_year = f'<span><i class="bi bi-check-circle-fill"></i>&nbsp;&nbsp;{title} ({year}) has been successfully added!<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></span>'
-            response_data = {
-                'title_year': title_year,
-                'table_html': render_to_string('watchlist/watchlist-table.html', {'data': data})
-            }
-            return JsonResponse(response_data)
-        else:
-            print(form.errors)
-        
-        data = WatchlistMovie.objects.all()
-        context = {
-            'data': data,
-            'form': form,
-        }
-        return render(request, self.template_name, context)
-
-class RankingsView(View):
-    template_name = 'watchlist/rankings.html'
-
-    def get(self, request):
-        movies = get_list_in_order(1)  
-        startDate = date(2023, 8, 15)
-        today = date.today()
-
-        newest = movies.order_by('-datetime_added').first()
-
-        form = RankingForm()
-        context = {
-            'data': movies,
-            'form': form,
-            'stats': get_stats(movies, startDate, today),
-            'longest_days': get_longest_days(movies, 5),
-            'latest': newest,
-            'start': startDate,
-            'end': today,
-        }
-        
-        return render(request, self.template_name, context)
-    
-    def post(self, request):
-        form = RankingForm(request.POST)
-        if form.is_valid():
-            title = form.cleaned_data['title']
-            year = form.cleaned_data['year']
-
-            every_night_list = List.objects.get(pk=1)
-            movie = Movie.objects.get(title=title, year=year)
-            MovieList.objects.create(list=every_night_list, movie=movie, order=0)
-
-            return redirect('rankings')  # Redirect to the same page after adding a movie
-
-@csrf_exempt   
-def update_order(request):
+# Update a movie's attributes from the Update Movie Modal.
+def movie_update(request):
     if request.method == 'POST':
-        movie_ids = request.POST.getlist('movie_ids[]')
-        list_id = request.POST.get('list_id')
-        # Check for empty values
-        if not list_id or not movie_ids:
-            return JsonResponse({'status': 'error', 'message': 'Invalid list_id or movie_ids'}, status=400)
+        t1 = t.time()
 
+        id = request.POST.get('movie')
+        rating = request.POST.get('rating')
+        date = request.POST.get('date')
+        service = request.POST.get('service')
+        tags = request.POST.get('tags')
+        review = request.POST.get('review')
+
+        movie = Movie.objects.get(TMDB_ID=id)
+
+        movie.rating = rating if rating else None
+        movie.date = date if date else None
+        movie.service = service if service else None
+        movie.review = review if review != "" else None if review else None
+
+        existing_tags = MovieTag.objects.filter(movie=movie)
+
+        if tags:
+            tag_names = tags.split(',')
+            if len(tag_names) != len(existing_tags):
+                existing_tags.delete()
+            for tag_name in tag_names:
+                tag, _ = Tag.objects.get_or_create(name=tag_name)
+                MovieTag.objects.get_or_create(movie=movie, tag=tag)
+        elif existing_tags:
+            existing_tags.delete()
+
+        movie.save()
+
+        print(f"{movie.title} updated in {t.time()-t1} seconds.")
+        return JsonResponse({'message': 'Movie saved successfully'})
+    return JsonResponse({'message': 'Invalid request method'}, status=400)
+
+
+"""
+Table Pages
+
+These views are used on the Watchlog and Watchlist pages
+
+"""
+
+# Make an API call to get a list of movies from TMDB given a changing query.
+def get_suggestions(request):
+    query = request.GET.get('query')
+
+    tmdb = find_TMDB(query)
+    results = [
+        {
+            'id': item.get('id'), 
+            'type': item.get('media_type') if item.get('media_type') == 'movie' else 'series',
+            'title':item.get('title') if item.get('title') else item.get('name'), 
+            'year': datetime.strptime(item.get("release_date" if item.get('media_type') == "movie" else "first_air_date"), "%Y-%m-%d").date().year if item.get('release_date') or item.get('first_air_date') else None,
+            'poster_url': f"https://image.tmdb.org/t/p/original{item.get('poster_path')}"
+        } 
+        for item in tmdb.get('results')[:10] if item.get('media_type') != "person"
+    ]
+    
+    return JsonResponse({'results': results})
+
+
+# Defines the Watchlog page
+class WatchlogView(View):
+    template_name = 'watchlog.html'
+
+    def get(self, request):
+        data = Movie.objects.filter(seen=True)
+        context = {
+            'data': data,
+            'date': date.today(),
+            'streamers': get_streamers(),
+        }
+        return render(request, self.template_name, context)
+
+    def post(self, request):
         try:
+            id = request.POST.get('movieid')
+            type = request.POST.get('movietype')
+            date = request.POST.get('date')
+            rating = request.POST.get('rating')
+            review = request.POST.get('review')
+            service = request.POST.get('service')
+
+            data = {
+                'id': id,
+                'type': type,
+                'date': date if date else None,
+                'rating': rating if rating else None,
+                'review': review if review and review != "" else None,
+                'service': service if service else None,
+                'favorite': request.POST.get('favorite'),
+                'theaters': request.POST.get('theaters'),
+                'tags': request.POST.get('tags'),
+                'elo': (float(rating) * 200 + 900) if rating else 900,
+                'seen': True,
+                'timesSeen': 1,
+            }
+
+            make_api_calls_and_update_database(data)
+
+            data = Movie.objects.filter(seen=True)
+
+            movie = Movie.objects.get(pk=id)
+
+            title_year = f'{movie.title} ({movie.year})'
+            response_data = {
+                'title_year': title_year,
+                'table_html': render_to_string('tables/watchlog-table.html', {'data': data}),
+            }
+            return JsonResponse(response_data)
+        except Exception as e:
+            print(f"Exception: {e}")
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+
+
+# Defines the Watchlist page
+class WatchlistView(View):
+    template_name = 'watchlist.html'
+
+    def get(self, request):
+        data = Movie.objects.filter(seen=False)
+        context = {
+            'data': data,
+            'date': date.today(),
+        }
+        return render(request, self.template_name, context)
+    
+    def post(self, request):
+        try:
+            id = request.POST.get('movieid')
+            type = request.POST.get('movietype')
+
+            data = {
+                'id': id,
+                'type': type,
+                'date': request.POST.get('date'),
+                'favorite': request.POST.get('favorite'),
+                'tags': request.POST.get('tags'),
+                'seen': False,
+                'timesSeen': 0,
+            }
+
+            make_api_calls_and_update_watchlist(data)
+            data = Movie.objects.filter(seen=False)
+
+            movie = Movie.objects.get(pk=id)
+
+            title_year = f'{movie.title} ({movie.year})'
+            response_data = {
+                'title_year': title_year,
+                'table_html': render_to_string('tables/watchlist-table.html', {'data': data})
+            }
+            return JsonResponse(response_data)
+        except Exception as e:
+            print(f"Exception: {e}")
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+
+
+"""
+Rankings Pages
+
+These views are used on the Rankings page
+
+In theory, these pages can be lightly modified or used currently for other List-based pages.
+
+"""
+
+# Update the order of a list as it's changed via drag-and-drop elements on the Rankings page.
+@csrf_exempt
+def update_order(request):
+    movie_ids = request.POST.getlist('movie_ids[]')
+    list_id = request.POST.get('list_id')
+    
+    # Check for empty values
+    if not list_id or not movie_ids:
+        return JsonResponse({'status': 'error', 'message': 'Invalid list_id or movie_ids'}, status=400)
+
+    try:
+        with transaction.atomic():
+            movie_list_objects = MovieList.objects.filter(list_id=list_id, movie_id__in=movie_ids).select_for_update()
+
+            movie_list_dict = {str(obj.movie_id): obj for obj in movie_list_objects}
+
             for order, movie_id in enumerate(movie_ids, start=1):
-                list_movie_order = MovieList.objects.get(list_id=list_id, movie_id=movie_id)
-                list_movie_order.order = order
-                list_movie_order.save()
+                movie_list_dict[str(movie_id)].order = order
 
-            return JsonResponse({'status': 'success'})
-        except MovieList.DoesNotExist:
-            return JsonResponse({'status': 'error', 'message': 'Movie or list not found'}, status=400)
-    return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=400)
+            MovieList.objects.bulk_update(movie_list_dict.values(), ['order'])
 
+        return JsonResponse({'status': 'success'})
+    except MovieList.DoesNotExist:
+        return JsonResponse({'status': 'error', 'message': 'Movie or list not found'}, status=400)
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+
+
+# Process the submission of a new movie to a list.
+def rankings_submit(request):
+    try:
+        id = request.POST.get('movieId')
+        movie = Movie.objects.get(TMDB_ID=id)
+        list_instance = List.objects.get(pk=1)
+        MovieList.objects.create(list=list_instance, movie=movie, order=0)
+    except:
+        None
+
+    context = {**initial_data(), **fetch_rankings(1)}
+    return render(request, "rankings.html", context)
+
+
+# Defines the Rankings page.
+class RankingsView(View):
+    def get(self, request):
+        context = {**initial_data(), **fetch_rankings(1)}
+        return render(request, "rankings.html", context)
+
+
+"""
+Rankings Pages
+
+These views are used on the Rankings page
+
+In theory, these pages can be lightly modified or used currently for other List-based pages.
+
+"""
+
+# Defines the base Dashboard page.
 class DashboardView(View):
     def get(self, request):
-        movies = Movie.objects.all()
-        today = date.today()
+        context = {**initial_data()}
+        return render(request, 'dashboard.html', context)
 
-        context = {
-            'newest': movies.order_by('-datetime_added').first(),
-            'today': today,
-            'week': get_week_info(movies, today), # from viewUtils
-            'month': get_month_info(movies, today), # from viewUtils
-            'year': get_year_info(movies, today), # from viewUtils
-            'heatmap': get_heatmap_data(movies, today), # from viewUtils
-            'year_count_data': get_year_count_data(movies, today), # from viewUtils,
-            'country_data': get_country_data(), # from viewUtils,
-            'keyword_data': get_keyword_data(), # from viewUtils
-            'ratings_data': get_rating_distribution(movies), # from viewUtils
-            'treemap_data': get_streaming(movies), # from viewUtils
-            'studio_data': get_top_studios(movies, 5),
-            'weekday_distribution': get_weekday_distribution(movies), # from viewUtils
-            'on_this_day': on_this_day(today), # from viewUtils
-            'oscars_data': get_oscars_range(movies, 1927, today.year - 1, "Best Picture"),
-            'streak': get_streak(today), # from viewUtils
-            'random': get_random_on_streaming(), # from viewUtils
-            'actors': get_top_actors(movies, 10, 4), # from viewUtils
-            'directors': get_top_directors(movies, 10, 3), # from viewUtils
-            'url_start': 'https://www.themoviedb.org/t/p/w90_and_h90_face',
-        }
-        return render(request, 'watchlist/dashboard.html', context)
 
+# Defines the Dashboard/home page
+def dashboard_home(request):
+    context = {**fetch_home()}
+    return render(request, 'dashboard/home.html', context)
+
+
+# Defines the Dashboard/analytics page
+def dashboard_analytics(request):
+    context = {**fetch_analytics(10,5)}
+    return render(request, 'dashboard/analytics.html', context)
+
+
+# Defines the Dashboard/people page
+def dashboard_people(request):
+    context = {**fetch_people(4,10)}
+    return render(request, 'dashboard/people.html', context)
+
+
+# Defines the Dashboard/on_this_day page
+def dashboard_on_this_day(request):
+    context = {**fetch_on_this_day()}
+    return render(request, 'dashboard/on_this_day.html', context)
+
+
+# Defines the Dashboard/week page
+def dashboard_this_week(request):
+    context = {**initial_data(), **fetch_this_week()}
+    return render(request, 'dashboard/this_week.html', context)
+
+
+# Defines the Dashboard/month pages
+def dashboard_month(request, month, year):
+    context = {**fetch_month(month, year)}
+    return render(request, 'dashboard/month.html', context)
+
+
+# Defines the Dashboard/year page
+def dashboard_year(request, year):
+    context = {**initial_data(), **fetch_year(year)}
+    return render(request, 'dashboard/year.html', context)
+
+
+"""
+Rankings Pages
+
+These views are used on the Rankings page
+
+In theory, these pages can be lightly modified or used currently for other List-based pages.
+
+"""
+
+# Defines the Elo page
 class EloView(View):
     def get(self, request):
         movies = Movie.objects.filter(rating__isnull=False)
         matches = movies.aggregate((Sum('eloMatches'))).get('eloMatches__sum') // 2
+        startDate = date(2024, 1, 29)
+        today = date.today()
+        gap5 = get_biggest_elo_diff(Movie.objects.filter(elo__isnull=False, rating__isnull=False), 1)[:10]
+
 
         context = {
-            'movies': random.sample(list(movies), 2),
-            'matches': matches
+            'movies': get_elo_movies(),
+            'matches': matches,
+            'start': startDate,
+            'end': today,
+            'gap5': gap5,
         }
-        return render(request, 'watchlist/elo.html', context)
+        return render(request, 'elo.html', context)
+
+
+# Process an Elo matchup from the Elo page and return its template
+def elo_matchup(request):
+    winner = Movie.objects.get(pk=request.GET.get('id_winner'))
+    loser = Movie.objects.get(pk=request.GET.get('id_loser'))
+
+    elo_match(winner, loser)
+
+    movies = Movie.objects.filter(rating__isnull=False)
+    matches = movies.aggregate((Sum('eloMatches'))).get('eloMatches__sum') // 2
+    random.seed()
+
+    startDate = date(2024, 1, 29)
+    today = date.today()
+    gap5 = get_biggest_elo_diff(Movie.objects.filter(elo__isnull=False, rating__isnull=False), 1)[:10]
+
+    context = {
+        'movies': get_elo_movies(),
+        'matches': matches,
+        'start': startDate,
+        'end': today,
+        'gap5': gap5
+    }
+    return render(request, 'components/elo/eloMatchup.html', context)
+
+
+# Process an Elo matchup from the Dashboard Mini Player and return its template
+def mini_elo_matchup(request):
+    winner = Movie.objects.get(pk=request.GET.get('id_winner'))
+    loser = Movie.objects.get(pk=request.GET.get('id_loser'))
+    elo_match(winner, loser)
+
+    context = {
+        'movies': get_elo_movies(),
+    }
+    return render(request, 'components/elo/small-elo-match.html', context)
+
+
+# Process an Elo matchup from the Elo Modal and return its template
+def elo_modal_matchup(request, movie_id):
+    winner = Movie.objects.get(pk=request.GET.get('id_winner'))
+    loser = Movie.objects.get(pk=request.GET.get('id_loser'))
+
+    elo_match(winner, loser)
+
+    movie = Movie.objects.get(pk=movie_id)
+
+    context = {
+        'movies': get_elo_selective(movie),
+    }
+    return render(request, 'components/elo/modal-elo-match.html', context)
+
+
