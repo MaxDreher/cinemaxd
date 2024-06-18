@@ -1,4 +1,6 @@
 from django import forms
+from .models import Movie
+
 
 SERVICES = [
     ('', ' '),  # Empty choice for the default/placeholder
@@ -8,7 +10,7 @@ SERVICES = [
     ('Disney Plus', 'Disney Plus'),
     ('Apple TV Plus', 'Apple TV Plus'),
     ('Amazon Prime Video', 'Amazon Prime Video'),
-    ('Peacock Premium', 'Peacock Premium'),
+    ('Peacock', 'Peacock'),
     ('Paramount Plus', 'Paramount Plus'),
     ('Paramount+ Amazon Channel', 'Paramount+ Amazon Channel'),
     ('Tubi TV', 'Tubi TV'),
@@ -21,6 +23,7 @@ SERVICES = [
     ('Youtube', 'Youtube'),
     ('Youtube Movies', 'Youtube Movies'),
     ('Tik Tok', 'Tik Tok'),
+    ('Crunchyroll', 'Crunchyroll')
 ]
 
 class MovieForm(forms.Form):
@@ -35,6 +38,8 @@ class MovieForm(forms.Form):
     tags = forms.CharField(label='Tags', required=False)
 
 class WatchlistForm(forms.Form):
+    movieid = forms.IntegerField(label = "Movie Id", required=False)
+    movietype = forms.CharField(label = "Movie Type", required=False)
     title = forms.CharField(label='Title', widget=forms.TextInput(attrs={'class': 'form-control input rounded-1 dark-input'}))
     year = forms.IntegerField(label='Year', widget=forms.TextInput(attrs={'class': 'form-control input rounded-1 dark-input'}))
     date_added = forms.DateField(label='Date Added')
@@ -42,8 +47,13 @@ class WatchlistForm(forms.Form):
     tags = forms.CharField(label='Tags', required=False)
 
 class RankingForm(forms.Form):
-    title = forms.CharField(label='Title', widget=forms.TextInput(attrs={'class': 'form-control input rounded-1 dark-input'}))
-    year = forms.IntegerField(label='Year', widget=forms.TextInput(attrs={'class': 'form-control input rounded-1 dark-input'}))
+    title = forms.ChoiceField(label='Title', choices=[], widget=forms.Select(attrs={'class': 'form-control input rounded-1 dark-input'}))
+
+    def __init__(self, *args, **kwargs):
+        choices = kwargs.pop('choices', None)
+        super(RankingForm, self).__init__(*args, **kwargs)
+        if choices:
+            self.fields['title'].choices = choices
 
 class PosterForm(forms.Form):
     TMDB_ID = forms.CharField(label='TMDB ID', widget=forms.TextInput(attrs={'class': 'form-control input rounded-1 dark-input'}))
