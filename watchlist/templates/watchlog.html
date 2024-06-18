@@ -1,0 +1,167 @@
+{% extends 'base-table.html' %}
+{% load static %}
+{% load compress %}
+
+{% block additionaljs %}
+    <script src="{% static 'js/tables.js' %}"></script>
+    <script>
+        $(document).ready(function () {
+            initializePage('/watchlog/');
+        });
+    </script>
+{% endblock %}
+
+{% block buttontext %}
+    Add to Watchlog
+{% endblock %}
+
+{% block form %}
+    <form id="input" method="post">
+        <div class="card-body p-3">
+
+            {% csrf_token %}
+            {# Form Inputs #}
+            <div class="row g-3">
+
+                <div class="col-md-1">
+                    {% include "./components/table/placeholder.html" %}
+                </div>
+
+                <div class="col-md-6 d-flex align-items-stretch">
+
+                    <div class="row g-2 py-1 w-100 d-flex align-items-center">
+
+                        {# Movie Input #}
+                        <div class="col-md-6 form-group">
+                            {% include "./components/table/movie-input.html" with icon="heart" %}
+                        </div>
+
+                        {# Date #}
+                        <div class="col-md-3 form-group">
+                            {% include "./components/table/date-input.html" %}
+                        </div>
+
+                        {# Rating #}
+                        <div class="col-md-3 form-group">
+
+                            {# Form Label #}
+                            {% include "./components/headers/form-label.html" with id="id_rating" text="Rating" icon="bi-star-fill" %}
+
+                            {# Rating #}
+                            <div class="star-rating">
+                                <span class="star bi bi-star" data-value="1"></span>
+                                <span class="star bi bi-star" data-value="2"></span>
+                                <span class="star bi bi-star" data-value="3"></span>
+                                <span class="star bi bi-star" data-value="4"></span>
+                                <span class="star bi bi-star" data-value="5"></span>
+                            </div>
+
+                            <input type="hidden" id="id_rating" name="rating" value="0">
+                            
+                            {% comment %} <input type="number" name="rating" id="id_rating" class="form-control bg-transparent rounded-4 text-body-primary" placeholder="&#9733; 0.5 - &#9733; 5.0" min="0.5" max="5.0" step="0.5"> {% endcomment %}
+                            
+                        </div>
+
+                        {# Service #}
+                        <div class="col-md-4 form-group">
+
+                            {# Form Label #}
+                            {% include "./components/headers/form-label.html" with id="id_service" text="Service" icon="bi-youtube" %}
+
+                            <div class="input-group">
+
+                                {# Services Dropdown#}
+                                <select name="service" id="id_service" class="form-control bg-transparent rounded-start-4 text-body-primary">
+                                    <option label="Select"></option>
+                                    {% for service in streamers %}
+                                        <option value="{{ service }}" {% if movie.service == service %}selected{% endif %}>{{ service }}</option>
+                                    {% endfor %}
+                                </select>
+
+                                {# Favorite #}
+                                <input type="hidden" id="theaterInput" name="theaters">
+                                <button type="button" id="theaterButton" class="btn btn-sm btn-outline-secondary text-center rounded-end-2">
+                                    <i id="theater-icon" class="bi bi-camera-reels"></i>
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                        {# Tags #}
+                        <div class="col-md-8 form-group">
+                            {% include "./components/table/tags-input.html" %}
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="col-md-5 d-flex align-items-stretch">
+                    <div class="row g-2 py-1 w-100 d-flex align-items-center">
+                        <div class="col-md-12 form-group">
+
+                            {# Form Label #}
+                            {% include "./components/headers/form-label.html" with id="id_review" text="Review" icon="bi-pencil-square" %}
+
+                            {# Review #}
+                            <textarea name="review" id="id_review" class="form-control bg-transparent rounded-4 text-body-primary" rows="5"></textarea>
+                        </div>
+                    </div>
+                </div>
+                            
+            </div>
+        </div>
+
+        <div class="card-footer bg-body border-0 border-top border-bottom rounded-0">
+            {% include "./components/table/buttonstack.html" %}
+        </div>
+
+    </form>     
+{% comment %} 
+    <form id="watchlistInput" method="post">
+        <div class="card-body p-3">
+
+            {% csrf_token %}
+            {# Form Inputs #}
+            <div class="row g-3">
+                <div class="col-md-1">
+                    {% include "./components/table/placeholder.html" %}
+                </div>
+
+                <div class="col-md-11 d-flex align-items-stretch">
+
+                    {# Top Row of Inputs #}
+                    <div class="row g-2 py-1 w-100 d-flex align-items-center">
+
+                        {# Movie Input #}
+                        <div class="col-md-4 form-group">
+                            {% include "./components/table/movie-input.html" %}
+                        </div>
+
+                        {# Date #}
+                        <div class="col-md-2 form-group">
+                            {% include "./components/table/date-input.html" %}
+                        </div>
+
+                        {# Tags #}
+                        <div class="col-md-6 form-group">
+                            {% include "./components/table/tags-input.html" %}
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        
+        <div class="card-footer bg-body border-0 border-top border-bottom rounded-0">
+            {% include "./components/table/buttonstack.html" %}
+        </div>
+
+    </form> {% endcomment %}
+{% endblock %}
+
+{% block table %}
+    {% include "./tables/watchlog-table.html" with data=data %}
+{% endblock %}

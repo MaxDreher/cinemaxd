@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filters %}
+{% block js %}
+    <script src="{% static 'js/elo.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid g-0">
+        <div id="eloContainer">
+            {% include "./components/elo/eloMatchup.html" %}
+        </div>
+    </div>
+{% endblock %}

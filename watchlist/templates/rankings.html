@@ -1,0 +1,183 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filters %}
+{% load compress %}
+
+{% block css %}
+    {% compress css %}
+        <link type="text/x-scss" rel="stylesheet" href="{% static 'scss/rankings.scss' %}" media="screen">
+    {% endcompress %}
+{% endblock %}
+
+{% block js %}
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="{% static 'js/rankings.js' %}"></script>
+    <script>
+        initializeSortable()
+    </script>
+{% endblock %}
+
+{% block content %}
+    <div class="row g-3 mt-0 mb-3 mx-2">
+        {# Left Column (Stats, Input) #}
+        <div class="col-md-4">
+
+            {# Add Movie Form #}
+            <div class="row g-3">
+
+                <div class="col-md-12">
+                    <input class="btn-check" type="checkbox" id="grid-swapper" autocomplete="off">
+                    <label class="btn btn-outline-secondary rounded-4 w-100" for="grid-swapper">
+                        <i class="bi bi-stack"></i>
+                        <span class="text-body-secondary fw-semibold">Collapse</span>
+                    </label>
+                </div>
+
+                <div class="col-md-12">
+                    <div class="card rounded-4 border border-0">
+                        <div class="card-body text-center py-3 px-3">
+                            <small class="text-body-tertiary">
+                                <i class="bi bi-calendar3-week"></i>
+                                {{ start }} - {{ end }}
+                            </small>
+                            <div class="row mt-2">
+                                <div class="col-md-12">
+                                    <span><b class="h2 montserrat">{{ stats.movie_count }}</b></span>
+                                    <small class="h3 fw-semibold text-body-tertiary">movies</small>
+                                </div>
+                                <div class="col-md-12">
+                                    <span><b class="h2 montserrat">{{ stats.total_days }}</b></span>
+                                    <small class="h3 fw-semibold text-body-tertiary">days</small>
+                                </div>
+                                <div class="col-md-12">
+                                    <small class="h6 fw-semilight">
+                                        {% if stats.gap > 0 %}
+                                            <span class="text-body-green">(+{{ stats.gap }})</span>
+                                        {% else %}
+                                            <span class="text-body-red">({{ stats.gap }})</span>
+                                        {% endif %}
+                                    </small>
+                                </div>
+                            </div>
+                            <hr class="mt-2 mb-3">
+                            {% include "./components/badges/badge-secondary.html" with text=stats.days_runtime %}
+                            {% include "./components/badges/badge-secondary.html" with text=stats.total_runtime|convert_to_hrs %}
+                            {% include "./components/badges/badge-secondary.html" with text=stats.average_rating|convert_to_rating %}
+                            {% include "./components/badges/badge-secondary.html" with text=stats.average_critical|convert_to_rating color="dark" %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <div class="card rounded-4 border border-0">
+                        {% include "./components/cards/movie-card.html" with movie=latest size="db2-small" text="Newest Addition" badges_off=1  poster_off=1 %}
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        {# Right Column (Ranking List) #}
+        <div class="col-md-8">
+            <div class="mb-2">
+
+                {# Input Form #}
+                <div id="addMovieControl" class="card rounded-4 border border-0 mb-3 me-3">
+                        
+                    <div class="d-grid gap-3 mx-auto w-100">
+                        <button class="btn btn-dark shadow text-body-secondary raleway fw-semibold rounded-4" type="button" data-bs-toggle="collapse" data-bs-target="#formCollapse" aria-expanded="false" aria-controls="formCollapse" role="button" id="collapseButton">
+                            <span id="collapseIcon" class="bi bi-chevron-down"></span>
+                            Add to Rankings
+                        </button>
+                    </div>
+
+                    <div class="collapse" id="formCollapse">
+                        <div class="card-body p-3">
+
+                            <form id="addMovieForm">
+                                {% csrf_token %}
+                                <div class="row g-3">
+
+                                    <div class="col-md-12">
+                                        <div class="row">
+
+                                            {# Title #}
+                                            <div class="col-md-12 form-group">
+                                                <div class="">
+                                                    {% include "./components/headers/form-label.html" with id="id_title" text="Title" icon="bi-film" %}
+                                                </div>
+                                                <div class="input-group">
+                                                    <select name="title" id="id_title" class="form-select form-select-sm bg-dark text-body-primary rounded-4">
+                                                        <option selected>Select a Film</option>
+                                                        {% for item in not_in_list %}
+                                                            <option value="{{item.TMDB_ID}}">{{item.title}} ({{item.year}})</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <div class="d-grid gap-2">
+                                            <button class="btn btn-sm btn-secondary rounded-4" type="submit" id="submitButton">
+                                                <span>
+                                                    <div id="submitText">
+                                                        Submit
+                                                    </div>
+                                                    <div class="d-none" id="loadingSpinner">
+                                                        <span>
+                                                            <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                                                            <span role="status">Loading...</span>
+                                                        </span>
+                                                    </div>
+                                                </span>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </form>
+
+                        </div>
+                    </div>
+
+                </div>
+
+                {# Sortable List #}
+                <div id="expanded-sortable">
+                    <ul class="list-group list-group-numbered me-3" id="sortable">
+                        {% for movie in data %}
+                            <li class="list-group-item rounded-4 p-0 mb-3" data-movie-id="{{ movie.TMDB_ID }}">
+                                {% include "./components/cards/movie-card.html" with movie=movie size="db2-small" width="65px" rankings=1 %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                
+                {# Shrunk List #}
+                <div id="condensed-list" style="display:none;">
+                    <div class="hstack gap-3 me-3">
+                        {% for movie in data %}
+                            <div class="mb-3">
+                                {% include "./components/posters/borderless-poster-link.html" with movie=movie width="85px" %}
+                                {% comment %} <img src="{{ movie.posterLink }}" class="img-fluid shadow border border-2 rounded-2 h-100" alt="{{ movie.title }} Poster"> {% endcomment %}
+                            </div>
+                            {% if forloop.counter|divisibleby:10 and not forloop.last %}
+                                </div>
+                                <div class="hstack gap-3 me-3">
+                            {% endif %}            
+                        {% endfor %}
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+{% endblock %}

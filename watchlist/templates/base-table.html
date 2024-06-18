@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load compress %}
+
+{% block css %}
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/searchpanes/2.2.0/css/searchPanes.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/searchpanes/2.2.0/css/searchPanes.bootstrap5.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.7.0/css/select.dataTables.min.css">
+    {% compress css %}
+        <link type="text/x-scss" rel="stylesheet" href="{% static 'scss/table.scss' %}" media="screen">
+    {% endcompress %}
+{% endblock %}
+{% block js %}
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/searchpanes/2.2.0/js/dataTables.searchPanes.min.js"></script>
+    <script src="https://cdn.datatables.net/searchpanes/2.2.0/js/searchPanes.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/select/1.7.0/js/dataTables.select.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
+    <script src="https://cdn.datatables.net/plug-ins/1.13.7/sorting/natural.js"></script>
+    {% block additionaljs %}
+    {% endblock %}
+{% endblock %}
+
+{% block content %}
+    <div id="container" class="container-fluid p-0" style="display:none">
+        <div class="row g-0 m-0">
+
+            {# Sidebar #}
+            <div class="col-md-3">
+                <div class="sidebar bg-secondary-subtle p-3 vh-100 sticky-sidebar">
+
+                    <div id="sidebar" class="sidebar">
+
+                        <div class="card-header">
+                            <div id="sidebar-header" class="row">
+                            </div>
+                        </div>
+                        <div class="card-body py-0">
+                            <div class="dtsp-verticalContainer">
+                                <div id="searchPanes" class="dtsp-verticalPanes">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+
+            <div class="col-md-9">
+                <div class="row g-0">
+
+                    <div class="col-md-12">
+                        <div class="card border-0 rounded-0">
+
+                            {# Button #}
+                            <div class="d-grid w-100 mx-auto">
+                                <button class="btn btn-dark border-0 border-bottom text-body-secondary rounded-0" type="button" data-bs-toggle="collapse" data-bs-target="#formCollapse" aria-expanded="false" aria-controls="formCollapse" role="button" id="collapseButton">
+                                    <span id="collapseIcon" class="bi bi-chevron-down"></span>
+                                    {% block buttontext %}Expand{% endblock %}
+                                </button>
+                            </div>
+
+                            {# Collapsed Form #}
+                            <div class="collapse" id="formCollapse">
+                                {% block form %}
+                                {% endblock %}
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+
+                        <div id="alert-placeholder">
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-12">
+                        <div id="tableContainer">
+                            {% block table %}
+                            {% endblock %}
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
