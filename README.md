@@ -1,4 +1,4 @@
-# <img src="./previewImg/logo.png" alt="image_name png" />
+# <img src="./images/logo.png" alt="image_name png" />
 
 A personal-use web application designed in Django to gain experience with front-end and back-end tools while integrating it with a hobby of mine.
 
@@ -25,30 +25,30 @@ Some of these include:
 - Best Picture by year tracking.
 - Highest/Lowest rated and most watched actors/directors.
 
-<img src="./previewImg/Dashboard.png" alt="image_name png" />
+<img src="./images/Dashboard.png" alt="image_name png" />
 
 ### Watchlog
 The functionality for the tables comes from the [DataTables](https://datatables.net/) libary, with the [SearchPanes](https://datatables.net/extensions/searchpanes/) extension providing filtering capability. These elements have been heavily customized to fit this use-case. The entry form is processed via AJAX and refreshes the table and search panes without reloading the entire page. In addition, an AJAX request is sent when a movie's title and year are entered that retrieves the film's poster from the TMDB API, so there is some amount of "user-verification" when recording an entry.
 
-<img src="./previewImg/Watchlog.png" alt="image_name png" />
+<img src="./images/Watchlog.png" alt="image_name png" />
 
 ### Watchlist
-<img src="./previewImg/Watchlist.png" alt="image_name png" />
+<img src="./images/Watchlist.png" alt="image_name png" />
 
 ### Movie Popouts
 These elements are created using Bootstrap's offcanvas elements, and can be triggered by clicking the title of a film from any page. These elements contain more detailed information about the movie than can be displayed on the Dashboard or Tables, while also not requiring another webpage entirely. This element is created via AJAX when a film is clicked, and destroyed when another is clicked, as to never be storing more than one on the page at a time.
 
-<img src="./previewImg/Offcanvas.png" alt="image_name png" />
+<img src="./images/Offcanvas.png" alt="image_name png" />
 
 ### People Popouts
 Just as film titles can be clicked, people's names will also pop-out an element displaying information about them as both a director and actor.
 
-<img src="./previewImg/Offcanvas_People.png" alt="image_name png" />
+<img src="./images/Offcanvas_People.png" alt="image_name png" />
 
 ### Poster-Selector
 This element uses an AJAX request to make an API call gathering all existing posters for a film, and providing a quick selector to choose which one the app will primarily use. This feature is inspired directly by [Letterboxd's](https://letterboxd.com/) similar feature in their paid version.
 
-<img src="./previewImg/Poster-Selector.png" alt="image_name png" />
+<img src="./images/Poster-Selector.png" alt="image_name png" />
 
 ## WIP
 
@@ -59,7 +59,7 @@ This page is a sortable list of the movies I've seen while trying to keep up wit
 
 Future scope for this page is to update the design to be in-line with the rest of the website, and to remove the need to manually add new movies to the list via form, moving to something like a selector.
 
-<img src="./previewImg/Rankings.png" alt="image_name png" />
+<img src="./images/Rankings.png" alt="image_name png" />
 
 ### Elo
 This page is a long-term project that uses a simple [Elo scoring algorithm](https://en.wikipedia.org/wiki/Elo_rating_system) to rank movies based on my head-to-head inputs. In theory, this was implemented to help me combat bias, most notably recency bias, in my ratings. 
@@ -72,7 +72,7 @@ The large amount of entries makes this impractical at some level without thousan
 
 Future scope for this page includes updated design, as well as alternative matchup methods, such as random movies within a range of scores.
 
-<img src="./previewImg/Elo.png" alt="image_name png" />
+<img src="./images/Elo.png" alt="image_name png" />
 
 
 ## Database Design
@@ -82,7 +82,7 @@ This project is built using a relational database schema using Django's models. 
 
 
 
-<img src="./previewImg/Current_ERD.png" alt="image_name png" />
+<img src="./images/Current_ERD.png" alt="image_name png" />
 
 The decision to seperate "Watchlog" and "Watchlist" is largely driven by certain instances where the distinction between both is helpful; however, it is my intention to eliminate this at some point given the redundancy of two models with so many similarities. At the very least moving them to a super-class/sub-class scheme.
 
@@ -90,21 +90,21 @@ The decision to seperate "Watchlog" and "Watchlist" is largely driven by certain
 I started this project to replace a spreadsheet I had been working on between August 2023 - November 2023 because it would allow me so much more freedom in my design and statistics.
 
 <p float="left">
-    <img width="50%" src="./previewImg/Spreadsheet.png" alt="image_name png" /><img width="50%" src="./previewImg/Spreadsheet2.png" alt="image_name png" />
-    <img width="50%" src="./previewImg/Spreadsheet3.png" alt="image_name png" /><img width="50%" src="./previewImg/Spreadsheet4.png" alt="image_name png" />
+    <img width="50%" src="./images/Spreadsheet.png" alt="image_name png" /><img width="50%" src="./images/Spreadsheet2.png" alt="image_name png" />
+    <img width="50%" src="./images/Spreadsheet3.png" alt="image_name png" /><img width="50%" src="./images/Spreadsheet4.png" alt="image_name png" />
 </p>
 
 I began working on this project in December 2023, and had a "working" Dashboard and Watchlog page by 12/31/2023.
 
 <p float="left">
-    <img width="50%" src="./previewImg/Dashboard-12-31-2023.png" alt="image_name png" /><img width="50%" src="./previewImg/Watchlog-12-31-2023.png" alt="image_name png" />
+    <img width="50%" src="./images/Dashboard-12-31-2023.png" alt="image_name png" /><img width="50%" src="./images/Watchlog-12-31-2023.png" alt="image_name png" />
 </p>
 
 These have seen substantially overhauled, of course, and were re-designed heavily by 01/24/2024, with the addition of a few new features as well.
 
 <p float="left">
-    <img width="50%" src="./previewImg/Dashboard-01-24-2024.png" alt="image_name png" /><img width="50%" src="./previewImg/Watchlog-01-24-2024.png" alt="image_name png" />
-    <img width="50%" src="./previewImg/Rankings-01-24-2024.png" alt="image_name png" /><img width="50%" src="./previewImg/Offcanvas-01-24-2024.png" alt="image_name png" />
+    <img width="50%" src="./images/Dashboard-01-24-2024.png" alt="image_name png" /><img width="50%" src="./images/Watchlog-01-24-2024.png" alt="image_name png" />
+    <img width="50%" src="./images/Rankings-01-24-2024.png" alt="image_name png" /><img width="50%" src="./images/Offcanvas-01-24-2024.png" alt="image_name png" />
 </p>
 
 The version detailed in the rest of this page is the current updates, as of 02/17/2024.
