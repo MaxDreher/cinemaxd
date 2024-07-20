@@ -45,6 +45,14 @@ def get_posters(movie):
 def get_streamers():
     return STREAMING_PROVIDERS
 
+
+def get_devices():
+    return Movie.objects.filter(seen=True).values_list('device', flat=True).distinct()
+
+
+def get_theaters():
+    return Movie.objects.filter(seen=True).values_list('theater', flat=True).distinct()
+
 # ===============================================
 # OSCARS DATA UTILITIES
 # ===============================================
