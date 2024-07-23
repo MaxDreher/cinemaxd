@@ -1,11 +1,11 @@
 # <img src="./images/logo_new.png" alt="image_name png" />
 
 > [!NOTE]
-> *This repository serves as a public representation of a privately maintained project. It is intended purely for portfolio demonstration purposes, showcasing     various functionalities and design principles implemented in the original application. This project is not intended for re-production.*
+> *This repository serves as a public representation of a privately maintained project. It is intended purely for portfolio demonstration purposes, showcasing various functionalities and design principles implemented in the original application. This project is not intended for re-production, and portions of relevant code may be excluded.*
 
 "**Cinemax'd**" is my personal-use database application for logging movies and television series I've seen, or would like to see. It's built using [Django](https://www.djangoproject.com/) and operates on a local SQLite3 database. The relational database schema is designed to maintain relationships between movies and other data, such as cast, awards, genres, and more.
 
-This data is parsed and managed by [entry.py](./moviedb/entry.py), which integrates information from the [TMDB](https://developer.themoviedb.org/docs/getting-started), [OMDB](https://www.omdbapi.com/), and [Wikidata](https://www.wikidata.org/wiki/Wikidata:REST_API) APIs. Additionally, web-scraping and data manipulation techniques are employed to gather review scores and awards data from other sources when necessary.
+This data is parsed and managed by [entry.py](./example/entry.py), which integrates information from the [TMDB](https://developer.themoviedb.org/docs/getting-started), [OMDB](https://www.omdbapi.com/), and [Wikidata](https://www.wikidata.org/wiki/Wikidata:REST_API) APIs. Additionally, web-scraping and data manipulation techniques are employed to gather review scores and awards data from other sources when necessary.
 
 The front-end design is primarily crafted using Django's built-in templating language. To enhance the user interface, I incorporated [Bootstrap 5](https://getbootstrap.com/), [jQuery](https://jquery.com/), and [jQuery UI](https://jqueryui.com/). Styling is managed with [SASS](https://sass-lang.com/), and charts are all visualized with [amCharts5](https://www.amcharts.com/).
 
@@ -160,7 +160,7 @@ All of my models are built through Django, and can be summarized by the followin
     <p><i>An Entity Relationship Diagram describing the models.</i></p>
 </div>
 
-As mentioned previously, when a movie is submitted to the database, [entry.py](./moviedb/entry.py) handles all data collection and parsing. Most of the data is sourced from the [TMDB API](https://developer.themoviedb.org/docs/getting-started), and then manipulated to meet certain constraints. For example, I only handle the types "series" and "movie," whereas TMDB uses "tv" and "movie." TMDB's data is very robust, allowing me to populate the majority of my fields from their data. Almost all of the models, aside from "movie" and "award," are populated entirely by the TMDB API.
+As mentioned previously, when a movie is submitted to the database, [entry.py](./example/entry.py) handles all data collection and parsing. Most of the data is sourced from the [TMDB API](https://developer.themoviedb.org/docs/getting-started), and then manipulated to meet certain constraints. For example, I only handle the types "series" and "movie," whereas TMDB uses "tv" and "movie." TMDB's data is very robust, allowing me to populate the majority of my fields from their data. Almost all of the models, aside from "movie" and "award," are populated entirely by the TMDB API.
 
 However, while TMDB's API provides a wealth of information, it is no more than I could get by using their native service. This led me to integrate other data pipelines into my project to ensure that the information I have access to exceeds that which I could get from any particular service.
 
